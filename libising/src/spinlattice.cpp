@@ -4,10 +4,10 @@
 
 #include <cmath>
 
-template<unsigned int dimension, class SpinType>
-typename SpinLattice<dimension, SpinType>::index_type SpinLattice<dimension, SpinType>::to_boost_array(std::vector<unsigned int> coordinates)
+template<unsigned int dimension, class SpinType, class Derived>
+typename SpinLatticeBase<dimension, SpinType, Derived>::index_type SpinLatticeBase<dimension, SpinType, Derived>::to_boost_array(std::vector<unsigned int> coordinates)
 {
-  SpinLattice<dimension, SpinType>::index_type result;
+  SpinLatticeBase<dimension, SpinType, Derived>::index_type result;
   for (unsigned int d = 0; d < dimension; d++) result[d] = coordinates[d];
   return result;
 }
@@ -15,8 +15,8 @@ typename SpinLattice<dimension, SpinType>::index_type SpinLattice<dimension, Spi
  * \details Converts an integer (between 0 and the the number of lattice sites) to a correct index.
  * \param i Integer to convert
  */
-template<unsigned int dimension, class SpinType>
-typename SpinLattice<dimension, SpinType>::index_type SpinLattice<dimension, SpinType>::int_to_index(unsigned int i) const
+template<unsigned int dimension, class SpinType, class Derived>
+typename SpinLatticeBase<dimension, SpinType, Derived>::index_type SpinLatticeBase<dimension, SpinType, Derived>::int_to_index(unsigned int i) const
 {
   // Calculate the coordinates of the point
   index_type coordinates;
@@ -29,24 +29,12 @@ typename SpinLattice<dimension, SpinType>::index_type SpinLattice<dimension, Spi
 }
 
 /*!
- * \details Construct an empty SpinLattice (for reloading serialized stuff)
+ * \details Construct an empty SpinLatticeBase (for reloading serialized stuff)
  */
-template<unsigned int dimension, class SpinType>
-SpinLattice<dimension, SpinType>::SpinLattice()
+template<unsigned int dimension, class SpinType, class Derived>
+SpinLatticeBase<dimension, SpinType, Derived>::SpinLatticeBase()
   : _simulation_time(0),
     spin_lattice()
-{
-  // ToDo: Check lattice_extension size with the dimension
-}
-
-/*!
- * \details Constructs a spin lattice with the given extension. The dimension and the spin type used is given as a template parameter.
- * \param lattice_extension A STL vector of integers giving the extension of the lattice for each dimension. The size of the vector must match the dimension, the integers mustn't be zero or negative.
- */
-template<unsigned int dimension, class SpinType>
-SpinLattice<dimension, SpinType>::SpinLattice(std::vector<unsigned int> lattice_extension)
-  : _simulation_time(0),
-    spin_lattice(to_boost_array(lattice_extension))
 {
   // ToDo: Check lattice_extension size with the dimension
 }
@@ -56,8 +44,8 @@ SpinLattice<dimension, SpinType>::SpinLattice(std::vector<unsigned int> lattice_
  * \param lattice_extension A STL vector of integers giving the extension of the lattice for each dimension. The size of the vector must match the dimension, the integers mustn't be zero or negative.
  * \param default_spin Default value for all spins
  */
-template<unsigned int dimension, class SpinType>
-SpinLattice<dimension, SpinType>::SpinLattice(std::vector<unsigned int> lattice_extension, SpinType default_spin)
+template<unsigned int dimension, class SpinType, class Derived>
+SpinLatticeBase<dimension, SpinType, Derived>::SpinLatticeBase(std::vector<unsigned int> lattice_extension, SpinType default_spin)
   : _simulation_time(0),
     spin_lattice(to_boost_array(lattice_extension))
 {
@@ -69,28 +57,28 @@ SpinLattice<dimension, SpinType>::SpinLattice(std::vector<unsigned int> lattice_
 }
 
 /*!
- * \details Constructs by copying another SpinLattice with the same dimension and the same SpinType. The dimension and the spin type used is given as a template parameter. 
- * \param other SpinLattice to copy
+ * \details Constructs by copying another SpinLatticeBase with the same dimension and the same SpinType. The dimension and the spin type used is given as a template parameter. 
+ * \param other SpinLatticeBase to copy
  */
-template<unsigned int dimension, class SpinType>
-SpinLattice<dimension, SpinType>::SpinLattice(const SpinLattice<dimension, SpinType>& other)
+template<unsigned int dimension, class SpinType, class Derived>
+SpinLatticeBase<dimension, SpinType, Derived>::SpinLatticeBase(const SpinLatticeBase<dimension, SpinType, Derived>& other)
   : _simulation_time(0),
     spin_lattice(other.spin_lattice)
 { }
 
-template<unsigned int dimension, class SpinType>
-SpinType SpinLattice<dimension, SpinType>::get_spin(index_type coordinates) const
+template<unsigned int dimension, class SpinType, class Derived>
+SpinType SpinLatticeBase<dimension, SpinType, Derived>::get_spin(index_type coordinates) const
 {
   return spin_lattice(coordinates);
 }
-template<unsigned int dimension, class SpinType>
-void SpinLattice<dimension, SpinType>::set_spin(index_type coordinates, SpinType value)
+template<unsigned int dimension, class SpinType, class Derived>
+void SpinLatticeBase<dimension, SpinType, Derived>::set_spin(index_type coordinates, SpinType value)
 {
   spin_lattice(coordinates) = value;
 }
 
-template<unsigned int dimension, class SpinType>
-SpinLattice<dimension, SpinType>& SpinLattice<dimension, SpinType>::operator=(const SpinLattice<dimension, SpinType>& other)
+template<unsigned int dimension, class SpinType, class Derived>
+SpinLatticeBase<dimension, SpinType, Derived>& SpinLatticeBase<dimension, SpinType, Derived>::operator=(const SpinLatticeBase<dimension, SpinType, Derived>& other)
 {
   // Check for self-assignment
   if (this == &other)
@@ -103,13 +91,13 @@ SpinLattice<dimension, SpinType>& SpinLattice<dimension, SpinType>::operator=(co
   // Return the existing object
   return *this;
 }
-template<unsigned int dimension, class SpinType>
-bool SpinLattice<dimension, SpinType>::operator==(const SpinLattice<dimension, SpinType>& other) const
+template<unsigned int dimension, class SpinType, class Derived>
+bool SpinLatticeBase<dimension, SpinType, Derived>::operator==(const SpinLatticeBase<dimension, SpinType, Derived>& other) const
 {
   return spin_lattice == other.spin_lattice;
 }
-template<unsigned int dimension, class SpinType>
-bool SpinLattice<dimension, SpinType>::operator!=(const SpinLattice<dimension, SpinType>& other) const
+template<unsigned int dimension, class SpinType, class Derived>
+bool SpinLatticeBase<dimension, SpinType, Derived>::operator!=(const SpinLatticeBase<dimension, SpinType, Derived>& other) const
 {
   return spin_lattice != other.spin_lattice;
 }
@@ -117,8 +105,8 @@ bool SpinLattice<dimension, SpinType>::operator!=(const SpinLattice<dimension, S
 /*! 
  * \details Creates a STL vector of Step objects representing all steps that can be done in the lattice. For each lattice site there are the flips from the present value of the spin to all other values of the spin.
  */
-template<unsigned int dimension, class SpinType>
-std::vector<Step<dimension, SpinType> > SpinLattice<dimension, SpinType>::all_steps()
+template<unsigned int dimension, class SpinType, class Derived>
+std::vector<Step<dimension, SpinType> > SpinLatticeBase<dimension, SpinType, Derived>::all_steps()
 {
   std::vector<Step<dimension, SpinType> > result;
   // Go through all lattice sites and through every differing spin
@@ -132,7 +120,7 @@ std::vector<Step<dimension, SpinType> > SpinLattice<dimension, SpinType>::all_st
     {
       if (*new_spin != spin_lattice(step_index))
       {
-	result.push_back(Step<dimension, SpinType>(this, step_index, *new_spin));
+	result.push_back(Step<dimension, SpinType>(static_cast<Derived*>(this), step_index, *new_spin));
       }
     }
   }
@@ -144,8 +132,8 @@ std::vector<Step<dimension, SpinType> > SpinLattice<dimension, SpinType>::all_st
  * \details Updates the spin lattice with the given spin. After the update the simulation time is increase by one. If the creation simulation time of the step does not match the actual simulation time of the spin lattice, an exception will be thrown (to be implemented).
  * \param step_to_commit A valid step that should update the spin lattice.
  */
-template<unsigned int dimension, class SpinType>
-void SpinLattice<dimension, SpinType>::commit(Step<dimension, SpinType>& step_to_commit)
+template<unsigned int dimension, class SpinType, class Derived>
+void SpinLatticeBase<dimension, SpinType, Derived>::commit(Step<dimension, SpinType>& step_to_commit)
 {
   // ToDo: Check for the right simulation time
   
@@ -157,8 +145,8 @@ void SpinLattice<dimension, SpinType>::commit(Step<dimension, SpinType>& step_to
 /*! 
  * \details Calculates the energy of the lattice by summing over all next-neighbour pairs and returning the negative value of the product of the pairs.
  */
-template<unsigned int dimension, class SpinType>
-double SpinLattice<dimension, SpinType>::energy() const
+template<unsigned int dimension, class SpinType, class Derived>
+double SpinLatticeBase<dimension, SpinType, Derived>::energy() const
 {
   double result = 0;
 
@@ -182,8 +170,8 @@ double SpinLattice<dimension, SpinType>::energy() const
 /*! 
  * \details Calculates the magnetization of the lattice by summing over all spins and returning the sum of their values
  */
-template<unsigned int dimension, class SpinType>
-double SpinLattice<dimension, SpinType>::magnetization() const
+template<unsigned int dimension, class SpinType, class Derived>
+double SpinLatticeBase<dimension, SpinType, Derived>::magnetization() const
 {
   double result = 0;
 
@@ -200,8 +188,8 @@ double SpinLattice<dimension, SpinType>::magnetization() const
  * \details Returns a STL vector of spins that are the next neighbours of the spin at the given coordinates.
  * \param coordinates Index of the spin of which the next neighbours will be calculated.
  */
-template<unsigned int dimension, class SpinType>
-std::vector<SpinType> SpinLattice<dimension, SpinType>::next_neighbours(index_type coordinates) const
+template<unsigned int dimension, class SpinType, class Derived>
+std::vector<SpinType> SpinLatticeBase<dimension, SpinType, Derived>::next_neighbours(index_type coordinates) const
 {
   std::vector<SpinType> result;
 
@@ -240,8 +228,8 @@ std::vector<SpinType> SpinLattice<dimension, SpinType>::next_neighbours(index_ty
  * \details Proposes a step based on a given random number between 0 and 1. The integer part of (random_number * number_of_sites) will be used for determining the index where the step or the spin flip should occur, the non-integer part will be used for determining to which new spin the old spin will be flipped.
  * \param rng Random number generator so that rng() gives a random number between 0 and 1
  */
-template<unsigned int dimension, class SpinType>
-Step<dimension, SpinType> SpinLattice<dimension, SpinType>::propose_step(double random_double)
+template<unsigned int dimension, class SpinType, class Derived>
+Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose_step(double random_double)
 {
   // Use a random number for calculating a random int between 0 and the number of spins in the system
   double random_number_index = random_double*spin_lattice.num_elements();
@@ -256,7 +244,7 @@ Step<dimension, SpinType> SpinLattice<dimension, SpinType>::propose_step(double 
   }
 
   // Create a step and return the step
-  return Step<dimension, SpinType>(this, // Pointer to the lattice of the step
+  return Step<dimension, SpinType>(static_cast<Derived*>(this), // Pointer to the lattice of the step
 				   lattice_multiindex, // Index of the place to flip
 				   spin_lattice(lattice_multiindex).random_differ(random_number_index - lattice_index)); // new random spin value differing from the old value
 }
@@ -265,8 +253,8 @@ Step<dimension, SpinType> SpinLattice<dimension, SpinType>::propose_step(double 
  * \details Proposes a step based on a given random number between 0 and 1. The integer part of (random_number * number_of_sites) will be used for determining the index where the step or the spin flip should occur, the non-integer part will be used for determining to which new spin the old spin will be flipped.
  * \param rng Random number generator so that rng() gives a random number between 0 and 1
  */
-template<unsigned int dimension, class SpinType> template<class RandomNumberGenerator>
-Step<dimension, SpinType> SpinLattice<dimension, SpinType>::propose_step(RandomNumberGenerator* rng)
+template<unsigned int dimension, class SpinType, class Derived> template<class RandomNumberGenerator>
+Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose_step(RandomNumberGenerator* rng)
 {
   // Use a random number for calculating a random int between 0 and the number of spins in the system
   double random_number_index = rng->random_double()*spin_lattice.num_elements();
@@ -281,7 +269,7 @@ Step<dimension, SpinType> SpinLattice<dimension, SpinType>::propose_step(RandomN
   }
 
   // Create a step and return the step
-  return Step<dimension, SpinType>(this, // Pointer to the lattice of the step
+  return Step<dimension, SpinType>(static_cast<Derived*>(this), // Pointer to the lattice of the step
 				   lattice_multiindex, // Index of the place to flip
 				   spin_lattice(lattice_multiindex).random_differ(rng->random_double())); // new random spin value differing from the old value
 }

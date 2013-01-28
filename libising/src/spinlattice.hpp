@@ -15,15 +15,16 @@
 /*! 
  * \brief Class template for a arbitrary dimensional lattice of spins with next-neighbour interaction.
  * \author Benedikt Krüger
- * \details This class takes two template arguments: The first (unsigned int) specifies the number of dimensions, the second the class of spins that should be used. A class used as template argument must have the following functions: 
+ * \details This class takes two template arguments: The first (unsigned int) specifies the number of dimensions, the second the class of spins that should be used. A class used as spin-template argument must have the following functions: 
  * - operator== and operator!= for determining whether two spins are equal
  * - operator= for assigning two spins
  * - std::vector<SpinType> all_possible_values() const: Function that returns a vector with all possible values of a spin.
  * - SpinType random_differ(double random_number) const: Function that returns a new spin out of all possible values that is unequal to the actual spin.
  */
-template<unsigned int dimension, class SpinType>
-class SpinLattice
+template<unsigned int dimension, class SpinType, class Derived>
+class SpinLatticeBase
 {
+protected:
   typedef boost::multi_array<SpinType, dimension> lattice_array_type;
   typedef boost::array<typename lattice_array_type::index, dimension> index_type;
 
@@ -51,13 +52,11 @@ protected:
 
 public:
   //! Default constructor
-  SpinLattice();
-  //! Constructor
-  SpinLattice(std::vector<unsigned int> lattice_extension);
-  //! Constructor with default value
-  SpinLattice(std::vector<unsigned int> lattice_extension, SpinType default_spin);
+  SpinLatticeBase();
+  //! Constructor with optional default value
+  SpinLatticeBase(std::vector<unsigned int> lattice_extension, SpinType default_spin = SpinType());
   //! Copy constructor
-  SpinLattice(const SpinLattice<dimension, SpinType>& other);
+  SpinLatticeBase(const SpinLatticeBase<dimension, SpinType, Derived>& other);
 
   //! Function to get a spin at the given coordinates
   SpinType get_spin(index_type coordinates) const;
@@ -67,11 +66,11 @@ public:
   int get_simulation_time() const { return _simulation_time; }
 
   //! Assignment Operator
-  SpinLattice<dimension, SpinType>& operator=(const SpinLattice<dimension, SpinType>& other);
+  SpinLatticeBase<dimension, SpinType, Derived>& operator=(const SpinLatticeBase<dimension, SpinType, Derived>& other);
   //! Operator for testing equality
-  bool operator==(const SpinLattice<dimension, SpinType>& other) const;
+  bool operator==(const SpinLatticeBase<dimension, SpinType, Derived>& other) const;
   //! Operator for testing inequality
-  bool operator!=(const SpinLattice<dimension, SpinType>& other) const;
+  bool operator!=(const SpinLatticeBase<dimension, SpinType, Derived>& other) const;
 
   //! Create a vector with all present possible steps
   std::vector<Step<dimension, SpinType> > all_steps();
@@ -92,6 +91,130 @@ public:
   Step<dimension, SpinType> propose_step(double random_double);
   //! Propose a step given a random number generator
   template<class RandomNumberGenerator> Step<dimension, SpinType> propose_step(RandomNumberGenerator* rng);
+};
+
+//! Derived class for an arbitrary-dimensional spin lattice
+template<unsigned int dimension, class SpinType>
+class SpinLattice : public SpinLatticeBase<dimension, SpinType, SpinLattice<dimension, SpinType> >
+{
+private:
+  typedef SpinLatticeBase<dimension, SpinType, SpinLattice<dimension, SpinType> > Base;
+
+public:
+  //! Default constructor
+  SpinLattice() : Base() {}
+  //! Constructor with optional default value
+  SpinLattice(std::vector<unsigned int> lattice_extension, SpinType default_spin = SpinType()) : Base(lattice_extension, default_spin) {}
+  //! Copy constructor
+  SpinLattice(const SpinLattice<dimension,SpinType>& other) : Base(other) {}
+};
+
+//! Specialised class for a one dimensional spin lattice
+template<class SpinType>
+class SpinLattice<1, SpinType> : public SpinLatticeBase<1, SpinType, SpinLattice<1, SpinType> >
+{
+private:
+  typedef SpinLatticeBase<1, SpinType, SpinLattice<1, SpinType> > Base;
+  typedef typename Base::lattice_array_type::index subindex_type;
+
+  typename Base::index_type create_array_index(subindex_type x1)
+  {
+    typename Base::index_type array_index;
+    array_index[0] = x1;
+    return array_index;
+  }
+
+public:
+  //! Default constructor
+  SpinLattice() : Base() {}
+  //! Constructor with optional default value
+  SpinLattice(std::vector<unsigned int> lattice_extension, SpinType default_spin = SpinType()) : Base(lattice_extension, default_spin) {}
+  //! Copy constructor
+  SpinLattice(const SpinLattice<1, SpinType>& other) : Base(other) {}
+
+  //! Const-Access-Operator for three-dimensional spin
+  const SpinType& operator()(subindex_type x1) const
+  {
+    return this->spin_lattice(create_array_index(x1));
+  }
+  //! Modifying Access-Operator for three-dimensional spin
+  SpinType& operator()(subindex_type x1)
+  {
+    return this->spin_lattice(create_array_index(x1));
+  }
+};
+
+//! Specialised class for a two-dimensional spin lattice
+template<class SpinType>
+class SpinLattice<2, SpinType> : public SpinLatticeBase<2, SpinType, SpinLattice<2, SpinType> >
+{
+private:
+  typedef SpinLatticeBase<2, SpinType, SpinLattice<2, SpinType> > Base;
+  typedef typename Base::lattice_array_type::index subindex_type;
+
+  typename Base::index_type create_array_index(subindex_type x1, subindex_type x2)
+  {
+    typename Base::index_type array_index;
+    array_index[0] = x1;
+    array_index[1] = x2;
+    return array_index;
+  }
+
+public:
+  //! Default constructor
+  SpinLattice() : Base() {}
+  //! Constructor with optional default value
+  SpinLattice(std::vector<unsigned int> lattice_extension, SpinType default_spin = SpinType()) : Base(lattice_extension, default_spin) {}
+  //! Copy constructor
+  SpinLattice(const SpinLattice<2, SpinType>& other) : Base(other) {}
+
+  //! Const-Access-Operator for three-dimensional spin
+  const SpinType& operator()(subindex_type x1, subindex_type x2) const
+  {
+    return this->spin_lattice(create_array_index(x1, x2));
+  }
+  //! Modifying Access-Operator for three-dimensional spin
+  SpinType& operator()(subindex_type x1, subindex_type x2)
+  {
+    return this->spin_lattice(create_array_index(x1, x2));
+  }
+};
+
+//! Specialied class for a three-dimensional spin lattice
+template<class SpinType>
+class SpinLattice<3, SpinType> : public SpinLatticeBase<3, SpinType, SpinLattice<3, SpinType> >
+{
+private:
+  typedef SpinLatticeBase<3, SpinType, SpinLattice<3, SpinType> > Base;
+  typedef typename Base::lattice_array_type::index subindex_type;
+
+  typename Base::index_type create_array_index(subindex_type x1, subindex_type x2, subindex_type x3)
+  {
+    typename Base::index_type array_index;
+    array_index[0] = x1;
+    array_index[1] = x2;
+    array_index[2] = x3;
+    return array_index;
+  }
+
+public:
+  //! Default constructor
+  SpinLattice() : Base() {}
+  //! Constructor with default value
+  SpinLattice(std::vector<unsigned int> lattice_extension, SpinType default_spin = SpinType()) : Base(lattice_extension, default_spin) {}
+  //! Copy constructor
+  SpinLattice(const SpinLattice<3, SpinType>& other) : Base(other) {}
+
+  //! Const-Access-Operator for three-dimensional spin
+  const SpinType& operator()(subindex_type x1, subindex_type x2, subindex_type x3) const
+  {
+    return this->spin_lattice(create_array_index(x1, x2, x3));
+  }
+  //! Modifying Access-Operator for three-dimensional spin
+  SpinType& operator()(subindex_type x1, subindex_type x2, subindex_type x3)
+  {
+    return this->spin_lattice(create_array_index(x1, x2, x3));
+  }
 };
 
 // Include the implementation

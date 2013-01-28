@@ -12,6 +12,7 @@ CppUnit::Test* TestSpinLattice::suite()
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_get_simulation_time", &TestSpinLattice::test_get_simulation_time ) );
 
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_operator_equal", &TestSpinLattice::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_operator_access", &TestSpinLattice::test_operator_access ) );
 
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_all_steps", &TestSpinLattice::test_all_steps ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_commit", &TestSpinLattice::test_commit ) );
@@ -183,6 +184,42 @@ void TestSpinLattice::test_operator_equal()
   CPPUNIT_ASSERT(*testlattice_1d_copy == *testlattice_1d);
   CPPUNIT_ASSERT(*testlattice_2d_copy == *testlattice_2d);
   CPPUNIT_ASSERT(*testlattice_1d_real_copy == *testlattice_1d_real);
+}
+void TestSpinLattice::test_operator_access()
+{
+  SpinIsing spin_up(1);
+  SpinIsing spin_down(-1);
+
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_1d)(0).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_1d)(1).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_1d)(2).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_1d)(3).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_1d)(4).get_value());
+  
+  (*testlattice_1d)(0) = spin_down;
+  (*testlattice_1d)(2) = spin_up;
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_1d)(0).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_1d)(2).get_value());
+
+  CPPUNIT_ASSERT_EQUAL(0, static_cast<int>((*testlattice_2d_potts)(0,0).get_value()));
+  CPPUNIT_ASSERT_EQUAL(1, static_cast<int>((*testlattice_2d_potts)(0,1).get_value()));
+  CPPUNIT_ASSERT_EQUAL(2, static_cast<int>((*testlattice_2d_potts)(0,2).get_value()));
+  CPPUNIT_ASSERT_EQUAL(3, static_cast<int>((*testlattice_2d_potts)(1,0).get_value()));
+  CPPUNIT_ASSERT_EQUAL(4, static_cast<int>((*testlattice_2d_potts)(1,1).get_value()));
+  CPPUNIT_ASSERT_EQUAL(5, static_cast<int>((*testlattice_2d_potts)(1,2).get_value()));
+  CPPUNIT_ASSERT_EQUAL(6, static_cast<int>((*testlattice_2d_potts)(2,0).get_value()));
+  CPPUNIT_ASSERT_EQUAL(7, static_cast<int>((*testlattice_2d_potts)(2,1).get_value()));
+  CPPUNIT_ASSERT_EQUAL(8, static_cast<int>((*testlattice_2d_potts)(2,2).get_value()));
+
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_2d)(0,0).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_2d)(0,1).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_2d)(0,2).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_2d)(1,0).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_2d)(1,1).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_2d)(1,2).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_2d)(2,0).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_down.get_value(), (*testlattice_2d)(2,1).get_value());
+  CPPUNIT_ASSERT_EQUAL(spin_up.get_value(), (*testlattice_2d)(2,2).get_value());
 }
 
 void TestSpinLattice::test_all_steps()

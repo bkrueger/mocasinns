@@ -15,8 +15,8 @@
 
 class TestMetropolis : CppUnit::TestFixture
 {
-  typedef SpinLattice<2, SpinIsing> ConfigurationType;
-  typedef Step<2, SpinIsing> StepType;
+  typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
+  typedef Ising::Step<2, Ising::SpinIsing> StepType;
   typedef Metropolis<ConfigurationType, StepType, Boost_MT19937> SimulationType;
 
 private:

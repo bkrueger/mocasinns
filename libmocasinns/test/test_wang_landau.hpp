@@ -14,12 +14,12 @@
 #ifndef TEST_WANG_LANDAU_HPP
 #define TEST_WANG_LANDAU_HPP
 
-typedef SpinLattice<1, SpinIsing> IsingConfiguration1d;
-typedef Step<1, SpinIsing> IsingStep1d;
+typedef Ising::SpinLattice<1, Ising::SpinIsing> IsingConfiguration1d;
+typedef Ising::Step<1, Ising::SpinIsing> IsingStep1d;
 typedef WangLandau<IsingConfiguration1d, IsingStep1d, int, Histocrete, Boost_MT19937> IsingSimulation1d;
 
-typedef SpinLattice<2, SpinIsing> IsingConfiguration2d;
-typedef Step<2, SpinIsing> IsingStep2d;
+typedef Ising::SpinLattice<2, Ising::SpinIsing> IsingConfiguration2d;
+typedef Ising::Step<2, Ising::SpinIsing> IsingStep2d;
 typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histocrete, Boost_MT19937> IsingSimulation2d;
 
 class TestWangLandau : CppUnit::TestFixture

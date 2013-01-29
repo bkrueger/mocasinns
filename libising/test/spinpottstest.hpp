@@ -8,6 +8,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "../src/spin_potts.hpp"
 
+using namespace Ising;
+
 class TestSpinPotts : public CppUnit::TestFixture
 {
 private:

@@ -4,6 +4,9 @@
 
 #include <cmath>
 
+namespace Ising
+{
+
 template<unsigned int dimension, class SpinType, class Derived>
 typename SpinLatticeBase<dimension, SpinType, Derived>::index_type SpinLatticeBase<dimension, SpinType, Derived>::to_boost_array(std::vector<unsigned int> coordinates)
 {
@@ -273,5 +276,7 @@ Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose
 				   lattice_multiindex, // Index of the place to flip
 				   spin_lattice(lattice_multiindex).random_differ(rng->random_double())); // new random spin value differing from the old value
 }
+
+} // of namespace Ising
 
 #endif

@@ -4,6 +4,9 @@
 #include "spinlattice.hpp"
 #include "spin_ising.hpp"
 
+namespace Ising
+{
+
 void test_spinlattice()
 {
   std::vector<unsigned int> dim(1,5);
@@ -20,3 +23,5 @@ void test_spinlattice()
   Step<1, SpinIsing> step(&test_spinlattice, index, SpinIsing(-1));
    
 }
+
+} // of namespace Ising

@@ -4,6 +4,9 @@
 #include <vector>
 #include "boost/multi_array.hpp"
 
+namespace Ising
+{
+
 template<unsigned int T, class V> class SpinLattice;
 
 template<unsigned int dimension, class SpinType>
@@ -56,6 +59,8 @@ public:
   //! Revert the step after it has been executed
   void undo();
 };
+
+} // of namespace Ising
 
 #include "step.cpp"
 

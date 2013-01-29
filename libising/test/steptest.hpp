@@ -10,6 +10,8 @@
 #include "../src/spinlattice.hpp"
 #include "../src/spin_ising.hpp"
 
+using namespace Ising;
+
 typedef boost::multi_array<SpinIsing, 1> lattice_array_type_1d;
 typedef boost::array<lattice_array_type_1d::index, 1> index_type_1d;
 typedef boost::multi_array<SpinIsing, 2> lattice_array_type_2d;

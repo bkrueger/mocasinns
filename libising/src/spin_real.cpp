@@ -1,5 +1,8 @@
 #include "spin_real.hpp"
 
+namespace Ising
+{
+
 /*!
  * \details Default constructor, the value of the spin is set to 1 (spin up)
  */
@@ -76,3 +79,5 @@ double operator*(const SpinReal& spin_1, const SpinReal& spin_2)
 {
   return spin_1._value * spin_2._value;
 }
+
+} // of namespace Ising

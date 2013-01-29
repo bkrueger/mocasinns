@@ -2,6 +2,9 @@
 
 #include "spinlattice.hpp"
 
+namespace Ising
+{
+
 /*!
  * \details Contructs a new Step object that belongs to the given lattice at the given index. The flip will be performed to the new spin.
  * \param lattice SpinLattice on which the step will be executed.
@@ -61,5 +64,7 @@ void Step<dimension, SpinType>::undo()
   // Commit the step
   _lattice->commit(inverse_step);
 }
+
+} // of namespace Ising
 
 #endif

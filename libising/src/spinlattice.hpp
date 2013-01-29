@@ -12,6 +12,8 @@
 // Serialization of boost multi array
 #include "multi_array_serialize.hpp"
 
+namespace Ising
+{
 /*! 
  * \brief Class template for a arbitrary dimensional lattice of spins with next-neighbour interaction.
  * \author Benedikt Krüger
@@ -216,6 +218,8 @@ public:
     return this->spin_lattice(create_array_index(x1, x2, x3));
   }
 };
+
+} // of namespace Ising
 
 // Include the implementation
 #include "spinlattice.cpp"

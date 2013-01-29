@@ -10,6 +10,7 @@
 #include "spin_potts.hpp"
 
 using namespace boost::python;
+using namespace Ising;
 
 BOOST_PYTHON_MODULE(libising_wrap)
 {

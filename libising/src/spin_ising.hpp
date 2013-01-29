@@ -8,6 +8,9 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+namespace Ising
+{
+
 typedef int value_type_ising;
 
 /*!
@@ -61,5 +64,7 @@ public:
   //! Returns a spin that has value based on the random number given between 0 and 1, the value differs from the value of this spin
   SpinIsing random_differ(double random_number) const;
 };
+
+} // of namespace Ising
 
 #endif

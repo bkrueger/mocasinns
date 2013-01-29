@@ -8,6 +8,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "../src/spin_real.hpp"
 
+using namespace Ising;
+
 class TestSpinReal : public CppUnit::TestFixture
 {
 private:

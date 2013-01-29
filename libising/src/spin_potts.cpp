@@ -3,6 +3,9 @@
 #include <cmath>
 #include <iostream>
 
+namespace Ising
+{
+
 /*!
  * \details Default constructor, the value and the maximal value of the spin are set to 1.
  */
@@ -94,3 +97,5 @@ double operator*(const SpinPotts& spin_1, const SpinPotts& spin_2)
   else
     return 0;
 }
+
+} // of namespace Ising

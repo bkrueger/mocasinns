@@ -12,8 +12,6 @@
 #include <fstream>
 #include <sstream>
 
-using namespace std;
-
 namespace Mocasinns
 {
 namespace Histograms
@@ -176,9 +174,9 @@ void HistoBase<x_value_type,y_value_type>::load_csv(std::istream& input_stream)
   {
     x_value_type x; 
     y_value_type y;
-    line.erase(line.begin(), find_if(line.begin(), line.end(), not1(ptr_fun<int, int>(isspace)))); // remove leading whitespace
+    line.erase(line.begin(), find_if(line.begin(), line.end(), not1(std::ptr_fun<int, int>(isspace)))); // remove leading whitespace
     if(line[0] == '#') continue; // ignore comments
-    stringstream(line) >> x >> y;
+    std::stringstream(line) >> x >> y;
     values.insert(std::pair<x_value_type, y_value_type>(x,y));
   }
 }
@@ -188,7 +186,7 @@ void HistoBase<x_value_type,y_value_type>::load_csv(const char* filename)
   std::ifstream input_filestream(filename);
   if(input_filestream.fail())
   {
-    cerr << "File " << filename << " cannot be loaded! Fatal error!" << endl;
+    std::cerr << "File " << filename << " cannot be loaded! Fatal error!" << std::endl;
   }
   load_csv(input_filestream);
   input_filestream.close();

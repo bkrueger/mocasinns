@@ -9,7 +9,6 @@
 
 #include <histocrete.hpp>
 
-using namespace std;
 using namespace Mocasinns::Histograms;
 
 class TestHistocrete : public CppUnit::TestFixture

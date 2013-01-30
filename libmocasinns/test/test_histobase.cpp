@@ -21,17 +21,17 @@ CppUnit::Test* TestHistoBase::suite()
 
 void TestHistoBase::setUp()
 {
-  testhisto_int << pair<int,int>(1,0);
-  testhisto_int << pair<int,int>(2,0);
-  testhisto_int << pair<int,int>(3,0);
-  testhisto_int << pair<int,int>(4,0);
-  testhisto_int << pair<int,int>(5,1);
+  testhisto_int << std::pair<int,int>(1,0);
+  testhisto_int << std::pair<int,int>(2,0);
+  testhisto_int << std::pair<int,int>(3,0);
+  testhisto_int << std::pair<int,int>(4,0);
+  testhisto_int << std::pair<int,int>(5,1);
 
-  testhisto_double << pair<double,double>(1.0,0.0);
-  testhisto_double << pair<double,double>(2.0,0.0);
-  testhisto_double << pair<double,double>(3.0,0.0);
-  testhisto_double << pair<double,double>(4.0,0.0);
-  testhisto_double << pair<double,double>(5.0,1.0);
+  testhisto_double << std::pair<double,double>(1.0,0.0);
+  testhisto_double << std::pair<double,double>(2.0,0.0);
+  testhisto_double << std::pair<double,double>(3.0,0.0);
+  testhisto_double << std::pair<double,double>(4.0,0.0);
+  testhisto_double << std::pair<double,double>(5.0,1.0);
 }
 void TestHistoBase::tearDown() { }
 

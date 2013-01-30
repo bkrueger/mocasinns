@@ -17,17 +17,17 @@ CppUnit::Test* TestHistocrete::suite()
 
 void TestHistocrete::setUp()
 {
-  testhisto_int << pair<int,int>(1,0);
-  testhisto_int << pair<int,int>(2,0);
-  testhisto_int << pair<int,int>(3,0);
-  testhisto_int << pair<int,int>(4,0);
-  testhisto_int << pair<int,int>(5,1);
+  testhisto_int << std::pair<int,int>(1,0);
+  testhisto_int << std::pair<int,int>(2,0);
+  testhisto_int << std::pair<int,int>(3,0);
+  testhisto_int << std::pair<int,int>(4,0);
+  testhisto_int << std::pair<int,int>(5,1);
 
-  testhisto_double << pair<double,double>(1.0,0.0);
-  testhisto_double << pair<double,double>(2.0,0.0);
-  testhisto_double << pair<double,double>(3.0,0.0);
-  testhisto_double << pair<double,double>(4.0,0.0);
-  testhisto_double << pair<double,double>(5.0,1.0);
+  testhisto_double << std::pair<double,double>(1.0,0.0);
+  testhisto_double << std::pair<double,double>(2.0,0.0);
+  testhisto_double << std::pair<double,double>(3.0,0.0);
+  testhisto_double << std::pair<double,double>(4.0,0.0);
+  testhisto_double << std::pair<double,double>(5.0,1.0);
 }
 
 void TestHistocrete::tearDown() { }
@@ -55,15 +55,15 @@ void TestHistocrete::test_operator_fill()
   CPPUNIT_ASSERT(testhisto_double[6.0] == 1.0);
 
   // Test the increment by a pair
-  testhisto_int << pair<int, int>(3,5);
-  testhisto_int << pair<int, int>(5,2);
-  testhisto_int << pair<int, int>(7,5);
+  testhisto_int << std::pair<int, int>(3,5);
+  testhisto_int << std::pair<int, int>(5,2);
+  testhisto_int << std::pair<int, int>(7,5);
   CPPUNIT_ASSERT(testhisto_int[3] == 5);
   CPPUNIT_ASSERT(testhisto_int[5] == 4);
   CPPUNIT_ASSERT(testhisto_int[7] == 5);
-  testhisto_double << pair<double, double>(3.0,5.0);
-  testhisto_double << pair<double, double>(5.0,2.0);
-  testhisto_double << pair<double, double>(7.0,5.0);
+  testhisto_double << std::pair<double, double>(3.0,5.0);
+  testhisto_double << std::pair<double, double>(5.0,2.0);
+  testhisto_double << std::pair<double, double>(7.0,5.0);
   CPPUNIT_ASSERT(testhisto_double[3.0] == 5.0);
   CPPUNIT_ASSERT(testhisto_double[5.0] == 4.0);
   CPPUNIT_ASSERT(testhisto_double[7.0] == 5.0);
@@ -143,17 +143,17 @@ void TestHistocrete::test_operator_divide()
 void TestHistocrete::test_insert()
 {
   // Test the insertion of a pair
-  testhisto_int.insert(pair<int, int>(6,3));
+  testhisto_int.insert(std::pair<int, int>(6,3));
   CPPUNIT_ASSERT_EQUAL(3, testhisto_int[6]);
-  testhisto_double.insert(pair<double, double>(4.4, 2.0));
+  testhisto_double.insert(std::pair<double, double>(4.4, 2.0));
   CPPUNIT_ASSERT_EQUAL(2.0, testhisto_double[4.4]);
 
   // Construct a new histocrete and test the insertion via the iterators
   Histocrete<int, int> testhisto_int_2;
-  testhisto_int_2 << pair<int,int>(7,3);
-  testhisto_int_2 << pair<int,int>(9,1);
-  testhisto_int_2 << pair<int,int>(11,2);
-  testhisto_int_2 << pair<int,int>(12,5);
+  testhisto_int_2 << std::pair<int,int>(7,3);
+  testhisto_int_2 << std::pair<int,int>(9,1);
+  testhisto_int_2 << std::pair<int,int>(11,2);
+  testhisto_int_2 << std::pair<int,int>(12,5);
   testhisto_int.insert(testhisto_int_2.begin(), testhisto_int_2.end());
   CPPUNIT_ASSERT_EQUAL(3, testhisto_int[7]);
   CPPUNIT_ASSERT_EQUAL(1, testhisto_int[9]);

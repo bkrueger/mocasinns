@@ -1,3 +1,6 @@
+#ifndef TEST_SIMULATION_HPP
+#define TEST_SIMULATION_HPP
+
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
@@ -9,9 +12,6 @@
 
 #include <simulation.hpp>
 #include <random_boost_mt19937.hpp>
-
-#ifndef TEST_SIMULATION_HPP
-#define TEST_SIMULATION_HPP
 
 using namespace Mocasinns;
 

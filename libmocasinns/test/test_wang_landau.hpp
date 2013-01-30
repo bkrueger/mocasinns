@@ -1,3 +1,6 @@
+#ifndef TEST_WANG_LANDAU_HPP
+#define TEST_WANG_LANDAU_HPP
+
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
@@ -10,9 +13,6 @@
 #include <wang_landau.hpp>
 #include <histocrete.hpp>
 #include <random_boost_mt19937.hpp>
-
-#ifndef TEST_WANG_LANDAU_HPP
-#define TEST_WANG_LANDAU_HPP
 
 using namespace Mocasinns;
 

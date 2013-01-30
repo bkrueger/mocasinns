@@ -1,3 +1,6 @@
+#ifndef TEST_METROPOLIS_HPP
+#define TEST_METROPOLIS_HPP
+
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestSuite.h>
@@ -9,9 +12,6 @@
 
 #include <metropolis.hpp>
 #include <random_boost_mt19937.hpp>
-
-#ifndef TEST_METROPOLIS_HPP
-#define TEST_METROPOLIS_HPP
 
 using namespace Mocasinns;
 

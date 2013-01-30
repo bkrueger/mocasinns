@@ -11,7 +11,7 @@
 #include <spin_ising.hpp>
 
 #include <wang_landau.hpp>
-#include <histocrete.hpp>
+#include <histograms/histocrete.hpp>
 #include <random_boost_mt19937.hpp>
 
 using namespace Mocasinns;

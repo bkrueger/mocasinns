@@ -7,7 +7,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <histogram_number.hpp>
+#include <histograms/histogram_number.hpp>
 
 using namespace Mocasinns::Histograms;
 

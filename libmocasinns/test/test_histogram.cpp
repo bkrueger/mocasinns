@@ -1,5 +1,5 @@
 #include "test_histogram.hpp"
-#include <histocrete.hpp>
+#include <histograms/histocrete.hpp>
 
 CppUnit::Test* TestHistogram::suite()
 {

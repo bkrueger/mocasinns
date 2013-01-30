@@ -7,7 +7,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <histocrete.hpp>
+#include <histograms/histocrete.hpp>
 
 using namespace Mocasinns::Histograms;
 

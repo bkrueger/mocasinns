@@ -17,6 +17,11 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/map.hpp>
 
+namespace Mocasinns
+{
+namespace Histograms
+{
+
 //! Class for a histogram used in the Wang-Landau-Algorithm
 template <class x_value_type, class y_value_type> class HistoBase
 {
@@ -155,6 +160,9 @@ public:
   //! Save the data of the histocrete to a csv file
   virtual void save_csv(const char* filename) const;
 };
+
+} // of namespace Histograms
+} // of namespace Mocasinns
 
 // Include implementation file because this is a template class
 #include "histobase.cpp"

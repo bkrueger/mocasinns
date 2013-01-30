@@ -9,6 +9,8 @@
 
 #include <binnings.hpp>
 
+using namespace Mocasinns::Histograms;
+
 class TestBinningNumber : CppUnit::TestFixture
 {
 private:

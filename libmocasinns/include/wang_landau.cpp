@@ -9,6 +9,9 @@
 
 #ifdef WANG_LANDAU_HPP
 
+namespace Mocasinns
+{
+
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 template <class ParameterEnergyType>
 WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
@@ -191,5 +194,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
   save_serialize(output_filestream);
   output_filestream.close();
 }
+
+} // of namespace Mocasinns
 
 #endif

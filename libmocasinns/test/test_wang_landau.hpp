@@ -14,13 +14,15 @@
 #ifndef TEST_WANG_LANDAU_HPP
 #define TEST_WANG_LANDAU_HPP
 
+using namespace Mocasinns;
+
 typedef Ising::SpinLattice<1, Ising::SpinIsing> IsingConfiguration1d;
 typedef Ising::Step<1, Ising::SpinIsing> IsingStep1d;
-typedef WangLandau<IsingConfiguration1d, IsingStep1d, int, Histocrete, Boost_MT19937> IsingSimulation1d;
+typedef WangLandau<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Boost_MT19937> IsingSimulation1d;
 
 typedef Ising::SpinLattice<2, Ising::SpinIsing> IsingConfiguration2d;
 typedef Ising::Step<2, Ising::SpinIsing> IsingStep2d;
-typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histocrete, Boost_MT19937> IsingSimulation2d;
+typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Boost_MT19937> IsingSimulation2d;
 
 class TestWangLandau : CppUnit::TestFixture
 {

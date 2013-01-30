@@ -9,6 +9,9 @@
 
 #ifdef SIMULATION_HPP
 
+namespace Mocasinns
+{
+
 template <class ConfigurationType, class RandomNumberGenerator>
 void Simulation<ConfigurationType, RandomNumberGenerator>::register_posix_signal_handler()
 {
@@ -154,5 +157,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator>::save_serialize(const 
   save_serialize(output_filestream);
   output_filestream.close();
 }
+
+} // of namespace Mocasinns
 
 #endif

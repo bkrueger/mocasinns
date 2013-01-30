@@ -14,6 +14,11 @@
 
 using namespace std;
 
+namespace Mocasinns
+{
+namespace Histograms
+{
+
 template<class x_value_type, class y_value_type>
 bool HistoBase<x_value_type,y_value_type>::operator==(const HistoBase<x_value_type,y_value_type>& rhs) const
 {
@@ -203,5 +208,8 @@ void HistoBase<x_value_type,y_value_type>::save_csv(const char* filename) const
   save_csv(output_filestream);
   output_filestream.close();
 }
+
+} // of namespace Histograms
+} // of namespace Mocasinns
 
 #endif

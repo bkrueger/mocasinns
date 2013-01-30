@@ -15,6 +15,11 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/vector.hpp>
 
+namespace Mocasinns
+{
+namespace Histograms
+{
+
 //! Class for binning a single numerical value 
 template<class T> class BinningNumber
 {
@@ -97,5 +102,8 @@ public:
     return result;
   }
 };
+
+} // of namespace Histograms
+} // of namespace Mocasinns
 
 #endif

@@ -22,6 +22,9 @@
 // Header for signal handling
 #include <boost/signal.hpp>
 
+namespace Mocasinns
+{
+
 //! Base class for all Simulations in MoCaSinns
 template <class ConfigurationType, class RandomNumberGenerator>
 class Simulation
@@ -99,6 +102,8 @@ public:
 // Initialisation of the static member signal_number_caught
 template <class ConfigurationType, class RandomNumberGenerator>
 volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator>::signal_number_caught = 0;
+
+} // of namespace Mocasinns
 
 #include "simulation.cpp"
 

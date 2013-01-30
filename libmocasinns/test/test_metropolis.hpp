@@ -13,6 +13,8 @@
 #ifndef TEST_METROPOLIS_HPP
 #define TEST_METROPOLIS_HPP
 
+using namespace Mocasinns;
+
 class TestMetropolis : CppUnit::TestFixture
 {
   typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;

@@ -11,6 +11,7 @@
 #include <binnings.hpp>
 
 using namespace std;
+using namespace Mocasinns::Histograms;
 
 class TestHistogram : public CppUnit::TestFixture
 {

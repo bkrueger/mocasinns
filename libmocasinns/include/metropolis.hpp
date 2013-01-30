@@ -15,6 +15,9 @@
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
 
+namespace Mocasinns
+{
+
 //! Class for Metropolis-Monte-Carlo simulations
 template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>
@@ -48,6 +51,8 @@ public:
   //! Save the data of the Metropolis simulation to a serialization file
   virtual void save_serialize(const char* filename) const;
 };
+
+} // of namespace Mocasinns
 
 #include "metropolis.cpp"
 

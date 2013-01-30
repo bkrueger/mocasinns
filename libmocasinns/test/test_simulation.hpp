@@ -13,6 +13,8 @@
 #ifndef TEST_SIMULATION_HPP
 #define TEST_SIMULATION_HPP
 
+using namespace Mocasinns;
+
 class TestSimulation : CppUnit::TestFixture
 {
   typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;

@@ -11,6 +11,7 @@
 #include <histocrete.hpp>
 
 using namespace std;
+using namespace Mocasinns::Histograms;
 
 class TestHistoBase : public CppUnit::TestFixture
 {

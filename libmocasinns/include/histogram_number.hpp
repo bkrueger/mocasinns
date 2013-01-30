@@ -16,6 +16,11 @@
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
 
+namespace Mocasinns
+{
+namespace Histograms
+{
+
 //! Class for a binned histogram
 template <class x_value_type, class y_value_type> 
 class HistogramNumber : public HistoBase<x_value_type, y_value_type>
@@ -104,6 +109,9 @@ public:
   //! Save the data of the histocrete to a serialization file
   virtual void save_serialize(const char* filename) const;
 };
+
+} // of namespace Histograms
+} // of namespace Mocasinns
 
 #include "histogram_number.cpp"
 

@@ -10,6 +10,7 @@
 #include <histogram_number.hpp>
 
 using namespace std;
+using namespace Mocasinns::Histograms;
 
 class TestHistogramNumber : public CppUnit::TestFixture
 {

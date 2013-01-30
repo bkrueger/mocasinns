@@ -15,6 +15,9 @@
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
 
+namespace Mocasinns
+{
+
 //! Class for Metropolis-Monte-Carlo simulations
 template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
 class WangLandau : public Simulation<ConfigurationType, RandomNumberGenerator>
@@ -172,6 +175,8 @@ private:
     ar & incidence_counter;
   }
 };
+
+} // of namespace Mocasinns
 
 #include "wang_landau.cpp"
 

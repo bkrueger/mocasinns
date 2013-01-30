@@ -8,6 +8,11 @@
  */
 #ifdef HISTOGRAM_HPP
 
+namespace Mocasinns
+{
+namespace Histograms
+{
+
 template<class x_value_type, class y_value_type, class BinningFunctor>
 void Histogram<x_value_type,y_value_type, BinningFunctor>::operator+=(HistoBase<x_value_type, y_value_type>& other_histobase)
 {
@@ -73,5 +78,8 @@ void Histogram<x_value_type,y_value_type,BinningFunctor>::save_serialize(const c
   save_serialize(output_filestream);
   output_filestream.close();
 }
+
+} // of namespace Histograms
+} // of namespace Mocasinns
 
 #endif

@@ -10,6 +10,9 @@
 
 #ifdef METROPOLIS_HPP
 
+namespace Mocasinns
+{
+
 /*!
  * \param num_steps Number of Metropolis steps that will be performed
  * \param beta Inverse temperature that will be used for calculation of the acceptance probability of the Metropolis steps.
@@ -60,5 +63,7 @@ void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::save_serialize(
   save_serialize(output_filestream);
   output_filestream.close();
 }
+
+} // of namespace Mocasinns
 
 #endif

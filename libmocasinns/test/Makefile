@@ -6,7 +6,7 @@ LDFLAGS = -L../../libising/lib -L../../librandom/lib
 INCLUDE = -I../include -I../../libising/src -I../../librandom/include
 
 TEST_LIBS = -lising -lrandom -lboost_serialization -lboost_signals -lcppunit -ldl
-TEST_OBJECTS = test_simulation.o test_metropolis.o test_wang_landau.o test_binnings.o test_histobase.o test_histocrete.o test_histogram.o test_histogram_number.o test.o
+TEST_OBJECTS = test_simulation.o test_configuration_test.o test_metropolis.o test_wang_landau.o test_binnings.o test_histobase.o test_histocrete.o test_histogram.o test_histogram_number.o test.o
 
 all: test
 

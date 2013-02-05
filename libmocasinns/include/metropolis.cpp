@@ -27,9 +27,10 @@ void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_s
 
     if (next_step.is_executable())
     {
-      double delta_E = next_step.delta_E();
+      // One does need to define this in advance, because the Temperature Type need not to be comparable to an double 0.0
+      double beta_times_delta_E = beta*next_step.delta_E();
       double random_accept = this->rng->random_double();
-      if (delta_E <= 0 || random_accept < exp(-beta * delta_E))
+      if (beta_times_delta_E <= 0 || random_accept < exp(-beta_times_delta_E))
       {
 	next_step.execute();
       }

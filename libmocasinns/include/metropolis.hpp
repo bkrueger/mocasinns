@@ -22,6 +22,23 @@ namespace Mocasinns
 template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
+public:
+  //! Struct storing the parameters for a Metropolis Monte-Carlo Simulation
+  struct Parameters
+  {
+    //! Number of steps to perform before taking data
+    unsigned long int relaxation_steps;
+    //! Number of data points per temperature
+    unsigned int measurement_number;
+    //! Number of steps to perform between two data measurements
+    unsigned int steps_between_measurement;
+
+    //! Standard constructor for setting default values
+    Parameters() : relaxation_steps(1000),
+		   measurement_number(100),
+		   steps_between_measurement(100) {}
+  };
+
 private:
   //! Member variable for boost serialization
   friend class boost::serialization::access;
@@ -41,6 +58,13 @@ public:
   //! Execute a given number of Metropolis-MC steps on the configuration at inverse temperatur beta
   template<class TemperaturType = double>
   void do_metropolis_steps(const uint32_t& number, const TemperaturType& beta);
+
+  //! Execute a Metropolis Monte-Carlo simulation with given parameters at given inverse temperature
+  template<class ObservableFunctor, class TemperatureType = double>
+  std::vector<typename ObservableFunctor::observable_type> do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta);
+  //! Execute a Metropolis Monte-Carlo simulation with given parameters at the given range of inverse temperatures
+  template<class ObservableFunctor, class InputIterator>
+  std::vector<std::vector<typename ObservableFunctor::observable_type> > do_metropolis_simulation(const Parameters& parameters, InputIterator beta_begin, InputIterator beta_end);
 
   //! Load the data of the Metropolis simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream);

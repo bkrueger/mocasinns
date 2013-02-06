@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include <cmath>
 
 namespace Mocasinns
 {
@@ -128,6 +129,9 @@ namespace Mocasinns
 	return *this;
       }
 
+      template<class TT, class S>
+      friend VectorObservable<T>& pow(const VectorObservable<T>&, const S&);
+
       //! Returns an iterator pointing to the beginning of the VectorObservable
       iterator begin() { return data.begin(); }
       //! Returns an iterator pointing to the end of the VectorObservable
@@ -232,7 +236,7 @@ namespace Mocasinns
     template <class T, class S>
     const VectorObservable<T> operator*(const S& lhs, const VectorObservable<T>& rhs)
     {
-      return VectorObservable<T>(rhs) *= rhs;
+      return VectorObservable<T>(rhs) *= lhs;
     }
     //! Multiply a scalar and a ObservableVector
     template <class T, class S>
@@ -245,6 +249,21 @@ namespace Mocasinns
     const VectorObservable<T> operator/(const VectorObservable<T>& lhs, const S& rhs)
     {
       return VectorObservable<T>(lhs) /= rhs;
+    }
+
+    //! Exponentiate the ObservableVector with a scalar
+    template <class T, class S>
+    const VectorObservable<T> pow(const VectorObservable<T>& base, const S& exponent)
+    {
+      VectorObservable<T> result(base.size(), T());
+      typename VectorObservable<T>::const_iterator it_base = base.begin();
+      typename VectorObservable<T>::iterator it_result = result.begin();
+      for (; it_base != base.end(); ++it_base, ++it_result)
+      {
+	(*it_result) = std::pow(*it_base, exponent);
+      }
+
+      return result;
     }
   }
 }

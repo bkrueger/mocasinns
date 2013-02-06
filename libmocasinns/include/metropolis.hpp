@@ -60,11 +60,11 @@ public:
   void do_metropolis_steps(const uint32_t& number, const TemperaturType& beta);
 
   //! Execute a Metropolis Monte-Carlo simulation with given parameters at given inverse temperature
-  template<class ObservableFunctor, class TemperatureType = double>
-  std::vector<typename ObservableFunctor::observable_type> do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta);
+  template<class Observable, class TemperatureType = double>
+  std::vector<typename Observable::observable_type> do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta);
   //! Execute a Metropolis Monte-Carlo simulation with given parameters at the given range of inverse temperatures
-  template<class ObservableFunctor, class InputIterator>
-  std::vector<std::vector<typename ObservableFunctor::observable_type> > do_metropolis_simulation(const Parameters& parameters, InputIterator beta_begin, InputIterator beta_end);
+  template<class Observable, class InputIterator>
+  std::vector<std::vector<typename Observable::observable_type> > do_metropolis_simulation(const Parameters& parameters, InputIterator beta_begin, InputIterator beta_end);
 
   //! Load the data of the Metropolis simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream);

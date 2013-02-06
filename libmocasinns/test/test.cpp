@@ -11,6 +11,7 @@
 #include "test_histocrete.hpp"
 #include "test_histogram.hpp"
 #include "test_histogram_number.hpp"
+#include "test_vector_observable.hpp"
 
 int main()
 {
@@ -26,6 +27,7 @@ int main()
   runner.addTest(TestHistocrete::suite());
   runner.addTest(TestHistogram::suite());
   runner.addTest(TestHistogramNumber::suite());
+  runner.addTest(TestVectorObservable::suite());
 
   CppUnit::BriefTestProgressListener listener;
   runner.eventManager().addListener(&listener);

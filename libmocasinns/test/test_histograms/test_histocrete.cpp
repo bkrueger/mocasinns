@@ -2,15 +2,15 @@
 
 CppUnit::Test* TestHistocrete::suite()
 {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistocrete");
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistocrete");
     
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistocrete: test_operator_fill", &TestHistocrete::test_operator_fill ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistocrete: test_operator_access", &TestHistocrete::test_operator_access ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistocrete: test_operator_increment", &TestHistocrete::test_operator_increment ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistocrete: test_operator_divide", &TestHistocrete::test_operator_divide ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_operator_fill", &TestHistocrete::test_operator_fill ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_operator_access", &TestHistocrete::test_operator_access ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_operator_increment", &TestHistocrete::test_operator_increment ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_operator_divide", &TestHistocrete::test_operator_divide ) );
 
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistocrete: test_insert", &TestHistocrete::test_insert ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistocrete: test_serialize", &TestHistocrete::test_serialize ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_insert", &TestHistocrete::test_insert ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_serialize", &TestHistocrete::test_serialize ) );
 
     return suiteOfTests;
 }

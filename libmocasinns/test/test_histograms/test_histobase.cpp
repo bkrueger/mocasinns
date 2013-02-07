@@ -2,19 +2,19 @@
 
 CppUnit::Test* TestHistoBase::suite()
 {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistoBase");
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistoBase");
     
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_flatness", &TestHistoBase::test_flatness ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_max_x_value", &TestHistoBase::test_max_x_value ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_max_y_value", &TestHistoBase::test_max_y_value ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_min_x_value", &TestHistoBase::test_min_x_value ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_min_y_value", &TestHistoBase::test_min_y_value ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_set_all_y_values", &TestHistoBase::test_set_all_y_values ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_shift_bin_zero", &TestHistoBase::test_shift_bin_zero ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_sum", &TestHistoBase::test_sum ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_serialize", &TestHistoBase::test_serialize ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistoBase: test_csv", &TestHistoBase::test_csv ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_flatness", &TestHistoBase::test_flatness ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_max_x_value", &TestHistoBase::test_max_x_value ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_max_y_value", &TestHistoBase::test_max_y_value ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_min_x_value", &TestHistoBase::test_min_x_value ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_min_y_value", &TestHistoBase::test_min_y_value ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_set_all_y_values", &TestHistoBase::test_set_all_y_values ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_shift_bin_zero", &TestHistoBase::test_shift_bin_zero ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_sum", &TestHistoBase::test_sum ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_serialize", &TestHistoBase::test_serialize ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_csv", &TestHistoBase::test_csv ) );
 
     return suiteOfTests;
 }

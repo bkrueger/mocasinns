@@ -4,8 +4,8 @@
 
 CppUnit::Test* TestBinningNumber::suite()
 {
-  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestBinningNumber");
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestBinningNumber>("TestBinningNumber: test_functor", &TestBinningNumber::test_functor) );
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestHistograms/TestBinningNumber");
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestBinningNumber>("TestHistograms/TestBinningNumber: test_functor", &TestBinningNumber::test_functor) );
   
   return suite_of_tests;
 }
@@ -110,8 +110,8 @@ void TestBinningNumber::test_functor()
 
 CppUnit::Test* TestBinningNumberVector::suite()
 {
-  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestBinningNumberVector");
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestBinningNumberVector>("TestBinningNumberVector: test_functor", &TestBinningNumberVector::test_functor) );
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestHistograms/TestBinningNumberVector");
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestBinningNumberVector>("TestHistograms/TestBinningNumberVector: test_functor", &TestBinningNumberVector::test_functor) );
   
   return suite_of_tests;
 }

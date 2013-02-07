@@ -6,11 +6,11 @@
 #include "test_configuration_test.hpp"
 #include "test_metropolis.hpp"
 #include "test_wang_landau.hpp"
-#include "test_binnings.hpp"
-#include "test_histobase.hpp"
-#include "test_histocrete.hpp"
-#include "test_histogram.hpp"
-#include "test_histogram_number.hpp"
+#include "test_histograms/test_binnings.hpp"
+#include "test_histograms/test_histobase.hpp"
+#include "test_histograms/test_histocrete.hpp"
+#include "test_histograms/test_histogram.hpp"
+#include "test_histograms/test_histogram_number.hpp"
 #include "test_vector_observable.hpp"
 
 int main()

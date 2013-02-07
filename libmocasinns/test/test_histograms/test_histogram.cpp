@@ -1,24 +1,25 @@
-#include "test_histogram_number.hpp"
+#include "test_histogram.hpp"
 #include <histograms/histocrete.hpp>
 
-CppUnit::Test* TestHistogramNumber::suite()
+CppUnit::Test* TestHistogram::suite()
 {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistogram");
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistogram");
     
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogramNumber>("TestHistogramNumber: test_operator_fill", &TestHistogramNumber::test_operator_fill ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogramNumber>("TestHistogramNumber: test_operator_access", &TestHistogramNumber::test_operator_access ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogramNumber>("TestHistogramNumber: test_operator_increment", &TestHistogramNumber::test_operator_increment ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogramNumber>("TestHistogramNumber: test_operator_divide", &TestHistogramNumber::test_operator_divide ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_operator_fill", &TestHistogram::test_operator_fill ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_operator_access", &TestHistogram::test_operator_access ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_operator_increment", &TestHistogram::test_operator_increment ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_operator_divide", &TestHistogram::test_operator_divide ) );
 
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogramNumber>("TestHistogramNumber: test_insert", &TestHistogramNumber::test_insert ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_insert", &TestHistogram::test_insert ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_serialize", &TestHistogram::test_serialize ) );
 
     return suiteOfTests;
 }
 
-void TestHistogramNumber::setUp()
+void TestHistogram::setUp()
 {
-  testhisto_int = new HistogramNumber<int, int>(3,0);
-  testhisto_double = new HistogramNumber<double, double>(2.5,0.0);
+  testhisto_int = new Histogram<int, int, BinningNumber<int> >(BinningNumber<int>(3));
+  testhisto_double = new Histogram<double, double, BinningNumber<double> >(BinningNumber<double>(2.5));
 
   (*testhisto_int) << std::pair<int,int>(0,4);
   (*testhisto_int) << std::pair<int,int>(3,5);
@@ -31,13 +32,13 @@ void TestHistogramNumber::setUp()
   (*testhisto_double) << std::pair<double,double>(7.5,2.1);
 }
 
-void TestHistogramNumber::tearDown() 
+void TestHistogram::tearDown() 
 { 
   delete testhisto_int;
   delete testhisto_double;
 }
 
-void TestHistogramNumber::test_operator_fill()
+void TestHistogram::test_operator_fill()
 { 
   // Test the increment by one at a given bin
   (*testhisto_int) << 1;
@@ -60,7 +61,7 @@ void TestHistogramNumber::test_operator_fill()
   CPPUNIT_ASSERT_EQUAL(6.8, (*testhisto_double)[5.0]);
   CPPUNIT_ASSERT_EQUAL(2.1, (*testhisto_double)[7.5]);
 
-  // Test the increment by a pair
+  // Test the increment by a std::pair
   (*testhisto_int) << std::pair<int, int>(3,5);
   (*testhisto_int) << std::pair<int, int>(5,2);
   (*testhisto_int) << std::pair<int, int>(7,5);
@@ -77,7 +78,7 @@ void TestHistogramNumber::test_operator_fill()
   CPPUNIT_ASSERT_EQUAL(13.8, (*testhisto_double)[5.0]);
   CPPUNIT_ASSERT_EQUAL(2.1, (*testhisto_double)[7.5]);
 }
-void TestHistogramNumber::test_operator_access()
+void TestHistogram::test_operator_access()
 {
   // Test the get-operation
   CPPUNIT_ASSERT_EQUAL(4, (*testhisto_int)[0]);
@@ -111,10 +112,10 @@ void TestHistogramNumber::test_operator_access()
   CPPUNIT_ASSERT_EQUAL(1.0, (*testhisto_double)[1.5]);
   CPPUNIT_ASSERT_EQUAL(5.0, (*testhisto_double)[10.0]);
 }
-void TestHistogramNumber::test_operator_increment()
+void TestHistogram::test_operator_increment()
 { 
   // Test the += with a histocrete
-  HistogramNumber<int,int> histo2(3,0);
+  Histogram<int,int, BinningNumber<int> > histo2(BinningNumber<int>(3));
   histo2[0] = 2;
   histo2[3] = -4;
   histo2[6] = 1;
@@ -132,12 +133,12 @@ void TestHistogramNumber::test_operator_increment()
   CPPUNIT_ASSERT_EQUAL(5, (*testhisto_int)[6]);
   CPPUNIT_ASSERT_EQUAL(8, (*testhisto_int)[9]);
 }
-void TestHistogramNumber::test_operator_divide()
+void TestHistogram::test_operator_divide()
 { 
 
 }
 
-void TestHistogramNumber::test_insert()
+void TestHistogram::test_insert()
 {
   // Test the insertion of a pair
   testhisto_int->insert(std::pair<int, int>(14,3));
@@ -154,4 +155,33 @@ void TestHistogramNumber::test_insert()
   CPPUNIT_ASSERT_EQUAL(3, (*testhisto_int)[15]);
   CPPUNIT_ASSERT_EQUAL(1, (*testhisto_int)[18]);
   CPPUNIT_ASSERT_EQUAL(2, (*testhisto_int)[21]);
+}
+
+void TestHistogram::test_serialize()
+{
+  (*testhisto_int).save_serialize("serialize_test.dat");
+  
+  Histogram<int, int, BinningNumber<int> > testhisto_load;
+  testhisto_load.load_serialize("serialize_test.dat");
+
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int)[1], testhisto_load[1]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int)[2], testhisto_load[2]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int)[3], testhisto_load[3]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int)[4], testhisto_load[4]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int)[5], testhisto_load[5]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int).get_binning().get_binning_width(), testhisto_load.get_binning().get_binning_width());
+  CPPUNIT_ASSERT_EQUAL((*testhisto_int).get_binning().get_binning_reference(), testhisto_load.get_binning().get_binning_reference());
+
+  (*testhisto_double).save_serialize("serialize_test.dat");
+  
+  Histogram<double, double, BinningNumber<double> > testhisto_load_double;
+  testhisto_load_double.load_serialize("serialize_test.dat");
+
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double)[1.0], testhisto_load_double[1.0]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double)[2.0], testhisto_load_double[2.0]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double)[3.0], testhisto_load_double[3.0]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double)[4.0], testhisto_load_double[4.0]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double)[5.0], testhisto_load_double[5.0]);
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double).get_binning().get_binning_width(), testhisto_load_double.get_binning().get_binning_width());
+  CPPUNIT_ASSERT_EQUAL((*testhisto_double).get_binning().get_binning_reference(), testhisto_load_double.get_binning().get_binning_reference());
 }

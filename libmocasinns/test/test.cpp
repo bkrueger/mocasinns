@@ -11,7 +11,7 @@
 #include "test_histograms/test_histocrete.hpp"
 #include "test_histograms/test_histogram.hpp"
 #include "test_histograms/test_histogram_number.hpp"
-#include "test_vector_observable.hpp"
+#include "test_observables/test_vector_observable.hpp"
 
 int main()
 {

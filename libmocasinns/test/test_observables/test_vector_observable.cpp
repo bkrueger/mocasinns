@@ -2,15 +2,15 @@
 
 CppUnit::Test* TestVectorObservable::suite()
 {
-  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestVectorObservable");
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestVectorObservable: test_constructor", &TestVectorObservable::test_constructor) );
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestObservables/TestVectorObservable");
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestObservables/TestVectorObservable: test_constructor", &TestVectorObservable::test_constructor) );
 
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestVectorObservable: test_operator_add", &TestVectorObservable::test_operator_add) );
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestVectorObservable: test_operator_substract", &TestVectorObservable::test_operator_substract) );
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestVectorObservable: test_operator_multiply", &TestVectorObservable::test_operator_multiply) );
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestVectorObservable: test_operator_divide", &TestVectorObservable::test_operator_divide) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestObservables/TestVectorObservable: test_operator_add", &TestVectorObservable::test_operator_add) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestObservables/TestVectorObservable: test_operator_substract", &TestVectorObservable::test_operator_substract) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestObservables/TestVectorObservable: test_operator_multiply", &TestVectorObservable::test_operator_multiply) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestObservables/TestVectorObservable: test_operator_divide", &TestVectorObservable::test_operator_divide) );
 
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestVectorObservable: test_pow", &TestVectorObservable::test_pow) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorObservable>("TestObservables/TestVectorObservable: test_pow", &TestVectorObservable::test_pow) );
   
   return suite_of_tests;
 }

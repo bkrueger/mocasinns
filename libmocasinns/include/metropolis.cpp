@@ -52,26 +52,18 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observable, class TemperatureType>
 std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta)
 {
-  // Perform the relaxation steps
-  do_metropolis_steps(parameters.relaxation_steps, beta);
-  
-  // Create a vector for storing the measurements
-  std::vector<typename Observable::observable_type> measurements;
-  
-  // For each measurement, perform the steps and take the measurement
-  for (unsigned int m = 0; m < parameters.measurement_number; ++m)
-  {
-    do_metropolis_steps(parameters.steps_between_measurement, beta);
-    measurements.push_back(Observable::observe(this->configuration_space));
-  }
-  
-  // Return the measurments
-  return measurements;
+  // Call the accumulator function using the VectorAccumulator
+  VectorAccumulator<typename Observable::observable_type> measurements_accumulator;
+  do_metropolis_simulation<Observable>(parameters, beta, measurements_accumulator);
+
+  // Return the plain data
+  return measurements_accumulator.internal_vector;
 }
 
 /*!  
   \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam InputIterator Type of the iterator that iterates the different temperatures that will be considered
+  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param parameters Parameters to use for the simulation
   \param beta_begin Iterator pointing to the first inverse temperature that is calculated
   \param beta_end Iterator pointing on position after the last inverse temperature that is calculated
@@ -85,8 +77,57 @@ std::vector<std::vector<typename Observable::observable_type> > Metropolis<Confi
   for (InputIterator beta = first_beta; beta != last_beta; ++beta)
   {
     results.push_back(do_metropolis_simulation(parameters, *beta));
+    if (this->is_terminating) break;
   }
 }  
+
+/*!
+ \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+ \tparam Accumulator Class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
+ \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
+ \param parameters Parameters to use for the simulation
+ \param beta Inverse temperature at which the simulation is performed
+ \param measurement_accumulator Reference to the accumulator that stores the simulation results
+*/
+template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class Observable, class Accumulator, class TemperatureType>
+void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta, Accumulator& measurement_accumulator)
+{
+ // Perform the relaxation steps
+  do_metropolis_steps(parameters.relaxation_steps, beta);
+  
+  // For each measurement, perform the steps, invoke the signal handler, take the measurement and check for posix signals
+  for (unsigned int m = 0; m < parameters.measurement_number; ++m)
+  {
+    do_metropolis_steps(parameters.steps_between_measurement, beta);
+    signal_handler_measurement(this);
+    measurement_accumulator(Observable::observe(this->configuration_space));
+    if (this->check_for_posix_signal()) return;
+  }
+}
+
+/*!
+ \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+ \tparam AccumulatorIterator Iterator of a container of a class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
+ \tparam InverseTemperatureIterator  Iterator of a container of a type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
+ \param parameters Parameters to use for the simulation
+ \param beta_begin Iterator pointing to the first inverse temperature that is calculated
+ \param beta_end Iterator pointing on position after the last inverse temperature that is calculated
+ \param measurement_accumulator_begin Iterator pointing to the first accumulator that calculates the data for the first inverse temperature.
+ \param measurement_accumulator_end Iterator pointing one position after the last accumulator that calculates the data for the last inverse temperature
+*/
+template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class Observable, class AccumulatorIterator, class InverseTemperatureIterator>
+void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(const Parameters& parameters, InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
+{  
+  InverseTemperatureIterator beta_iterator = beta_begin;
+  AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;
+  for (; beta_iterator != beta_end; ++beta_iterator, ++measurement_accumulator_iterator)
+  {
+    do_metropolis_simulation(parameters, *beta_iterator, *measurement_accumulator_iterator);
+    if (this->is_terminating) break;
+  }
+}
 
 template <class ConfigurationType, class Step, class RandomNumberGenerator>
 void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::load_serialize(std::istream& input_stream)

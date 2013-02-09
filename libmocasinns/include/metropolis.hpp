@@ -40,6 +40,22 @@ public:
   };
 
 private:
+  //! Class for using a vector as an accumulator
+  template<class Observable> class VectorAccumulator
+  {
+  public:
+    //! Vector for the data
+    std::vector<Observable> internal_vector;
+
+    //! Standard constructor
+    VectorAccumulator() : internal_vector() {}
+    //! Copy constructor
+    VectorAccumulator(const VectorAccumulator<Observable>& copy) : internal_vector(copy.internal_vector) {}
+
+    //! Accumulating operator, refers to push-back
+    void operator()(const Observable& new_value) { internal_vector.push_back(new_value); }
+  };
+  
   //! Member variable for boost serialization
   friend class boost::serialization::access;
   //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
@@ -50,6 +66,9 @@ private:
   }
   
 public:
+  //! Boost signal handler invoked after every measurement
+  boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
+
   //! Initialise a Metropolis-MC simulation with default configuration space and default RandomNumberGenerator
   Metropolis() : Simulation<ConfigurationType, RandomNumberGenerator>() {}
   //! Initialise a Metropolis-MC simulation with given configuration space and default RandomNumberGenerator
@@ -65,6 +84,13 @@ public:
   //! Execute a Metropolis Monte-Carlo simulation with given parameters at the given range of inverse temperatures
   template<class Observable, class InputIterator>
   std::vector<std::vector<typename Observable::observable_type> > do_metropolis_simulation(const Parameters& parameters, InputIterator beta_begin, InputIterator beta_end);
+
+  //! Execute a Metropolis Monte-Carlo simulation with given parameters at given inverse temperature with an accumulator for storing the measurements results
+  template<class Observable, class Accumulator, class TemperatureType = double>
+  void do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta, Accumulator& measurement_accumulator);
+  //! Execute a Metropolis Monte-Carlo simulation with given parameters at given range of invere temperatures with an range of accumulators for storing the measurements results
+  template<class Observable, class AccumulatorIterator, class InverseTemperatureIterator>
+  void do_metropolis_simulation(const Parameters& parameters, InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end);
 
   //! Load the data of the Metropolis simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream);

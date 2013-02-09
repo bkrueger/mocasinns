@@ -25,6 +25,8 @@ private:
   ConfigurationType* test_config_space;
   SimulationType* test_simulation;
 
+  class ObserveIsingEnergy;
+
 public:
   static CppUnit::Test* suite();
   
@@ -32,6 +34,7 @@ public:
   void tearDown();
 
   void test_do_metropolis_steps();
+  void test_do_metropolis_simulation();
 };
 
 #endif

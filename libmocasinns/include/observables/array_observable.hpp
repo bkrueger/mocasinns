@@ -4,6 +4,8 @@
 #include <array>
 #include <cmath>
 
+#include <boost/accumulators/numeric/functional_fwd.hpp>
+
 namespace Mocasinns
 {
   namespace Observables
@@ -132,6 +134,24 @@ namespace Mocasinns
 
 	return *this;
       }
+      //! Multiply this ArrayObservable component-wise with another ArrayObservable
+      ArrayObservable<T,N>& operator*=(const ArrayObservable<T,N>& rhs)
+      {
+	// Multiply the arrays component-wise
+	for (unsigned int i = 0; i < N; ++i)
+	  data[i] *= rhs.data[i];
+
+	return *this;
+      }
+      //! Divide this ArrayObservable component-wise by another ArrayObservable
+      ArrayObservable<T,N>& operator/=(const ArrayObservable<T,N>& rhs)
+      {
+	// Divide the arrays component-wise
+	for (unsigned int i = 0; i < N, ++i)
+	  data[i] /= rhs.data[i];
+	
+	return *this;
+      }
 
       //! Returns an iterator pointing to the beginning of the VectorObservable
       iterator begin() { return data.begin(); }
@@ -210,6 +230,19 @@ namespace Mocasinns
       return ArrayObservable<T,N>(lhs) /= rhs;
     }
 
+    //! Multiply two ArrayObservables component-wise
+    template <class T,N>
+    const ArrayObservable<T,N> operator*(const ArrayObservable<T,N>& lhs, const ArrayObservable<T,N>& rhs)
+    {
+      return ArrayObservable<T>(lhs) *= rhs;
+    }
+    //! Divide two ArrayObservables component-wise
+    template <class T, size_t N>
+    const ArrayObservable<T,N> operator/(const ArrayObservable<T,N>& lhs, const ArrayObservable<T,N>& rhs)
+    {
+      return ArrayObservable<T,N>(lhs) /= rhs;
+    }
+
     //! Exponentiate the ArrayObservable with a scalar
     template <class T, size_t N, class S>
     const ArrayObservable<T,N> pow(const ArrayObservable<T,N>& base, const S& exponent)
@@ -224,6 +257,46 @@ namespace Mocasinns
 
       return result;
     }
+
+    //! Takes the square root of the ArrayObservable component wise
+    template <class T, size_t N>
+    const ArrayObservable<T,N> sqrt(const ArrayObservable<T,N>& number)
+    {
+      return pow(number, 0.5);
+    }
+  }
+}
+
+namespace boost 
+{ 
+  namespace numeric 
+  { 
+    namespace functional
+    {
+      // Tag type for ArrayObservable
+      template <typename T, size_t N>
+      struct ArrayObservableTag;
+
+      // Specialise tag<> for VectorObservable
+      template <typename T, size_t N> struct tag<Mocasinns::Observables::VectorObservable<T,N> >
+      {
+	typedef VectorObservableTag<T,N> type;
+      };
+
+      // Specify how to devide a VectorObservable by an integral count
+      template <typename Left, typename Right, class T, size_t N>
+      struct average<Left, Right, VectorObservableTag<T,N>, void>
+      {
+	// Define the type of the result
+	typedef Mocasinns::Observables::VectorObservable<T,N> result_type;
+	
+	// Define the result operator
+	result_type operator()(Left& left , Right& right) const
+	{
+	  return left / static_cast<double>(right);
+	}
+      };
+    }  
   }
 }
 

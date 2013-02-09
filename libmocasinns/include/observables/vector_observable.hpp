@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <cmath>
 
+#include <boost/accumulators/numeric/functional_fwd.hpp>
+
 namespace Mocasinns
 {
   namespace Observables
@@ -109,8 +111,7 @@ namespace Mocasinns
 	return *this;
       }
       //! Multiplies this VectorObservable with a scalar. 
-      template <class S>
-      VectorObservable<T>& operator*=(const S& rhs)
+      VectorObservable<T>& operator*=(const T& rhs)
       {
 	for (iterator it = data.begin(); it != data.end(); ++it)
 	{
@@ -119,13 +120,40 @@ namespace Mocasinns
 	return *this;
       }
       //! Devides this VectorObservable by a scalar
-      template <class S>
-      VectorObservable<T>& operator/=(const S& rhs)
+      VectorObservable<T>& operator/=(const T& rhs)
       {
 	for (iterator it = data.begin(); it != data.end(); ++it)
 	{
 	  (*it) /= rhs;
 	}
+	return *this;
+      }
+      //! Multiplies this VectorObservable component-wise with another VectorObservable
+      VectorObservable<T>& operator*=(const VectorObservable<T>& rhs)
+      {
+	// Test the sizes
+	if (data.size() != rhs.size()) throw SizesUnequalException();
+
+	// Multiply the vectors component-wise
+	iterator it_this = data.begin();
+	const_iterator it_rhs = rhs.data.begin();
+	for (; it_this != data.end(); ++it_this, ++it_rhs)
+	  (*it_this) *= (*it_rhs);
+
+	return *this;
+      }
+      //! Divides this VectorObservable component-wise by another VectorObservable
+      VectorObservable<T>& operator/=(const VectorObservable<T>& rhs)
+      {
+	// Test the sizes
+	if (data.size() != rhs.size()) throw SizesUnequalException();
+
+	// Divide the vectors component-wise
+	iterator it_this = data.begin();
+	const_iterator it_rhs = rhs.data.begin();
+	for (; it_this != data.end(); ++it_this, ++it_rhs)
+	  (*it_this) /= (*it_rhs);
+
 	return *this;
       }
 
@@ -233,20 +261,33 @@ namespace Mocasinns
     }
 
     //! Multiply a scalar and a ObservableVector
-    template <class T, class S>
-    const VectorObservable<T> operator*(const S& lhs, const VectorObservable<T>& rhs)
+    template <class T>
+    const VectorObservable<T> operator*(const T& lhs, const VectorObservable<T>& rhs)
     {
       return VectorObservable<T>(rhs) *= lhs;
     }
     //! Multiply a scalar and a ObservableVector
-    template <class T, class S>
-    const VectorObservable<T> operator*(const VectorObservable<T>& lhs, const S& rhs)
+    template <class T>
+    const VectorObservable<T> operator*(const VectorObservable<T>& lhs, const T& rhs)
     {
       return VectorObservable<T>(lhs) *= rhs;
     }
     //! Divide the ObservableVector by a scalar
-    template <class T, class S>
-    const VectorObservable<T> operator/(const VectorObservable<T>& lhs, const S& rhs)
+    template <class T>
+    const VectorObservable<T> operator/(const VectorObservable<T>& lhs, const T& rhs)
+    {
+      return VectorObservable<T>(lhs) /= rhs;
+    }
+
+    //! Multiply two ObservableVectors component-wise
+    template <class T>
+    const VectorObservable<T> operator*(const VectorObservable<T>& lhs, const VectorObservable<T>& rhs)
+    {
+      return VectorObservable<T>(lhs) *= rhs;
+    }
+    //! Divide two ObservableVectors component-wise
+    template <class T>
+    const VectorObservable<T> operator/(const VectorObservable<T>& lhs, const VectorObservable<T>& rhs)
     {
       return VectorObservable<T>(lhs) /= rhs;
     }
@@ -265,6 +306,46 @@ namespace Mocasinns
 
       return result;
     }
+
+    //! Takes the square root of the Observable vector component wise
+    template <class T>
+    const VectorObservable<T> sqrt(const VectorObservable<T>& number)
+    {
+      return pow(number, 0.5);
+    }
+  }
+}
+
+namespace boost 
+{ 
+  namespace numeric 
+  { 
+    namespace functional
+    {
+      // Tag type for VectorObservable
+      template <typename T>
+      struct VectorObservableTag;
+
+      // Specialise tag<> for VectorObservable
+      template <typename T> struct tag<Mocasinns::Observables::VectorObservable<T> >
+      {
+	typedef VectorObservableTag<T> type;
+      };
+
+      // Specify how to devide a VectorObservable by an integral count
+      template <typename Left, typename Right, class T>
+      struct average<Left, Right, VectorObservableTag<T>, void>
+      {
+	// Define the type of the result
+	typedef Mocasinns::Observables::VectorObservable<T> result_type;
+	
+	// Define the result operator
+	result_type operator()(Left& left , Right& right) const
+	{
+	  return left / static_cast<double>(right);
+	}
+      };
+    }  
   }
 }
 

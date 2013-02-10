@@ -92,9 +92,10 @@ bool Simulation<ConfigurationType, RandomNumberGenerator>::check_for_posix_signa
 
 template <class ConfigurationType, class RandomNumberGenerator>
 Simulation<ConfigurationType, RandomNumberGenerator>::Simulation()
-  : is_terminating(false)
+  : rng_seed(0), is_terminating(false)
 {
   rng = new RandomNumberGenerator();
+  rng->set_seed(rng_seed);
   configuration_space = new ConfigurationType();
   initialise_dump_file_random();
   register_posix_signal_handler();
@@ -102,9 +103,10 @@ Simulation<ConfigurationType, RandomNumberGenerator>::Simulation()
 
 template <class ConfigurationType, class RandomNumberGenerator>
 Simulation<ConfigurationType, RandomNumberGenerator>::Simulation(ConfigurationType* new_configuration)
-  : is_terminating(false)
+  : rng_seed(0), is_terminating(false)
 {
   rng = new RandomNumberGenerator();
+  rng->set_seed(rng_seed);
   configuration_space = new_configuration;
   initialise_dump_file_random();
   register_posix_signal_handler();
@@ -116,8 +118,14 @@ ConfigurationType* Simulation<ConfigurationType, RandomNumberGenerator>::get_con
   return configuration_space;
 }
 template <class ConfigurationType, class RandomNumberGenerator>
+int Simulation<ConfigurationType, RandomNumberGenerator>::get_random_seed() const
+{
+  return rng_seed;
+}
+template <class ConfigurationType, class RandomNumberGenerator>
 void Simulation<ConfigurationType, RandomNumberGenerator>::set_random_seed(int seed) 
 {
+  rng_seed = seed;
   rng->set_seed(seed);
 }
 template <class ConfigurationType, class RandomNumberGenerator>

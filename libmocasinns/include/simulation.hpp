@@ -38,6 +38,8 @@ protected:
   RandomNumberGenerator* rng;
   //! Pointer to the configuration space used in the Simulation
   ConfigurationType* configuration_space;
+  //! Seed that is used in the simulation
+  int rng_seed;
 
   //! Path and filename of the dumps of the simulation
   std::string dump_filename;
@@ -65,6 +67,7 @@ protected:
   template<class Archive> void serialize(Archive & ar, const unsigned int)
   {
     ar & configuration_space;
+    ar & rng_seed;
   }
   
 public:
@@ -82,6 +85,8 @@ public:
 
   //! Get-Accessor for the pointer to the configuration space
   ConfigurationType* get_config_space() const;
+  //! Get-Accessor for the seed of the RandomNumberGenerator
+  int get_random_seed() const;
   //! Set-Accessor for the seed of the RandomNumberGenerator
   void set_random_seed(int seed);
   //! Get-Accessor for the path and name of the dumped file

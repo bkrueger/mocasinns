@@ -147,7 +147,7 @@ namespace Mocasinns
       ArrayObservable<T,N>& operator/=(const ArrayObservable<T,N>& rhs)
       {
 	// Divide the arrays component-wise
-	for (unsigned int i = 0; i < N, ++i)
+	for (unsigned int i = 0; i < N; ++i)
 	  data[i] /= rhs.data[i];
 	
 	return *this;
@@ -231,10 +231,10 @@ namespace Mocasinns
     }
 
     //! Multiply two ArrayObservables component-wise
-    template <class T,N>
+    template <class T, size_t N>
     const ArrayObservable<T,N> operator*(const ArrayObservable<T,N>& lhs, const ArrayObservable<T,N>& rhs)
     {
-      return ArrayObservable<T>(lhs) *= rhs;
+      return ArrayObservable<T,N>(lhs) *= rhs;
     }
     //! Divide two ArrayObservables component-wise
     template <class T, size_t N>
@@ -278,17 +278,17 @@ namespace boost
       struct ArrayObservableTag;
 
       // Specialise tag<> for VectorObservable
-      template <typename T, size_t N> struct tag<Mocasinns::Observables::VectorObservable<T,N> >
+      template <typename T, size_t N> struct tag<Mocasinns::Observables::ArrayObservable<T,N> >
       {
-	typedef VectorObservableTag<T,N> type;
+	typedef ArrayObservableTag<T,N> type;
       };
 
       // Specify how to devide a VectorObservable by an integral count
       template <typename Left, typename Right, class T, size_t N>
-      struct average<Left, Right, VectorObservableTag<T,N>, void>
+      struct average<Left, Right, ArrayObservableTag<T,N>, void>
       {
 	// Define the type of the result
-	typedef Mocasinns::Observables::VectorObservable<T,N> result_type;
+	typedef Mocasinns::Observables::ArrayObservable<T,N> result_type;
 	
 	// Define the result operator
 	result_type operator()(Left& left , Right& right) const

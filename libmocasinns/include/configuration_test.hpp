@@ -10,8 +10,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef CONFIGURATION_TEST_HPP
-#define CONFIGURATION_TEST_HPP
+#ifndef MOCASINNS_CONFIGURATION_TEST_HPP
+#define MOCASINNS_CONFIGURATION_TEST_HPP
 
 #include "simulation.hpp"
 

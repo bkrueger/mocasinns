@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef WANG_LANDAU_COUNTING_HPP
-#define WANG_LANDAU_COUNTING_HPP
+#ifndef MOCASINNS_WANG_LANDAU_COUNTING_HPP
+#define MOCASINNS_WANG_LANDAU_COUNTING_HPP
 
 #include "wang_landau.hpp"
 

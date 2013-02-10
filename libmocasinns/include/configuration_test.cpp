@@ -5,7 +5,7 @@
  * \author Benedikt Krüger
  */
 
-#ifdef CONFIGURATION_TEST_HPP
+#ifdef MOCASINNS_CONFIGURATION_TEST_HPP
 
 // Boost classes for the serialization test
 #include <boost/archive/text_oarchive.hpp>

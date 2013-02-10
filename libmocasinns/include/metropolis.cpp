@@ -8,7 +8,7 @@
  * \author Benedikt Krüger
  */
 
-#ifdef METROPOLIS_HPP
+#ifdef MOCASINNS_METROPOLIS_HPP
 
 #include <cmath>
 

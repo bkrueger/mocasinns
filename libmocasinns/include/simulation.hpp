@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef SIMULATION_HPP
-#define SIMULATION_HPP
+#ifndef MOCASINNS_SIMULATION_HPP
+#define MOCASINNS_SIMULATION_HPP
 
 #include <string>
 #include <cstdlib>

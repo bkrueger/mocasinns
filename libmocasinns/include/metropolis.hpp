@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef METROPOLIS_HPP
-#define METROPOLIS_HPP
+#ifndef MOCASINNS_METROPOLIS_HPP
+#define MOCASINNS_METROPOLIS_HPP
 
 #include "simulation.hpp"
 

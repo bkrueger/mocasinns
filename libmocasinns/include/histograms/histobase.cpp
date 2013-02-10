@@ -6,7 +6,7 @@
  * 
  * \author Benedikt Krüger
  */
-#ifdef HISTOBASE_HPP
+#ifdef MOCASINNS_HISTOGRAMS_HISTOBASE_HPP
 
 #include <cmath> // INFINITY and isnan()
 #include <fstream>

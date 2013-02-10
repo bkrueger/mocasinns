@@ -7,7 +7,7 @@
  * \author Benedikt Krüger
  */
 
-#ifdef WANG_LANDAU_HPP
+#ifdef MOCASINNS_WANG_LANDAU_HPP
 
 namespace Mocasinns
 {

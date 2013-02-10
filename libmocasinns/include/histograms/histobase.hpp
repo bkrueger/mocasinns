@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef HISTOBASE_HPP
-#define HISTOBASE_HPP
+#ifndef MOCASINNS_HISTOGRAMS_HISTOBASE_HPP
+#define MOCASINNS_HISTOGRAMS_HISTOBASE_HPP
 
 #include <map>
 

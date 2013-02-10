@@ -7,7 +7,7 @@
  * \author Benedikt Krüger
  */
 
-#ifdef WANG_LANDAU_COUNTING_HPP
+#ifdef MOCASINNS_WANG_LANDAU_COUNTING_HPP
 
 template <class EnergyType>
 EnergyTypeExtended<EnergyType>::EnergyTypeExtended(EnergyType orig_energy, int in_gs) : original_energy(orig_energy), in_ground_state(in_gs)

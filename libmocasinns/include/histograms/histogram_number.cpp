@@ -6,7 +6,7 @@
  * 
  * \author Benedikt Krüger
  */
-#ifdef HISTOGRAM_NUMBER_HPP
+#ifdef MOCASINNS_HISTOGRAMS_HISTOGRAM_NUMBER_HPP
 
 namespace Mocasinns
 {

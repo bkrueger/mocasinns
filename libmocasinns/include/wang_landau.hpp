@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef WANG_LANDAU_HPP
-#define WANG_LANDAU_HPP
+#ifndef MOCASINNS_WANG_LANDAU_HPP
+#define MOCASINNS_WANG_LANDAU_HPP
 
 #include "simulation.hpp"
 

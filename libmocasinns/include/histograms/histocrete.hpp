@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef HISTOCRETE_HPP
-#define HISTOCRETE_HPP
+#ifndef MOCASINNS_HISTOGRAMS_HISTOCRETE_HPP
+#define MOCASINNS_HISTOGRAMS_HISTOCRETE_HPP
 
 #include "histobase.hpp"
 

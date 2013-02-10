@@ -7,8 +7,8 @@
  * \author Benedikt Krüger
  */
 
-#ifndef BINNINGS_HPP
-#define BINNINGS_HPP
+#ifndef MOCASINNS_HISTOGRAMS_BINNINGS_HPP
+#define MOCASINNS_HISTOGRAMS_BINNINGS_HPP
 
 // Header for the serialization of the class
 #include <boost/archive/text_oarchive.hpp>

@@ -7,7 +7,7 @@
  * \author Benedikt Krüger
  */
 
-#ifdef SIMULATION_HPP
+#ifdef MOCASINNS_SIMULATION_HPP
 
 namespace Mocasinns
 {

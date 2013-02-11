@@ -40,22 +40,6 @@ public:
   };
 
 private:
-  //! Class for using a vector as an accumulator
-  template<class Observable> class VectorAccumulator
-  {
-  public:
-    //! Vector for the data
-    std::vector<Observable> internal_vector;
-
-    //! Standard constructor
-    VectorAccumulator() : internal_vector() {}
-    //! Copy constructor
-    VectorAccumulator(const VectorAccumulator<Observable>& copy) : internal_vector(copy.internal_vector) {}
-
-    //! Accumulating operator, refers to push-back
-    void operator()(const Observable& new_value) { internal_vector.push_back(new_value); }
-  };
-  
   //! Member variable for boost serialization
   friend class boost::serialization::access;
   //! Method to serialize this class (omitted version name to avoid unused parameter warnings)

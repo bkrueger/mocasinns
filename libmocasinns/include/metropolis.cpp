@@ -12,6 +12,8 @@
 
 #include <cmath>
 
+#include "details/metropolis/vector_accumulator.hpp"
+
 namespace Mocasinns
 {
 
@@ -53,7 +55,7 @@ template<class Observable, class TemperatureType>
 std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const Parameters& parameters, const TemperatureType& beta)
 {
   // Call the accumulator function using the VectorAccumulator
-  VectorAccumulator<typename Observable::observable_type> measurements_accumulator;
+  Details::Metropolis::VectorAccumulator<typename Observable::observable_type> measurements_accumulator;
   do_metropolis_simulation<Observable>(parameters, beta, measurements_accumulator);
 
   // Return the plain data

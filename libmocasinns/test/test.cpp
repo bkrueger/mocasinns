@@ -5,6 +5,7 @@
 #include "test_simulation.hpp"
 #include "test_configuration_test.hpp"
 #include "test_metropolis.hpp"
+#include "test_metropolis_parallel.hpp"
 #include "test_wang_landau.hpp"
 #include "test_histograms/test_binnings.hpp"
 #include "test_histograms/test_histobase.hpp"
@@ -21,6 +22,7 @@ int main()
   runner.addTest(TestSimulation::suite());
   runner.addTest(TestConfigurationTest::suite());
   runner.addTest(TestMetropolis::suite());
+  runner.addTest(TestMetropolisParallel::suite());
   runner.addTest(TestWangLandau::suite());
   runner.addTest(TestBinningNumber::suite());
   runner.addTest(TestBinningNumberVector::suite());

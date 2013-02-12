@@ -28,12 +28,18 @@ CppUnit::Test* TestMetropolisParallel::suite()
 
 void TestMetropolisParallel::setUp()
 {
+  // Assign the simulation parameters for the parallel simulation
+  test_parameters.relaxation_steps = 10000;
+  test_parameters.measurement_number = 1000;
+  test_parameters.steps_between_measurement = 1000;
+  test_parameters.run_number = 4;
+
   // 2d-lattice of Ising spins
   std::vector<unsigned int> size_2d;
   size_2d.push_back(4); size_2d.push_back(4);
 
   test_config_space = new ConfigurationType(size_2d);
-  test_simulation = new SimulationType(test_config_space);
+  test_simulation = new SimulationType(test_parameters, test_config_space);
 }
 
 void TestMetropolisParallel::tearDown()
@@ -44,12 +50,6 @@ void TestMetropolisParallel::tearDown()
 
 void TestMetropolisParallel::test_do_parallel_metropolis_simulation()
 {
-  // Assign the simulation parameters for the parallel simulation
-  SimulationType::Parameters parameters_parallel;
-  parameters_parallel.relaxation_steps = 10000;
-  parameters_parallel.measurement_number = 1000;
-  parameters_parallel.steps_between_measurement = 1000;
-  parameters_parallel.run_number = 4;
   // Assign the simulation parameters for the serial simulation
   SimulationTypeSerial::Parameters parameters_serial;
   parameters_serial.relaxation_steps = 10000;
@@ -57,22 +57,22 @@ void TestMetropolisParallel::test_do_parallel_metropolis_simulation()
   parameters_serial.steps_between_measurement = 1000;
 
   // Perform four serial simulations and store the vector
-  SimulationTypeSerial serial_simulation_0(new ConfigurationType(*test_config_space));
-  SimulationTypeSerial serial_simulation_1(new ConfigurationType(*test_config_space));
-  SimulationTypeSerial serial_simulation_2(new ConfigurationType(*test_config_space));
-  SimulationTypeSerial serial_simulation_3(new ConfigurationType(*test_config_space));
+  SimulationTypeSerial serial_simulation_0(parameters_serial, new ConfigurationType(*test_config_space));
+  SimulationTypeSerial serial_simulation_1(parameters_serial, new ConfigurationType(*test_config_space));
+  SimulationTypeSerial serial_simulation_2(parameters_serial, new ConfigurationType(*test_config_space));
+  SimulationTypeSerial serial_simulation_3(parameters_serial, new ConfigurationType(*test_config_space));
   serial_simulation_0.set_random_seed(0);
   serial_simulation_1.set_random_seed(1);
   serial_simulation_2.set_random_seed(2);
   serial_simulation_3.set_random_seed(3);
-  std::vector<double> serial_result_0 = serial_simulation_0.do_metropolis_simulation<ObserveIsingEnergy>(parameters_serial, 0.0);
-  std::vector<double> serial_result_1 = serial_simulation_1.do_metropolis_simulation<ObserveIsingEnergy>(parameters_serial, 0.0);
-  std::vector<double> serial_result_2 = serial_simulation_2.do_metropolis_simulation<ObserveIsingEnergy>(parameters_serial, 0.0);
-  std::vector<double> serial_result_3 = serial_simulation_3.do_metropolis_simulation<ObserveIsingEnergy>(parameters_serial, 0.0);
+  std::vector<double> serial_result_0 = serial_simulation_0.do_metropolis_simulation<ObserveIsingEnergy>(0.0);
+  std::vector<double> serial_result_1 = serial_simulation_1.do_metropolis_simulation<ObserveIsingEnergy>(0.0);
+  std::vector<double> serial_result_2 = serial_simulation_2.do_metropolis_simulation<ObserveIsingEnergy>(0.0);
+  std::vector<double> serial_result_3 = serial_simulation_3.do_metropolis_simulation<ObserveIsingEnergy>(0.0);
 
   // Perform the parallel simulation
   test_simulation->set_random_seed(0);
-  std::vector<double> parallel_result = test_simulation->do_parallel_metropolis_simulation<ObserveIsingEnergy>(parameters_parallel, 0.0);
+  std::vector<double> parallel_result = test_simulation->do_parallel_metropolis_simulation<ObserveIsingEnergy>(0.0);
 
   // Check that the size of the two results agree
   CPPUNIT_ASSERT_EQUAL(4*serial_result_0.size(), parallel_result.size());

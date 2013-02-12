@@ -26,6 +26,7 @@ class TestMetropolisParallel : CppUnit::TestFixture
 private:
   ConfigurationType* test_config_space;
   SimulationType* test_simulation;
+  SimulationType::Parameters test_parameters;
 
   class ObserveIsingEnergy;
 

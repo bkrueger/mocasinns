@@ -29,12 +29,18 @@ CppUnit::Test* TestMetropolis::suite()
 
 void TestMetropolis::setUp()
 {
+  // Assign the simulation parameters
+  SimulationType::Parameters test_parameters;
+  test_parameters.relaxation_steps = 10000;
+  test_parameters.measurement_number = 10000;
+  test_parameters.steps_between_measurement = 100;
+
   // 2d-lattice of Ising spins
   std::vector<unsigned int> size_2d;
   size_2d.push_back(4); size_2d.push_back(4);
 
   test_config_space = new ConfigurationType(size_2d);
-  test_simulation = new SimulationType(test_config_space);
+  test_simulation = new SimulationType(test_parameters, test_config_space);
 }
 
 void TestMetropolis::tearDown()
@@ -61,21 +67,15 @@ void TestMetropolis::test_do_metropolis_steps()
 
 void TestMetropolis::test_do_metropolis_simulation()
 {
-  // Assign the simulation parameters
-  SimulationType::Parameters parameters;
-  parameters.relaxation_steps = 10000;
-  parameters.measurement_number = 10000;
-  parameters.steps_between_measurement = 100;
-
   // Create a boost accumulator
   ba::accumulator_set<double, ba::stats<ba::tag::mean, ba::tag::error_of<ba::tag::mean> > > acc;
   // Perform the simulation with accumulators
-  test_simulation->do_metropolis_simulation<ObserveIsingEnergy>(parameters, 0.0, acc);
+  test_simulation->do_metropolis_simulation<ObserveIsingEnergy>(0.0, acc);
   // Test the result
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, ba::mean(acc), 0.1);
 
   // Perform the simulation without accumulator
-  std::vector<double> result_vector = test_simulation->do_metropolis_simulation<ObserveIsingEnergy>(parameters, 0.0);
+  std::vector<double> result_vector = test_simulation->do_metropolis_simulation<ObserveIsingEnergy>(0.0);
   // Check that the measurement number is correct
   CPPUNIT_ASSERT_EQUAL(10000, (int)result_vector.size());
   // Accumulate the vector

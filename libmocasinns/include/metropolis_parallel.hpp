@@ -23,24 +23,6 @@ namespace Mocasinns
 template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class MetropolisParallel : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
-public:
-  //! Typedef for the serial Metropolis
-  typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> MetropolisSerial;
-  
-  //! Struct storing the parameters for a Metropolis Monte-Carlo Simulation
-  struct Parameters : MetropolisSerial::Parameters
-  {
-    //! Number of independent runs to perform
-    unsigned int run_number;
-    //! Number of processes to use
-    unsigned int process_number;
-
-    //! Standard constructor for setting default values
-    Parameters() : MetropolisSerial::Parameters(),
-		   run_number(2),
-		   process_number(2) {}
-  };
-
 private:
   //! Member variable for boost serialization
   friend class boost::serialization::access;
@@ -52,6 +34,12 @@ private:
   }
   
 public:
+  // Forward declaration of the parameters used for a parallel Metropolis Simulation
+  struct Parameters;
+
+  //! Typedef for the serial Metropolis
+  typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> MetropolisSerial;
+
   //! Boost signal handler invoked after every measurement
   boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
   //! Boost signal handler invoked after every run
@@ -85,6 +73,23 @@ public:
   //! Save the data of the Metropolis simulation to a serialization file
   virtual void save_serialize(const char* filename) const;
 };
+
+//! Struct storing the parameters of a parallel Metropolis Monte-Carlo Simulation
+template <class ConfigurationType, class StepType, class RandomNumberGenerator>
+struct MetropolisParallel<ConfigurationType, StepType, RandomNumberGenerator>::Parameters 
+  : Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters
+{
+  //! Number of independent runs to perform
+  unsigned int run_number;
+  //! Number of processes to use
+  unsigned int process_number;
+  
+  //! Standard constructor for setting default values
+  Parameters() : MetropolisSerial::Parameters(),
+		 run_number(2),
+		 process_number(2) {}
+};
+
 
 } // of namespace Mocasinns
 

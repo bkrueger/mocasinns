@@ -22,23 +22,6 @@ namespace Mocasinns
 template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
-public:
-  //! Struct storing the parameters for a Metropolis Monte-Carlo Simulation
-  struct Parameters
-  {
-    //! Number of steps to perform before taking data
-    unsigned long int relaxation_steps;
-    //! Number of data points per temperature
-    unsigned int measurement_number;
-    //! Number of steps to perform between two data measurements
-    unsigned int steps_between_measurement;
-
-    //! Standard constructor for setting default values
-    Parameters() : relaxation_steps(1000),
-		   measurement_number(100),
-		   steps_between_measurement(100) {}
-  };
-
 private:
   //! Member variable for boost serialization
   friend class boost::serialization::access;
@@ -50,6 +33,9 @@ private:
   }
   
 public:
+  //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
+  struct Parameters;
+
   //! Boost signal handler invoked after every measurement
   boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
 
@@ -86,6 +72,23 @@ public:
   virtual void save_serialize(const char* filename) const;
 };
 
+//! Struct storing the definition of the Parameters of a Metropolis-Simulation
+template <class ConfigurationType, class StepType, class RandomNumberGenerator>
+struct Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters
+{
+  //! Number of steps to perform before taking data
+  unsigned long int relaxation_steps;
+  //! Number of data points per temperature
+  unsigned int measurement_number;
+  //! Number of steps to perform between two data measurements
+  unsigned int steps_between_measurement;
+  
+  //! Standard constructor for setting default values
+  Parameters() : relaxation_steps(1000),
+		 measurement_number(100),
+		 steps_between_measurement(100) {}
+};
+  
 } // of namespace Mocasinns
 
 #include "metropolis.cpp"

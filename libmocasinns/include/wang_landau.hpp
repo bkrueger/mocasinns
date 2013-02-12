@@ -23,81 +23,12 @@ template <class ConfigurationType, class StepType, class EnergyType, template<cl
 class WangLandau : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
 public:
-  //! Struct for dealing with the parameters of a Wang-Landau-simulation
-  template<class ParameterEnergyType = EnergyType>
-  struct Parameters
-  {
-  public:
-    //! Energy value that is used as a reference point for the binning
-    ParameterEnergyType binning_reference;
-    //! Energy value range that is comprehended in one bin
-    ParameterEnergyType binning_width;
-    
-    //! Flag whether to use a maximal energy cutoff, default value is false
-    bool energy_cutoff_use;
-    //! Value of the maximal energy cutoff
-    EnergyType energy_cutoff;
-    
-    //! Flatness below that the modification factor is changed.
-    double flatness;
-
-    //! Modification factor for the entropy histogram at the beginning of the simulation
-    double modification_factor_initial;
-    //! Modification factor for the entropy histogram at the end of the simulation, triggers the exit
-    double modification_factor_final;
-    //! Factor to modify the multiplication factor after the desired flatness has been reached
-    double modification_factor_multiplyer;
-    
-    //! Number of steps to take before checking again the flatness
-    uint32_t sweep_steps;
-    
-    //! Constructor to set default values
-    Parameters();
-    
-    //! Test for equality
-    bool operator==(const Parameters<EnergyType>& rhs) const;
-    //! Test for inequality
-    bool operator!=(const Parameters<EnergyType>& rhs) const;
-
-  private:
-    //! Member variable for boost serialization
-    friend class boost::serialization::access;
-    //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
-    template<class Archive> void serialize(Archive & ar, const unsigned int)
-    {
-      // serialize base class information
-      ar & binning_reference;
-      ar & binning_width;
-      ar & energy_cutoff_use;
-      ar & energy_cutoff;
-      ar & flatness;
-      ar & modification_factor_initial;
-      ar & modification_factor_final;
-      ar & modification_factor_multiplyer;
-      ar & sweep_steps;
-    }
-  };
-
-  //! Struct used for signals to write the simulation status into std::cout
-  struct SimulationStatus
-  {
-    //! Operator for for calling the SimulationStatus function
-    /*!
-     * \param simulation Pointer to the simulation of which the information should be written
-     * \details Writes the following information in this order: simulation_time, modfactor_actual, incidence_flatness
-     */
-    void operator()(Simulation<ConfigurationType,RandomNumberGenerator>*);
-  };
-  //! Struct used for signals to dump the whole simulation into the specified file
-  struct SimulationDump
-  {
-    //! Operator for calling the SimulationDump function
-    /*!
-     * \param simulation Pointer to the simulation that should be dumped
-     * \param outstream Output stream where the information is written in
-     */
-    void operator()(Simulation<ConfigurationType,RandomNumberGenerator>*);
-  };
+  // Forward declaration of the parameters for the WangLandau-Simulation
+  template <class ParameterEnergyType = EnergyType> struct Parameters;
+  // Forward declaration of struct used in signals to write the simulation status into std::cout
+  struct SimulationStatus;
+  // Forward declaration of struct used in signals to dump the whole simulation into the specified file
+  struct SimulationDump;
 
   //! Boost signal handler invoked after every sweep
   boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_sweep;
@@ -174,6 +105,86 @@ private:
     ar & density_of_states;
     ar & incidence_counter;
   }
+};
+
+//! Struct for dealing with the parameters of a Wang-Landau-simulation
+template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
+template<class ParameterEnergyType>
+struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters
+{
+public:
+  //! Energy value that is used as a reference point for the binning
+  ParameterEnergyType binning_reference;
+  //! Energy value range that is comprehended in one bin
+  ParameterEnergyType binning_width;
+  
+  //! Flag whether to use a maximal energy cutoff, default value is false
+  bool energy_cutoff_use;
+  //! Value of the maximal energy cutoff
+  EnergyType energy_cutoff;
+  
+  //! Flatness below that the modification factor is changed.
+  double flatness;
+  
+  //! Modification factor for the entropy histogram at the beginning of the simulation
+  double modification_factor_initial;
+  //! Modification factor for the entropy histogram at the end of the simulation, triggers the exit
+  double modification_factor_final;
+  //! Factor to modify the multiplication factor after the desired flatness has been reached
+  double modification_factor_multiplyer;
+    
+  //! Number of steps to take before checking again the flatness
+  uint32_t sweep_steps;
+    
+  //! Constructor to set default values
+  Parameters();
+    
+  //! Test for equality
+  bool operator==(const Parameters<EnergyType>& rhs) const;
+  //! Test for inequality
+  bool operator!=(const Parameters<EnergyType>& rhs) const;
+  
+private:
+  //! Member variable for boost serialization
+  friend class boost::serialization::access;
+  //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
+  template<class Archive> void serialize(Archive & ar, const unsigned int)
+  {
+    // serialize base class information
+    ar & binning_reference;
+    ar & binning_width;
+    ar & energy_cutoff_use;
+    ar & energy_cutoff;
+    ar & flatness;
+    ar & modification_factor_initial;
+    ar & modification_factor_final;
+    ar & modification_factor_multiplyer;
+    ar & sweep_steps;
+  }
+};
+
+//! Struct used for signals to write the simulation status into std::cout
+template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
+struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::SimulationStatus
+{
+  //! Operator for for calling the SimulationStatus function
+  /*!
+   * \param simulation Pointer to the simulation of which the information should be written
+   * \details Writes the following information in this order: simulation_time, modfactor_actual, incidence_flatness
+     */
+  void operator()(Simulation<ConfigurationType,RandomNumberGenerator>*);
+};
+
+//! Struct used for signals to dump the whole simulation into the specified file
+template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
+struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::SimulationDump
+{
+  //! Operator for calling the SimulationDump function
+  /*!
+   * \param simulation Pointer to the simulation that should be dumped
+   * \param outstream Output stream where the information is written in
+   */
+  void operator()(Simulation<ConfigurationType,RandomNumberGenerator>*);
 };
 
 } // of namespace Mocasinns

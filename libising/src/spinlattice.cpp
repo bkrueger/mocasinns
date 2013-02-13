@@ -277,6 +277,17 @@ Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose
 				   spin_lattice(lattice_multiindex).random_differ(rng->random_double())); // new random spin value differing from the old value
 }
 
+template<unsigned int dimension, class SpinType, class Derived>
+unsigned int SpinLatticeBase<dimension, SpinType, Derived>::system_size() const
+{
+  unsigned int result = 1;
+  for (unsigned int d = 0; d < dimension; d++)
+    result *= spin_lattice.shape()[d];
+
+  return result;
+}
+
+
 } // of namespace Ising
 
 #endif

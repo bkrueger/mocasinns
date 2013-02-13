@@ -20,6 +20,7 @@ CppUnit::Test* TestSpinLattice::suite()
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_magnetization", &TestSpinLattice::test_magnetization ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_next_neighbours", &TestSpinLattice::test_next_neighbours ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_propose_step", &TestSpinLattice::test_propose_step ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_system_size", &TestSpinLattice::test_system_size ) );
 
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_serialize", &TestSpinLattice::test_serialize ) );
 
@@ -354,6 +355,12 @@ void TestSpinLattice::test_propose_step()
   CPPUNIT_ASSERT(step_1d_real_0_9.get_flip_index() == index_4);
   CPPUNIT_ASSERT(step_1d_real_0_9.get_old_spin() == SpinReal(1.0));
   CPPUNIT_ASSERT(step_1d_real_0_9.get_new_spin() == SpinReal(-1.0));
+}
+
+void TestSpinLattice::test_system_size()
+{
+  CPPUNIT_ASSERT_EQUAL(5u, testlattice_1d->system_size());
+  CPPUNIT_ASSERT_EQUAL(9u, testlattice_2d->system_size());
 }
 
 void TestSpinLattice::test_serialize()

@@ -51,6 +51,7 @@ public:
   void test_magnetization();
   void test_next_neighbours();
   void test_propose_step();
+  void test_system_size();
 
   void test_serialize();
 };

@@ -93,6 +93,9 @@ public:
   Step<dimension, SpinType> propose_step(double random_double);
   //! Propose a step given a random number generator
   template<class RandomNumberGenerator> Step<dimension, SpinType> propose_step(RandomNumberGenerator* rng);
+
+  //! Calculate the system size
+  unsigned int system_size() const;
 };
 
 //! Derived class for an arbitrary-dimensional spin lattice

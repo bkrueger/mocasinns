@@ -83,6 +83,8 @@ public:
   Simulation();
   //! Initialise a Simulation with given configuration space and default RandomNumberGenerator
   Simulation(ConfigurationType*);
+  //! Virtual destructor, deletes the random number generator created in the constructors
+  virtual ~Simulation();
 
   //! Get-Accessor for the pointer to the configuration space
   ConfigurationType* get_config_space() const;

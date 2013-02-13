@@ -113,6 +113,12 @@ Simulation<ConfigurationType, RandomNumberGenerator>::Simulation(ConfigurationTy
 }
 
 template <class ConfigurationType, class RandomNumberGenerator>
+Simulation<ConfigurationType, RandomNumberGenerator>::~Simulation()
+{
+  delete rng;
+}
+
+template <class ConfigurationType, class RandomNumberGenerator>
 ConfigurationType* Simulation<ConfigurationType, RandomNumberGenerator>::get_config_space() const
 {
   return configuration_space;

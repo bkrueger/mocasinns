@@ -23,6 +23,7 @@ CppUnit::Test* TestMetropolis::suite()
   CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestMetropolis");
   suite_of_tests->addTest( new CppUnit::TestCaller<TestMetropolis>("TestMetropolis: test_do_metropolis_steps", &TestMetropolis::test_do_metropolis_steps) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestMetropolis>("TestMetropolis: test_do_metropolis_simulation", &TestMetropolis::test_do_metropolis_simulation) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestMetropolis>("TestMetropolis: test_integrated_autocorrelation_time", &TestMetropolis::test_integrated_autocorrelation_time) );
     
   return suite_of_tests;
 }
@@ -83,4 +84,10 @@ void TestMetropolis::test_do_metropolis_simulation()
   for (unsigned int i = 0; i < result_vector.size(); ++i) sum += result_vector.at(i);
   // Test the results
   CPPUNIT_ASSERT_DOUBLES_EQUAL(ba::mean(acc), sum/result_vector.size(), 0.15);
+}
+
+void TestMetropolis::test_integrated_autocorrelation_time()
+{
+  // Call the method
+  double int_auto_time = test_simulation->integrated_autocorrelation_time<ObserveIsingEnergy>(0.0, 100, 5);
 }

@@ -12,6 +12,15 @@
 
 #include <cmath>
 
+// Includes for boost accumulators
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
+#include <boost/bind.hpp>
+#include <boost/ref.hpp>
+
+namespace ba = boost::accumulators;
+
 #include "details/metropolis/vector_accumulator.hpp"
 
 namespace Mocasinns
@@ -125,6 +134,95 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
     do_metropolis_simulation(*beta_iterator, *measurement_accumulator_iterator);
     if (this->is_terminating) break;
   }
+}
+
+/*!
+  \details Calculates the autocorrelation function C(t) of the observable f using the formula
+  \f[
+  C_f(t) = \left\langle f_0 f_t \right\rangle - \langle f \rangle^2
+  \f]
+  where \f$ f_t \f$ is the value of the observable at time \f$ t \f$. The second average is taken over all measurements done in this simulation. The first average is calculated as following:
+  \f[
+  \left\langle f_0 f_t \right\rangle = \frac{1}{N} \sum_{i=0}^{N-1} f_{i\cdot s} f_{i\cdot s + t}
+  \f]
+  where \f$ N \f$ is the parameters simulation_time_factor and s is the parameter maximal_time (the time indices are allways measured in units of the system size). Before taking the measurements the number of relaxation steps set in the parameters are taken.
+
+  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
+  \param beta Inverse temperature at which the simulation is performed
+  \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
+  \param simulation_time_factor Run time of the simulation in units of the maximal time (also gives the number of measurements taken for averaging the value of the autocorrelation function at each time). The default value is 5.
+*/									
+template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class Observable, class TemperatureType>
+std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
+{
+  // Do the relaxation steps
+  do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
+
+  // Define the vector with the results
+  std::vector<typename Observable::observable_type> results;
+
+  // Define the vector with the measurments of the observable and take the measurements
+  std::vector<typename Observable::observable_type> observable_measurements;
+  for (unsigned int i = 0; i < maximal_time*simulation_time_factor; ++i)
+  {
+    do_metropolis_steps(this->get_config_space()->system_size(), beta);
+    observable_measurements.push_back(Observable::observe(this->get_config_space()));
+  }
+
+  // Define an accumulator and calculate the mean value of the observable
+  ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_measured_mean;
+  std::for_each(observable_measurements.begin(), observable_measurements.end(), boost::bind<void>(boost::ref(acc_measured_mean), _1));
+  typename Observable::observable_type measured_mean = ba::mean(acc_measured_mean);
+
+  // Calculate the autocorrelation function using an accumulator
+  for (unsigned int time = 0; time <= maximal_time; ++time)
+  {
+    // Calculate the mean autocorrelation function for time
+    ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_autocorrelation_function_time;
+    for (unsigned int sweep = 0; sweep < simulation_time_factor; ++sweep)
+    {
+      unsigned int start_time = sweep*maximal_time;
+      acc_autocorrelation_function_time(observable_measurements[start_time]*observable_measurements[start_time + time]);
+    }
+    
+    // Add to the result vector
+    results.push_back(ba::mean(acc_autocorrelation_function_time) - measured_mean*measured_mean);
+  }
+
+  // Return the result vector
+  return results;
+}
+
+/*!
+  \details Calculates the integrated autocorrelation time \f$ \tau_\mathrm{int} \f$ based on the autocorrelation function \f$ C(t) \f$ using this formula:
+  \f[
+  \tau_\mathrm{int} = \left[1 + 2\sum_{t=1}^{N-1} \left( 1 - \frac{t}{N}\right) \frac{C(t)}{C(0)} \right]
+  \f]
+  where \f$ N \f$ denotes the maximal considered time.
+
+  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
+  \param beta Inverse temperature at which the simulation is performed
+  \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
+  \param simulation_time_factor Run time of the simulation in units of the maximal time (also gives the number of measurements taken for averaging the value of the autocorrelation function at each time). The default value is 5.
+ */
+template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class Observable, class TemperatureType>
+typename Observable::observable_type Metropolis<ConfigurationType, Step, RandomNumberGenerator>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
+{
+  // Calculate the autocorrelation function
+  std::vector<typename Observable::observable_type> vec_autocorrelation_function = autocorrelation_function<Observable>(beta, maximal_time, considered_time_factor);
+
+  // Calculate the integrated autocorrelation time
+  typename Observable::observable_type result(1.0);
+  for (unsigned int t = 1; t < maximal_time; ++t)
+  {
+    result += 2.0*(1.0 - static_cast<double>(t)/static_cast<double>(maximal_time))*(vec_autocorrelation_function[t]/vec_autocorrelation_function[0]);
+  }
+
+  return result;
 }
 
 template <class ConfigurationType, class Step, class RandomNumberGenerator>

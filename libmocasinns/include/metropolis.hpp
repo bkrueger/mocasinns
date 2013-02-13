@@ -59,6 +59,13 @@ public:
   template<class Observable, class AccumulatorIterator, class InverseTemperatureIterator>
   void do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end);
 
+  //! Measure the autocorrelation function of the system with respect to an observable
+  template<class Observable, class TemperatureType = double>
+  std::vector<typename Observable::observable_type> autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor = 5);
+  //! Calculate the integrated autocorrelation time of the system with respect to an observable
+  template<class Observable, class TemperatureType = double>
+  typename Observable::observable_type integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor = 5);
+
   //! Load the data of the Metropolis simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream);
   //! Load the data of the Metropolis simulation from a serialization file

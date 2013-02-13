@@ -64,49 +64,51 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observable, class Accumulator, class TemperatureType>
 void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parallel_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
-  // Create a metropolis-simulation for each run
-  std::vector<Metropolis<ConfigurationType, Step, RandomNumberGenerator>* > run_simulations;
-  for (unsigned int run = 0; run < simulation_parameters.run_number; ++run)
-  {
-    ConfigurationType* copied_configuration = new ConfigurationType(*(this->get_config_space()));
-    run_simulations.push_back(new Metropolis<ConfigurationType, Step, RandomNumberGenerator>(simulation_parameters, copied_configuration));
-    run_simulations[run]->set_random_seed(this->get_random_seed() + run);
-  }
-  
   // Perform a parallel for-loop for the different runs
   // The signal handlers and the simulation parameters need not to be shared, because class members are allways shared
   omp_set_num_threads(simulation_parameters.process_number);
-#pragma omp parallel for shared(run_simulations) shared(measurement_accumulator) shared(beta)
+#pragma omp parallel for shared(measurement_accumulator) shared(beta)
   for (unsigned int run = 0; run < simulation_parameters.run_number; ++run)
   {
+    // Forward declare a pointer for the configuration and the simulation
+    ConfigurationType* copied_configuration;
+    Metropolis<ConfigurationType, Step, RandomNumberGenerator>* run_simulation;
+#pragma omp critical
+    {
+      // Copy a configuration from the initial one
+      copied_configuration = new ConfigurationType(*(this->get_config_space()));
+      // Create the new configuration
+      run_simulation = new Metropolis<ConfigurationType, Step, RandomNumberGenerator>(simulation_parameters, copied_configuration);
+    }
+    
+    // Set the seed of the simulation to the seed of this simulation plus the run number
+    run_simulation->set_random_seed(this->get_random_seed() + run);
+
     // Perform the relaxation steps
-    run_simulations[run]->do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
+    run_simulation->do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
 
     // For each measurement, perform the steps, invoke the signal handler, take the measurement and check for posix signals
     for (unsigned int m = 0; m < simulation_parameters.measurement_number && !this->check_for_posix_signal(); ++m)
     {
-      run_simulations[run]->do_metropolis_steps(simulation_parameters.steps_between_measurement, beta);
+      run_simulation->do_metropolis_steps(simulation_parameters.steps_between_measurement, beta);
 
  #pragma omp critical
       {
 	signal_handler_measurement(this);
-	measurement_accumulator(Observable::observe(run_simulations[run]->get_config_space()));
+	measurement_accumulator(Observable::observe(run_simulation->get_config_space()));
       }
     }
     
-    // Call the signal handler for run finishing
 #pragma omp critical
     {
+      // Call the signal handler for run finishing
       if (!this->is_terminating)
 	signal_handler_run(this);
-    }
-  }
 
-  // Delete the created configurations and simulations
-  for (unsigned int run = 0; run < simulation_parameters.run_number; ++run)
-  {
-    delete run_simulations[run]->get_config_space();
-    delete run_simulations[run];
+      // Delete the created configuration and the simulation
+      delete run_simulation->get_config_space();
+      delete run_simulation;
+    }
   }
 }
 

@@ -82,6 +82,24 @@ namespace Mocasinns
       template <class TT>
       friend bool operator>=(const VectorObservable<TT>&, const VectorObservable<TT>&);
 
+      //! Adds a scalar to each component of this VectorObservable
+      VectorObservable<T>& operator+=(const T& rhs)
+      {
+	// Add the scalar component-wise
+	for (iterator it_this = data.begin(); it_this != data.end(); ++it_this)
+	  (*it_this) += rhs;
+
+	return *this;
+      }
+      //! Substracts a scalar of each component of this VectorObservable
+      VectorObservable<T>& operator-=(const T& rhs)
+      {
+	// Substract the scalar component-wise
+	for (iterator it_this = data.begin(); it_this != data.end(); ++it_this)
+	  (*it_this) -= rhs;
+
+	return *this;
+      }
       //! Adds a VectorObservable to this VectorObservable
       VectorObservable<T>& operator+=(const VectorObservable<T>& rhs)
       {
@@ -247,6 +265,24 @@ namespace Mocasinns
     template <class T>
     bool operator>=(const VectorObservable<T>& lhs, const VectorObservable<T>& rhs) { return lhs.data >= rhs.data; }
 
+    //! Adds a VectorObservable and a scalar
+    template <class T>
+    const VectorObservable<T> operator+(const VectorObservable<T>& lhs, const T& rhs)
+    {
+      return VectorObservable<T>(lhs) += rhs;
+    }
+    //! Adds a scalar and a VectorObservable
+    template <class T>
+    const VectorObservable<T> operator+(const T& lhs, const VectorObservable<T>& rhs)
+    {
+      return VectorObservable<T>(rhs) += lhs;
+    }
+    //! Substracts a VectorObservable and a scalar
+    template <class T>
+    const VectorObservable<T> operator-(const VectorObservable<T>& lhs, const T& rhs)
+    {
+      return VectorObservable<T>(lhs) -= rhs;
+    }
     //! Adds two vectors
     template <class T>
     const VectorObservable<T> operator+(const VectorObservable<T>& lhs, const VectorObservable<T>& rhs)

@@ -10,7 +10,7 @@ namespace Mocasinns
 {
   namespace Observables
   {
-    //! Class representing a vector observable with dynamic range check. Can be used like a std::vector and provides (component-wise) addition, substraction and exponentiation of the observables. For (faster) fixed range check use ArrayObservable or TupleObservable.
+    //! Class representing a array observable. Can be used like a std::array and provides (component-wise) addition, substraction and exponentiation of the observables. For using arrays of different types, use TupleObservables.
     template <class T, size_t N>
     class ArrayObservable
     {
@@ -19,7 +19,7 @@ namespace Mocasinns
       std::array<T,N> data;
 
     public:
-      //! The type of the object stored in the VectorObservable (T)
+      //! The type of the object stored in the ArrayObservable (T)
       typedef typename std::array<T,N>::value_type value_type;
       //! Pointer to T
       typedef typename std::array<T,N>::pointer pointer;
@@ -31,20 +31,20 @@ namespace Mocasinns
       typedef typename std::array<T,N>::size_type size_type;
       //! A signed integral type
       typedef typename std::array<T,N>::difference_type difference_type;
-      //! Iterator used to iterate through a VectorObservable
+      //! Iterator used to iterate through a ArrayObservable
       typedef typename std::array<T,N>::iterator iterator;
-      //! Const-Iterator used to iterate through a VectorObservable
+      //! Const-Iterator used to iterate through a ArrayObservable
       typedef typename std::array<T,N>::const_iterator const_iterator;
-      //! Iterator used to iterate backwards through a VectorObservable
+      //! Iterator used to iterate backwards through a ArrayObservable
       typedef typename std::array<T,N>::reverse_iterator reverse_iterator;
-      //! Const-Iterator used to iterate backwards through a VectorObservable
+      //! Const-Iterator used to iterate backwards through a ArrayObservable
       typedef typename std::array<T,N>::const_reverse_iterator const_reverse_iterator;
 
       //! Creates an empty ArrayObservable
       ArrayObservable() {}
       //! Creates a ArrayObservable with copies of t
       ArrayObservable(const T& t) { data.fill(t); }
-      //! Creates a VectorObservable with a std::array
+      //! Creates a ArrayObservable with a std::array
       ArrayObservable(const std::array<T,N>& std_array) { data = std_array; }
       //! Copy-Constructor
       ArrayObservable(const ArrayObservable<T,N>& other) { data = other.data; }
@@ -96,7 +96,25 @@ namespace Mocasinns
       bool operator<=(const ArrayObservable<T,N>& rhs) { return !operator>(rhs); }
       //! Compare the arrays component-wise, starting with the first entry
       bool operator>=(const ArrayObservable<T,N>& rhs) { return !operator<(rhs); }
-      //! Adds a VectorObservable to this VectorObservable
+      //! Adds a scalar to each component of this ArrayObservable
+      ArrayObservable<T,N>& operator+=(const T& rhs)
+      {
+	// Add the scalar component-wise
+	for (unsigned int i = 0; i < N; ++i)
+	  data[i] += rhs;
+
+	return *this;
+      }
+      //! Substracts a scalar of each component of this ArrayObservable
+      ArrayObservable<T,N>& operator-=(const T& rhs)
+      {
+	// Substracts the scalar component-wise
+	for (unsigned int i = 0; i < N; ++i)
+	  data[i] -= rhs;
+
+	return *this;
+      }
+      //! Adds a ArrayObservable to this ArrayObservable
       ArrayObservable<T,N>& operator+=(const ArrayObservable<T,N>& rhs)
       {
 	// Add the vectors component-wise
@@ -105,7 +123,7 @@ namespace Mocasinns
 
 	return *this;
       }
-      //! Substracts a VectorObservable from this VectorObservable
+      //! Substracts a ArrayObservable from this ArrayObservable
       ArrayObservable<T,N>& operator-=(const ArrayObservable<T,N>& rhs)
       {
 	// Substract the vectors component-wise
@@ -114,7 +132,7 @@ namespace Mocasinns
 
 	return *this;
       }
-      //! Multiplies this VectorObservable with a scalar. 
+      //! Multiplies this ArrayObservable with a scalar. 
       template <class S>
       ArrayObservable<T,N>& operator*=(const S& rhs)
       {
@@ -124,7 +142,7 @@ namespace Mocasinns
 
 	return *this;
       }
-      //! Devides this VectorObservable by a scalar
+      //! Devides this ArrayObservable by a scalar
       template <class S>
       ArrayObservable<T,N>& operator/=(const S& rhs)
       {
@@ -153,13 +171,13 @@ namespace Mocasinns
 	return *this;
       }
 
-      //! Returns an iterator pointing to the beginning of the VectorObservable
+      //! Returns an iterator pointing to the beginning of the ArrayObservable
       iterator begin() { return data.begin(); }
-      //! Returns an iterator pointing to the end of the VectorObservable
+      //! Returns an iterator pointing to the end of the ArrayObservable
       iterator end() { return data.end(); }
-      //! Returns an const_iterator pointing to the beginning of the VectorObservable
+      //! Returns an const_iterator pointing to the beginning of the ArrayObservable
       const_iterator begin() const { return data.begin(); }
-      //! Returns an const_iterator pointing to the end of the VectorObservable
+      //! Returns an const_iterator pointing to the end of the ArrayObservable
       const_iterator end() const { return data.end(); }
 
       //! Returns a reverse_iterator pointing to the beginning of the reversed vector. 
@@ -171,9 +189,9 @@ namespace Mocasinns
       //! Returns a const_reverse_iterator pointing to the end of the reversed vector. 
       const_reverse_iterator rend() const { return data.rend(); }
       
-      //! Returns a reference to the element at position n in the VectorObservable.
+      //! Returns a reference to the element at position n in the ArrayObservable.
       reference at (size_type n) { return data.at(n); }
-      //! Returns a const-reference to the element at position n in the VectorObservable.
+      //! Returns a const-reference to the element at position n in the ArrayObservable.
       const_reference at (size_type n) const { return data.at(n); }
       //! Returns the first element
       reference front() { return data.front(); }
@@ -184,20 +202,39 @@ namespace Mocasinns
       //! Returns the last element
       const_reference back() const { return data.back(); }
 
-      //! Returns the size of the VectorObservable. 
+      //! Returns the size of the ArrayObservable. 
       size_type size() const { return data.size(); }
-      //! Returns the largest possible size of the VectorObservable. 
+      //! Returns the largest possible size of the ArrayObservable. 
       size_type max_size() const { return data.max_size(); }
-      //! True if the VectorObservable's size() is 0
+      //! True if the ArrayObservable's size() is 0
       bool is_empty() const { return data.empty(); }
       
-      //! Swaps the contents of two VectorObservables
+      //! Swaps the contents of two ArrayObservables
       void swap(ArrayObservable<T,N>& other) { data.swap(other.data); }
 
       template<class TT, class S>
       friend ArrayObservable<T,N>& pow(const ArrayObservable<T,N>&, const S&);
     };
 
+    //! Adds an ArrayObservable and a scalar
+    template <class T, size_t N>
+    const ArrayObservable<T,N> operator+(const ArrayObservable<T,N>& lhs, const T& rhs)
+    {
+      return ArrayObservable<T,N>(lhs) += rhs;
+    }
+    //! Adds a scalar and an ArrayObservable
+    template <class T, size_t N>
+    const ArrayObservable<T,N> operator+(const T& lhs, const ArrayObservable<T,N>& rhs)
+    {
+      return ArrayObservable<T,N>(rhs) += lhs;
+    }
+      //! Substracts an ArrayObservable and a scalar
+    template <class T, size_t N>
+    const ArrayObservable<T,N> operator-(const ArrayObservable<T,N>& lhs, const T& rhs)
+    {
+      return ArrayObservable<T,N>(lhs) -= rhs;
+    }
+    
     //! Adds two ArrayObservables
     template <class T, size_t N>
     const ArrayObservable<T,N> operator+(const ArrayObservable<T,N>& lhs, const ArrayObservable<T,N>& rhs)
@@ -277,13 +314,13 @@ namespace boost
       template <typename T, size_t N>
       struct ArrayObservableTag;
 
-      // Specialise tag<> for VectorObservable
+      // Specialise tag<> for ArrayObservable
       template <typename T, size_t N> struct tag<Mocasinns::Observables::ArrayObservable<T,N> >
       {
 	typedef ArrayObservableTag<T,N> type;
       };
 
-      // Specify how to devide a VectorObservable by an integral count
+      // Specify how to devide a ArrayObservable by an integral count
       template <typename Left, typename Right, class T, size_t N>
       struct average<Left, Right, ArrayObservableTag<T,N>, void>
       {

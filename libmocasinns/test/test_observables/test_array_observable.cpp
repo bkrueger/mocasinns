@@ -58,6 +58,11 @@ void TestArrayObservable::test_operator_add()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(3.3, added_observable_double[0], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, added_observable_double[1], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(2.1, added_observable_double[2], 1e-6);
+  // Test adding a scalar
+  ArrayObservable<double,3> scalar_added_observable_double = added_observable_double + 2.0;
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(5.3, scalar_added_observable_double[0], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, scalar_added_observable_double[1], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.1, scalar_added_observable_double[2], 1e-6);
 
   // Test adding for VectorObservable<int>
   ArrayObservable<int,3> new_observable_int;
@@ -68,6 +73,11 @@ void TestArrayObservable::test_operator_add()
   CPPUNIT_ASSERT_EQUAL(4, added_observable_int[0]);
   CPPUNIT_ASSERT_EQUAL(1, added_observable_int[1]);
   CPPUNIT_ASSERT_EQUAL(2, added_observable_int[2]);
+  // Test adding a scalar
+  ArrayObservable<int,3> scalar_added_observable_int = added_observable_int + 2;
+  CPPUNIT_ASSERT_EQUAL(6, scalar_added_observable_int[0]);
+  CPPUNIT_ASSERT_EQUAL(3, scalar_added_observable_int[1]);
+  CPPUNIT_ASSERT_EQUAL(4, scalar_added_observable_int[2]);
 }
 void TestArrayObservable::test_operator_substract()
 {
@@ -80,6 +90,11 @@ void TestArrayObservable::test_operator_substract()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.3, substracted_observable_double[0], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0, substracted_observable_double[1], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-6.1, substracted_observable_double[2], 1e-6);
+  // Test substracting a scalar
+  ArrayObservable<double,3> scalar_substracted_observable_double = substracted_observable_double - 2.0;
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-3.3, scalar_substracted_observable_double[0], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, scalar_substracted_observable_double[1], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-8.1, scalar_substracted_observable_double[2], 1e-6);
 
   // Test substracting for VectorObservable<int>
   ArrayObservable<int,3> new_observable_int;
@@ -90,6 +105,11 @@ void TestArrayObservable::test_operator_substract()
   CPPUNIT_ASSERT_EQUAL(0, substracted_observable_int[0]);
   CPPUNIT_ASSERT_EQUAL(11, substracted_observable_int[1]);
   CPPUNIT_ASSERT_EQUAL(-4, substracted_observable_int[2]);
+  // Test substracting a scalar
+  ArrayObservable<int,3> scalar_substracted_observable_int = substracted_observable_int - 2;
+  CPPUNIT_ASSERT_EQUAL(-2, scalar_substracted_observable_int[0]);
+  CPPUNIT_ASSERT_EQUAL(9, scalar_substracted_observable_int[1]);
+  CPPUNIT_ASSERT_EQUAL(-6, scalar_substracted_observable_int[2]);
 }
 void TestArrayObservable::test_operator_multiply()
 {

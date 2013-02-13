@@ -31,9 +31,9 @@ public:
   typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> MetropolisSerial;
 
   //! Boost signal handler invoked after every measurement
-  boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
+  boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
   //! Boost signal handler invoked after every run
-  boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_run;
+  boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_run;
 
   //! Initialise a parallel Metropolis-MC simulation with default configuration space and default Parameters
   MetropolisParallel() : Simulation<ConfigurationType, RandomNumberGenerator>(), simulation_parameters() {}

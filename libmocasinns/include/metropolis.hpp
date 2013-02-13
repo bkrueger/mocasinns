@@ -27,7 +27,7 @@ public:
   struct Parameters;
 
   //! Boost signal handler invoked after every measurement
-  boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
+  boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
 
   //! Initialise a Metropolis-MC simulation with default configuration space and default Parameters
   Metropolis() : Simulation<ConfigurationType, RandomNumberGenerator>(), simulation_parameters() {}

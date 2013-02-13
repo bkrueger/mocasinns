@@ -31,9 +31,9 @@ public:
   struct SimulationDump;
 
   //! Boost signal handler invoked after every sweep
-  boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_sweep;
+  boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_sweep;
   //! Boost signal handler invoked if the actual modification factor is altered by the simulation
-  boost::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_modfac_change;
+  boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_modfac_change;
 
   //! Initialise a WangLanday-MC simulation with default parameters, default configuration space and default RandomNumberGenerator
   WangLandau();

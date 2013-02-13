@@ -11,6 +11,7 @@
 #define MOCASINNS_SIMULATION_HPP
 
 #include <string>
+#include <sstream>
 #include <cstdlib>
 #include <csignal>
 #include <fstream>
@@ -20,7 +21,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
 // Header for signal handling
-#include <boost/signal.hpp>
+#include <boost/signals2/signal.hpp>
 
 namespace Mocasinns
 {
@@ -72,11 +73,11 @@ protected:
   
 public:
   //! Boost signal handler invoked when SIGTERM is caught
-  boost::signal<void (Simulation*)> signal_handler_sigterm;
+  boost::signals2::signal<void (Simulation*)> signal_handler_sigterm;
   //! Boost signal handler invoked when SIGUSR1 is caught
-  boost::signal<void (Simulation*)> signal_handler_sigusr1;
+  boost::signals2::signal<void (Simulation*)> signal_handler_sigusr1;
   //! Boost signal handler invoked when SIGUSR1 is caught
-  boost::signal<void (Simulation*)> signal_handler_sigusr2;
+  boost::signals2::signal<void (Simulation*)> signal_handler_sigusr2;
 
   //! Initialise a Simulation with default configuration space and default RandomNumberGenerator
   Simulation();

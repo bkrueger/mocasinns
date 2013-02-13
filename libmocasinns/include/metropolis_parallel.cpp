@@ -75,6 +75,7 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
   
   // Perform a parallel for-loop for the different runs
   // The signal handlers and the simulation parameters need not to be shared, because class members are allways shared
+  omp_set_num_threads(simulation_parameters.process_number);
 #pragma omp parallel for shared(run_simulations) shared(measurement_accumulator) shared(beta)
   for (unsigned int run = 0; run < simulation_parameters.run_number; ++run)
   {

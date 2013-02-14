@@ -13,7 +13,8 @@ namespace ba = boost::accumulators;
 #include <spin_ising.hpp>
 // Includes from libmocasinns
 #include <metropolis.hpp>
-#include <observables/array_observable.hpp>
+#include <histograms/histogram_number.hpp>
+#include <observables/histogram_accumulator.hpp>
 // Includes from librandom
 #include <random_boost_mt19937.hpp>
 
@@ -53,17 +54,17 @@ int main()
   sim.set_random_seed(0);
 
   // Define an accumulator with an standard observable_type to copy
-  ba::accumulator_set<typename IsingEnergyObserver::observable_type, ba::stats<ba::tag::density> > 
-    acc(ba::tag::density::num_bins = 20, ba::tag::density::cache_size = 100);
+  Mocasinns::Observables::HistogramAccumulator<Mocasinns::Histograms::HistogramNumber, double> acc;
+  acc.set_binning(2.0, 0.0);
 
   // Do the simulation for temperature beta = 0.1
   sim.do_metropolis_simulation<IsingEnergyObserver>(0.1, acc);
 
   // Extract the histogram
-  boost::iterator_range<std::vector<std::pair<double, double> >::iterator> histogram = ba::density(acc);
-  for (unsigned int i = 0; i < histogram.size(); ++i)
+  Mocasinns::Histograms::HistogramNumber<double, double> histo = acc.normalized_histogram();
+  for (Mocasinns::Histograms::HistogramNumber<double, double>::const_iterator it = histo.begin(); it != histo.end(); ++it)
   {
-    std::cout << "Bin lower bound: " << histogram[i].first << ", value: " << histogram[i].second << std::endl;
+    std::cout << "Bin lower bound: " << it->first << ", value: " << it->second << std::endl;
   }
 
 }

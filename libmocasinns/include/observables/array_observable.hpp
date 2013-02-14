@@ -50,7 +50,11 @@ namespace Mocasinns
       ArrayObservable(const ArrayObservable<T,N>& other) { data = other.data; }
 
       //! The assignment operator
-      ArrayObservable<T,N>& operator=(const ArrayObservable<T,N>& other) { return data.operator=(other); }
+      ArrayObservable<T,N>& operator=(const ArrayObservable<T,N>& other) 
+      { 
+	data = other.data;
+	return *this;
+      }
       //! Returns the n'th element
       reference operator[](size_type n) { return data[n]; }
       //! Returns the n'th element

@@ -129,10 +129,10 @@ void HistoBase<x_value_type, y_value_type>::shift_bin_zero(const_iterator it)
 }
 
 template<class x_value_type, class y_value_type>
-y_value_type HistoBase<x_value_type,y_value_type>::sum()
+y_value_type HistoBase<x_value_type,y_value_type>::sum() const
 {
   y_value_type sum = 0;
-  for (iterator it = values.begin(); it != values.end(); it++)
+  for (const_iterator it = values.begin(); it != values.end(); it++)
   {
     sum += it->second;
   }

@@ -48,9 +48,9 @@ public:
   BinningNumber(T new_binning_width, T new_binning_reference) : binning_width(new_binning_width), binning_reference(new_binning_reference) { }
 
   //! Get-accessor for the bin widht
-  T get_binning_width() {return binning_width;}
+  T get_binning_width() const {return binning_width;}
   //! Get-accessor for the reference of the binning
-  T get_binning_reference() {return binning_reference;}
+  T get_binning_reference() const {return binning_reference;}
 
   //! Functor for binning
   T operator()(const T& value)

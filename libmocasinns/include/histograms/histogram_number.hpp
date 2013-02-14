@@ -58,9 +58,9 @@ public:
   HistogramNumber(x_value_type bin_width, x_value_type base_value) : binning(bin_width, base_value) {}
 
   //! Get-accessor for the width of the binning
-  virtual x_value_type get_binning_width() { return binning.get_binning_width(); }
+  virtual x_value_type get_binning_width() const { return binning.get_binning_width(); }
   //! Get-accessor for the reference of the binning
-  virtual x_value_type get_binning_reference() { return binning.get_binning_reference(); }
+  virtual x_value_type get_binning_reference() const { return binning.get_binning_reference(); }
   //! Set accessor to reset the binning, does not affect the actual values
   //! \bug Need to affect the actual values
   virtual void set_binning(x_value_type width, x_value_type reference)

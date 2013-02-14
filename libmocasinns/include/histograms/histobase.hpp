@@ -54,9 +54,9 @@ public:
   HistoBase() { }
 
   //! Get-Accessor for the bin width
-  virtual x_value_type get_binning_width() { return x_value_type(1); }
+  virtual x_value_type get_binning_width() const { return x_value_type(1); }
   //! Get-Accessor the the bin reference
-  virtual x_value_type get_binning_reference() { return x_value_type(0); }
+  virtual x_value_type get_binning_reference() const { return x_value_type(0); }
   //! Set-Accessor for setting the binning
   virtual void set_binning(x_value_type, x_value_type) { }
 
@@ -141,7 +141,7 @@ public:
   size_type size() const { return values.size(); }
   
   //! Returns the sum of the histocrete entries
-  y_value_type sum();
+  y_value_type sum() const;
 
   //! Load the data of the histocrete from a serialization stream
   virtual void load_serialize(std::istream& input_stream);

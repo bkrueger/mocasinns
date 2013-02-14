@@ -63,7 +63,11 @@ namespace Mocasinns
       VectorObservable(InputIterator first, InputIterator last) : data(first, last) {}
 
       //! The assignment operator
-      VectorObservable<T>& operator=(const VectorObservable<T>& other) { return data.operator=(other); }
+      VectorObservable<T>& operator=(const VectorObservable<T>& other) 
+      { 
+	data = other.data;
+	return *this;
+      }
       //! Returns the n'th element
       reference operator[](size_type n) { return data[n]; }
       //! Returns the n'th element
@@ -150,7 +154,8 @@ namespace Mocasinns
 	return *this;
       }
       //! Multiplies this VectorObservable with a scalar. 
-      VectorObservable<T>& operator*=(const T& rhs)
+      template<class S>
+      VectorObservable<T>& operator*=(const S& rhs)
       {
 	for (iterator it = data.begin(); it != data.end(); ++it)
 	{
@@ -159,7 +164,8 @@ namespace Mocasinns
 	return *this;
       }
       //! Devides this VectorObservable by a scalar
-      VectorObservable<T>& operator/=(const T& rhs)
+      template<class S>
+      VectorObservable<T>& operator/=(const S& rhs)
       {
 	for (iterator it = data.begin(); it != data.end(); ++it)
 	{
@@ -318,20 +324,20 @@ namespace Mocasinns
     }
 
     //! Multiply a scalar and a ObservableVector
-    template <class T>
-    const VectorObservable<T> operator*(const T& lhs, const VectorObservable<T>& rhs)
+    template <class T, class S>
+    const VectorObservable<T> operator*(const S& lhs, const VectorObservable<T>& rhs)
     {
       return VectorObservable<T>(rhs) *= lhs;
     }
     //! Multiply a scalar and a ObservableVector
-    template <class T>
-    const VectorObservable<T> operator*(const VectorObservable<T>& lhs, const T& rhs)
+    template <class T, class S>
+    const VectorObservable<T> operator*(const VectorObservable<T>& lhs, const S& rhs)
     {
       return VectorObservable<T>(lhs) *= rhs;
     }
     //! Divide the ObservableVector by a scalar
-    template <class T>
-    const VectorObservable<T> operator/(const VectorObservable<T>& lhs, const T& rhs)
+    template <class T, class S>
+    const VectorObservable<T> operator/(const VectorObservable<T>& lhs, const S& rhs)
     {
       return VectorObservable<T>(lhs) /= rhs;
     }

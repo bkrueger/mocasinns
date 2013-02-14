@@ -14,6 +14,7 @@
 #include "test_histograms/test_histogram_number.hpp"
 #include "test_observables/test_vector_observable.hpp"
 #include "test_observables/test_array_observable.hpp"
+#include "test_observables/test_histogram_accumulator.hpp"
 
 int main()
 {
@@ -32,6 +33,7 @@ int main()
   runner.addTest(TestHistogramNumber::suite());
   runner.addTest(TestVectorObservable::suite());
   runner.addTest(TestArrayObservable::suite());
+  runner.addTest(TestHistogramAccumulator::suite());
 
   CppUnit::BriefTestProgressListener listener;
   runner.eventManager().addListener(&listener);

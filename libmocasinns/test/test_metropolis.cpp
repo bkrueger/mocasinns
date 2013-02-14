@@ -8,6 +8,8 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/error_of_mean.hpp>
 
+#include <observables/vector_observable.hpp>
+
 namespace ba = boost::accumulators;
 
 //! Helper class to measure the energy of a configuration
@@ -16,6 +18,19 @@ class TestMetropolis::ObserveIsingEnergy
 public:
   typedef double observable_type;
   static observable_type observe(ConfigurationType* config) { return config->energy(); }
+};
+//! Helper class to measure the energy and the magnetization of a configuration
+class TestMetropolis::ObserveIsingEnergyMagnetization
+{
+public:
+  typedef Observables::VectorObservable<double> observable_type;
+  static observable_type observe(ConfigurationType* config)
+  {
+    observable_type result(2, 0.0);
+    result[0] = config->energy();
+    result[1] = config->magnetization();
+    return result;
+  }
 };
 
 CppUnit::Test* TestMetropolis::suite()
@@ -88,6 +103,9 @@ void TestMetropolis::test_do_metropolis_simulation()
 
 void TestMetropolis::test_integrated_autocorrelation_time()
 {
-  // Call the method
+  // Call the method for a simple observable
   double int_auto_time = test_simulation->integrated_autocorrelation_time<ObserveIsingEnergy>(0.0, 100, 5);
+
+  // Call the method for a more complicated observable
+  Observables::VectorObservable<double> int_auto_time_vec = test_simulation->integrated_autocorrelation_time<ObserveIsingEnergyMagnetization>(0.0, 100, 5);
 }

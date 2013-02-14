@@ -165,22 +165,25 @@ std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, 
 
   // Define the vector with the measurments of the observable and take the measurements
   std::vector<typename Observable::observable_type> observable_measurements;
-  for (unsigned int i = 0; i < maximal_time*simulation_time_factor; ++i)
+  for (unsigned int i = 0; i <= maximal_time*simulation_time_factor; ++i)
   {
     do_metropolis_steps(this->get_config_space()->system_size(), beta);
     observable_measurements.push_back(Observable::observe(this->get_config_space()));
   }
 
   // Define an accumulator and calculate the mean value of the observable
-  ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_measured_mean;
-  std::for_each(observable_measurements.begin(), observable_measurements.end(), boost::bind<void>(boost::ref(acc_measured_mean), _1));
+  ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_measured_mean(observable_measurements[0]);
+  for (unsigned int i = 0; i <= maximal_time*simulation_time_factor; ++i)
+  {
+    acc_measured_mean(observable_measurements[i]);
+  }
   typename Observable::observable_type measured_mean = ba::mean(acc_measured_mean);
 
   // Calculate the autocorrelation function using an accumulator
   for (unsigned int time = 0; time <= maximal_time; ++time)
   {
     // Calculate the mean autocorrelation function for time
-    ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_autocorrelation_function_time;
+    ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_autocorrelation_function_time(observable_measurements[0]);
     for (unsigned int sweep = 0; sweep < simulation_time_factor; ++sweep)
     {
       unsigned int start_time = sweep*maximal_time;
@@ -216,7 +219,7 @@ typename Observable::observable_type Metropolis<ConfigurationType, Step, RandomN
   std::vector<typename Observable::observable_type> vec_autocorrelation_function = autocorrelation_function<Observable>(beta, maximal_time, considered_time_factor);
 
   // Calculate the integrated autocorrelation time
-  typename Observable::observable_type result(1.0);
+  typename Observable::observable_type result = vec_autocorrelation_function[0]/vec_autocorrelation_function[0]; // Use this to initialise a one in each component even if using an VectorObservable or ArrayObservable
   for (unsigned int t = 1; t < maximal_time; ++t)
   {
     result += 2.0*(1.0 - static_cast<double>(t)/static_cast<double>(maximal_time))*(vec_autocorrelation_function[t]/vec_autocorrelation_function[0]);

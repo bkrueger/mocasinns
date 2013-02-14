@@ -27,6 +27,7 @@ private:
   SimulationType::Parameters test_parameters;
 
   class ObserveIsingEnergy;
+  class ObserveIsingEnergyMagnetization;
 
 public:
   static CppUnit::Test* suite();

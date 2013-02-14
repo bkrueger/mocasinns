@@ -20,4 +20,4 @@ test: $(TEST_OBJECTS)
 	$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -f *.o test
+	rm -f $(TEST_OBJECTS) *.o test

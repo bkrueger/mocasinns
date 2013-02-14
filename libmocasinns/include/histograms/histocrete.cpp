@@ -14,32 +14,35 @@ namespace Histograms
 {
 
 template<class x_value_type, class y_value_type>
-void Histocrete<x_value_type,y_value_type>::operator+=(HistoBase<x_value_type, y_value_type>& other_histobase)
+Histocrete<x_value_type,y_value_type>& Histocrete<x_value_type,y_value_type>::operator+=(HistoBase<x_value_type, y_value_type>& other_histobase)
 {
   for (iterator it = other_histobase.begin(); it != other_histobase.end(); it++)
   {
     this->values[it->first] += it->second;
   }
+  return *this;
 }
 template<class x_value_type, class y_value_type>
-void Histocrete<x_value_type,y_value_type>::operator+= (const y_value_type& const_value)
+Histocrete<x_value_type,y_value_type>& Histocrete<x_value_type,y_value_type>::operator+=(const y_value_type& const_value)
 {
   for (iterator it = this->values.begin(); it != this->values.end(); it++)
   {
     it->second += const_value;
   }
+  return *this;
 }
 template<class x_value_type, class y_value_type>
-void Histocrete<x_value_type,y_value_type>::operator/= (HistoBase<x_value_type, y_value_type>& other_histobase)
+Histocrete<x_value_type,y_value_type>& Histocrete<x_value_type,y_value_type>::operator/= (HistoBase<x_value_type, y_value_type>& other_histobase)
 {
   for (iterator it = other_histobase.begin(); it != other_histobase.end(); it++)
   {
     if (!isnan(it->second) && it->second != 0)
       this->values[it->first] /= it->second;
   }
+  return *this;
 }
 template<class x_value_type, class y_value_type>
-void Histocrete<x_value_type,y_value_type>::operator/= (const y_value_type& const_value)
+Histocrete<x_value_type,y_value_type>& Histocrete<x_value_type,y_value_type>::operator/= (const y_value_type& const_value)
 {
   if (const_value == 0) return;
   
@@ -47,6 +50,7 @@ void Histocrete<x_value_type,y_value_type>::operator/= (const y_value_type& cons
   {
     if (!isnan(it->second)) it->second /= const_value;
   }
+  return *this;
 }
 
 template<class x_value_type, class y_value_type>

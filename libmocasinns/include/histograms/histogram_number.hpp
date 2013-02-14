@@ -78,13 +78,13 @@ public:
   //! Value of the Histogram at given bin, takes binning into account
   //const y_value_type& operator[] (const x_value_type & bin) const { return this->values[binning(bin)]; }
   //! Adds a given HistoBase (using the binning function) to this Histogram
-  void operator+= (HistoBase<x_value_type, y_value_type>& other_histobase);
+  HistogramNumber<x_value_type, y_value_type>& operator+= (HistoBase<x_value_type, y_value_type>& other_histobase);
   //! Adds a given value to all bins of this Histogram
-  void operator+= (const y_value_type& const_value);
+  HistogramNumber<x_value_type, y_value_type>& operator+= (const y_value_type& const_value);
   //! Devides this Histogram binwise through a given HistoBase
-  void operator/= (HistoBase<x_value_type, y_value_type>& other_histobase);
+  HistogramNumber<x_value_type, y_value_type>& operator/= (HistoBase<x_value_type, y_value_type>& other_histobase);
   //! Devides this Histogram binwise through a given value
-  void operator/= (const y_value_type& const_value); 
+  HistogramNumber<x_value_type, y_value_type>& operator/= (const y_value_type& const_value); 
 
   //! Bin a value
   virtual x_value_type bin_value(x_value_type value) { return binning(value); }

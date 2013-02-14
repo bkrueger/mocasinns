@@ -14,32 +14,35 @@ namespace Histograms
 {
 
 template<class x_value_type, class y_value_type>
-void HistogramNumber<x_value_type,y_value_type>::operator+=(HistoBase<x_value_type, y_value_type>& other_histobase)
+HistogramNumber<x_value_type, y_value_type>& HistogramNumber<x_value_type,y_value_type>::operator+=(HistoBase<x_value_type, y_value_type>& other_histobase)
 {
   for (iterator it = other_histobase.begin(); it != other_histobase.end(); it++)
   {
     this->values[binning(it->first)] += it->second;
   }
+  return *this;
 }
 template<class x_value_type, class y_value_type>
-void HistogramNumber<x_value_type,y_value_type>::operator+= (const y_value_type& const_value)
+HistogramNumber<x_value_type, y_value_type>& HistogramNumber<x_value_type,y_value_type>::operator+= (const y_value_type& const_value)
 {
   for (iterator it = this->values.begin(); it != this->values.end(); it++)
   {
     it->second += const_value;
   }
+  return *this;
 }
 template<class x_value_type, class y_value_type>
-void HistogramNumber<x_value_type,y_value_type>::operator/= (HistoBase<x_value_type, y_value_type>& other_histobase)
+HistogramNumber<x_value_type, y_value_type>& HistogramNumber<x_value_type,y_value_type>::operator/= (HistoBase<x_value_type, y_value_type>& other_histobase)
 {
   for (iterator it = other_histobase.begin(); it != other_histobase.end(); it++)
   {
     if (it->second != 0)
       this->values[binning(it->first)] /= it->second;
   }
+  return *this;
 }
 template<class x_value_type, class y_value_type>
-void HistogramNumber<x_value_type,y_value_type>::operator/= (const y_value_type& const_value)
+HistogramNumber<x_value_type, y_value_type>& HistogramNumber<x_value_type,y_value_type>::operator/= (const y_value_type& const_value)
 {
   if (const_value == 0) return;
   
@@ -47,6 +50,7 @@ void HistogramNumber<x_value_type,y_value_type>::operator/= (const y_value_type&
   {
     it->second /= const_value;
   }
+  return *this;
 }
 
 template<class x_value_type, class y_value_type>

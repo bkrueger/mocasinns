@@ -57,13 +57,13 @@ public:
   //! Value of the Histocrete at given bin
   const y_value_type& operator[] (const x_value_type & bin) const { return this->values[bin]; }
   //! Adds a given HistoBase to this Histocrete
-  void operator+= (HistoBase<x_value_type, y_value_type>& other_histobase);
+  Histocrete<x_value_type, y_value_type>& operator+= (HistoBase<x_value_type, y_value_type>& other_histobase);
   //! Adds a given value to all bins of this Histocrete
-  void operator+= (const y_value_type& const_value);
+  Histocrete<x_value_type, y_value_type>& operator+= (const y_value_type& const_value);
   //! Devides this Histocrete binwise through a given HistoBase
-  void operator/= (HistoBase<x_value_type, y_value_type>& other_histobase);
+  Histocrete<x_value_type, y_value_type>& operator/= (HistoBase<x_value_type, y_value_type>& other_histobase);
   //! Devides this Histocrete binwise through a given value
-  void operator/= (const y_value_type& const_value); 
+  Histocrete<x_value_type, y_value_type>& operator/= (const y_value_type& const_value); 
 
   //! Insert element
   std::pair<iterator, bool> insert(const value_type& x) { return this->values.insert(x); }

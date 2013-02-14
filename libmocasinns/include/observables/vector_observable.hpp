@@ -103,7 +103,17 @@ namespace Mocasinns
       //! Adds a VectorObservable to this VectorObservable
       VectorObservable<T>& operator+=(const VectorObservable<T>& rhs)
       {
-	// Test the sizes
+	// If the right hand side is empty, do nothing.
+	// If this VectorObservable is empty, assign the rhs to this vector and return
+	if (rhs.size() == 0)
+	  return *this;
+	if (this->size() == 0)
+	{
+	  data = rhs.data;
+	  return *this;
+	}
+
+	// Test the sizes for other mismatch
 	if (data.size() != rhs.size()) throw SizesUnequalException();
 
 	// Add the vectors component-wise
@@ -117,7 +127,18 @@ namespace Mocasinns
       //! Substracts a VectorObservable from this VectorObservable
       VectorObservable<T>& operator-=(const VectorObservable<T>& rhs)
       {
-	// Test the sizes
+	// If the right hand side is empty, do nothing.
+	// If this VectorObservable is empty, assign the negative rhs to this vector and return
+	if (rhs.size() == 0)
+	  return *this;
+	if (this->size() == 0)
+	{
+	  for (const_iterator it_rhs = rhs.data.begin(); it_rhs != rhs.data.end(); ++it_rhs)
+	    this->push_back(-(*it_rhs));
+	  return *this;
+	}
+
+	// Test the sizes for other mismatch
 	if (data.size() != rhs.size()) throw SizesUnequalException();
 
 	// Substract the vectors component-wise

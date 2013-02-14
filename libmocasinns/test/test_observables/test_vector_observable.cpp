@@ -64,6 +64,15 @@ void TestVectorObservable::test_operator_add()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0, scalar_added_observable_double[1], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(4.1, scalar_added_observable_double[2], 1e-6);
 
+  // Test adding of an empty VectorObservable for VectorObservable<double>
+  VectorObservable<double> empty_observable_double;
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, ((*vector_observable_double) + empty_observable_double)[0], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2.5, ((*vector_observable_double) + empty_observable_double)[1], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-2.0, ((*vector_observable_double) + empty_observable_double)[2], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, (empty_observable_double + (*vector_observable_double))[0], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2.5, (empty_observable_double + (*vector_observable_double))[1], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-2.0, (empty_observable_double + (*vector_observable_double))[2], 1e-6);
+
   // Test adding for VectorObservable<int>
   VectorObservable<int> new_observable_int(3,0);
   new_observable_int[0] = 2;
@@ -95,6 +104,15 @@ void TestVectorObservable::test_operator_substract()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-3.3, scalar_substracted_observable_double[0], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, scalar_substracted_observable_double[1], 1e-6);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-8.1, scalar_substracted_observable_double[2], 1e-6);
+
+  // Test substracting of an empty VectorObservable for VectorObservable<double>
+  VectorObservable<double> empty_observable_double;
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, ((*vector_observable_double) - empty_observable_double)[0], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2.5, ((*vector_observable_double) - empty_observable_double)[1], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-2.0, ((*vector_observable_double) - empty_observable_double)[2], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, (empty_observable_double - (*vector_observable_double))[0], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-2.5, (empty_observable_double - (*vector_observable_double))[1], 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, (empty_observable_double - (*vector_observable_double))[2], 1e-6);
 
   // Test substracting for VectorObservable<int>
   VectorObservable<int> new_observable_int(3,0);

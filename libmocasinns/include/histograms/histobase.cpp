@@ -42,6 +42,29 @@ bool HistoBase<x_value_type,y_value_type>::operator!=(const HistoBase<x_value_ty
 }
 
 template<class x_value_type, class y_value_type>
+double HistoBase<x_value_type,y_value_type>::derivative(const_iterator x) const
+{
+  // If the bin is the first or the last bin, use the simple formula using only one neighbour
+  if (x == min_x_value())
+  {
+    const_iterator x_plus(x); ++x_plus;
+    return static_cast<double>(x_plus->second - x->second)/static_cast<double>(x_plus->first - x->first);
+  }
+  else if (x == max_x_value())
+  {
+    const_iterator x_minus(x); --x_minus;
+    return static_cast<double>(x->second - x_minus->second)/static_cast<double>(x->first - x_minus->first);
+  }
+  // If we have a bin in the middle, use both neighbouring points
+  else
+  {
+    const_iterator x_plus(x); ++x_plus;
+    const_iterator x_minus(x); --x_minus;
+    return static_cast<double>(x_plus->second - x_minus->second)/static_cast<double>(x_plus->first - x_minus->first);
+  }
+}
+
+template<class x_value_type, class y_value_type>
 double HistoBase<x_value_type,y_value_type>::flatness() const
 {
   unsigned int bin_number = 0;

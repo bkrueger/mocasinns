@@ -76,9 +76,12 @@ public:
   //! Delete all x- and y-values of the histogram
   void clear() { values.clear(); }
 
-  // Count elements with a specific x-value
+  //! Count elements with a specific x-value
   size_type count(const x_value_type& x) const { return values.count(x); }
 
+  //! Calculate the derivative at given x_value_type
+  double derivative(const_iterator x) const;
+  
   //! Test whether container is empty
   bool empty() const { return values.empty(); }
 

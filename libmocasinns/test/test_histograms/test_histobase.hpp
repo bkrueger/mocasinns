@@ -25,6 +25,7 @@ public:
   void tearDown();
 
   void test_operator_equal();
+  void test_derivative();
   void test_flatness();
   void test_max_x_value();
   void test_max_y_value();

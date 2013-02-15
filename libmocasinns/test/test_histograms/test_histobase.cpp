@@ -5,6 +5,7 @@ CppUnit::Test* TestHistoBase::suite()
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistoBase");
     
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_derivative", &TestHistoBase::test_derivative ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_flatness", &TestHistoBase::test_flatness ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_max_x_value", &TestHistoBase::test_max_x_value ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_max_y_value", &TestHistoBase::test_max_y_value ) );
@@ -67,6 +68,32 @@ void TestHistoBase::test_operator_equal()
   // Test for inequality
   CPPUNIT_ASSERT(testhisto_int != testhisto_int_second);
   CPPUNIT_ASSERT(testhisto_double != testhisto_double_second);
+}
+
+void TestHistoBase::test_derivative()
+{
+  // Test for integers
+  // Fill with additional numbers
+  testhisto_int << std::pair<int,int>(1,2);
+  testhisto_int << std::pair<int,int>(2,1);
+  // Test the derivatives
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, testhisto_int.derivative(testhisto_int.find(1)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, testhisto_int.derivative(testhisto_int.find(2)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.5, testhisto_int.derivative(testhisto_int.find(3)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, testhisto_int.derivative(testhisto_int.find(4)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, testhisto_int.derivative(testhisto_int.find(5)), 1e-6);
+
+  // Test for doubles
+  // Test for integers
+  // Fill with additional numbers
+  testhisto_double << std::pair<double,double>(1.0,2.0);
+  testhisto_double << std::pair<double,double>(2.0,1.0);
+  // Test the derivatives
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, testhisto_double.derivative(testhisto_double.find(1)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, testhisto_double.derivative(testhisto_double.find(2)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.5, testhisto_double.derivative(testhisto_double.find(3)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, testhisto_double.derivative(testhisto_double.find(4)), 1e-6);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, testhisto_double.derivative(testhisto_double.find(5)), 1e-6);
 }
 void TestHistoBase::test_flatness()
 {

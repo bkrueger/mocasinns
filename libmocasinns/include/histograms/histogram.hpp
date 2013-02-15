@@ -59,18 +59,18 @@ public:
   //! Constructor taking the binning width and the binning reference
   Histogram(x_value_type binning_width, x_value_type binning_reference) : binning(binning_width, binning_reference) {}
   //! Copy constructor
-  Histogram(Histogram<x_value_type, y_value_type, BinningFunctor>& other) : HistoBase<x_value_type,y_value_type>(other), binning(other.binning) {}
+  Histogram(HistoBase<x_value_type, y_value_type>& other) : HistoBase<x_value_type,y_value_type>(other), binning(other.binning) {}
 
   //! Get-accessor for the binning functor
-  BinningFunctor get_binning() { return binning; }
+  BinningFunctor get_binning() const { return binning; }
   //! Set-accessor for the binning functor
   void set_binning(BinningFunctor value) { binning = value; }
   //! Get-accessor for the width of the binning
-  x_value_type get_binning_width() { return binning.get_binning_width(); }
+  x_value_type get_binning_width() const { return binning.get_binning_width(); }
   //! Set-accessor for the width of the binning
-  void set_binning(x_value_type value) { binning.set_binning_width(value); }
+  void set_binning_width(x_value_type value) { binning.set_binning_width(value); }
   //! Get-accessor for the reference point of the binning
-  x_value_type get_binning_reference() { return binning.get_binning_reference(); }
+  x_value_type get_binning_reference() const { return binning.get_binning_reference(); }
   //! Set-accessor for the reference point of the binning
   void set_binning_reference(x_value_type value) { binning.set_binning_reference(value); }
 
@@ -133,7 +133,7 @@ public:
   //! Constructor taking the binning width and the binning reference
   HistogramNumber(x_value_type binning_width, x_value_type binning_reference) : Base(binning_width, binning_reference) {}
   //! Copy constructor
-  HistogramNumber(HistogramNumber<x_value_type, y_value_type>& other) : Base(other) {}  
+  HistogramNumber(const HistoBase<x_value_type, y_value_type>& other) : Base(other) {}  
 };
 
 /*!
@@ -161,7 +161,7 @@ public:
   //! Constructor taking the binning width and the binning reference
   HistogramVector(x_value_type binning_width, x_value_type binning_reference) : Base(binning_width, binning_reference) {}
   //! Copy constructor
-  HistogramVector(HistogramVector<x_value_type, y_value_type>& other) : Base(other) {}  
+  HistogramVector(const HistoBase<x_value_type, y_value_type>& other) : Base(other) {}  
 
   //! Load the data of the HistogramVector from a serialization stream
   //! \todo Needs to be implemented

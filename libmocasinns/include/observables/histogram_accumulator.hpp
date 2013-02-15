@@ -39,7 +39,8 @@ namespace Mocasinns
 
 	// Define the result and set the binning
 	Histo<Observable, double> result;
-	result.set_binning(this->get_binning_width(), this->get_binning_reference());
+	result.set_binning_width(this->get_binning_width());
+	result.set_binning_reference(this->get_binning_reference());
 
 	// Calculate the normalized histogram
 	for (typename BaseHisto::const_iterator it = this->begin(); it != this->end(); ++it)

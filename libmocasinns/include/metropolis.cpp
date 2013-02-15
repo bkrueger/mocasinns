@@ -53,6 +53,7 @@ void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_s
 }
 
 /*!
+  \fn std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
   \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed.

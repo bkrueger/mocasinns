@@ -47,10 +47,14 @@ public:
   //! Constructor giving the bin width and the base value
   BinningNumber(T new_binning_width, T new_binning_reference) : binning_width(new_binning_width), binning_reference(new_binning_reference) { }
 
-  //! Get-accessor for the bin widht
+  //! Get-accessor for the bin width
   T get_binning_width() const {return binning_width;}
-  //! Get-accessor for the reference of the binning
+  //! Set-accessor for the bin width
+  void set_binning_width(T value) { binning_width = value; }
+  //! Get-accessor for the reference point of the binning
   T get_binning_reference() const {return binning_reference;}
+  //! Set-accessor for the reference point of the binning
+  void set_binning_reference(T value) { binning_reference = value; }
 
   //! Functor for binning
   T operator()(const T& value)
@@ -64,9 +68,9 @@ template<class T> class BinningNumberVector
 {
 private:
   //! Bin-width
-  std::vector<T> bin_widths;
+  std::vector<T> binning_width;
   //! Zero value of the binning
-  std::vector<T> base_values;
+  std::vector<T> binning_reference;
 
   // Serialization stuff
   //! Member variable for boost serialization
@@ -74,31 +78,40 @@ private:
   //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
   template<class Archive> void serialize(Archive & ar, const unsigned int)
   {
-    ar & bin_widths;
-    ar & base_values;
+    ar & binning_width;
+    ar & binning_reference;
   }
 
   
 public:
   //! Constructor giving a single bin width for all numbers
   BinningNumberVector(unsigned int dimension, T bin_width) 
-    : bin_widths(dimension, bin_width), base_values(dimension, 0) {}
+    : binning_width(dimension, bin_width), binning_reference(dimension, 0) {}
   //! Constructor giving a single bin width and a single base value for all numbers
   BinningNumberVector(unsigned int dimension, T bin_width, T base_value) 
-    : bin_widths(dimension, bin_width), base_values(dimension, base_value) {}
+    : binning_width(dimension, bin_width), binning_reference(dimension, base_value) {}
   //! Constructor giving different bin widths and base values for each dimension
-  BinningNumberVector(const std::vector<T>& new_bin_widths) 
-    : bin_widths(new_bin_widths), base_values(bin_widths.size(), 0) {}
+  BinningNumberVector(const std::vector<T>& new_binning_width) 
+    : binning_width(new_binning_width), binning_reference(binning_width.size(), 0) {}
   //! Constructor giving different bin widths and base values for each dimension
-  BinningNumberVector(const std::vector<T>& new_bin_widths, const std::vector<T>& new_base_values) 
-    : bin_widths(new_bin_widths), base_values(new_base_values) {}
+  BinningNumberVector(const std::vector<T>& new_binning_width, const std::vector<T>& new_binning_reference) 
+    : binning_width(new_binning_width), binning_reference(new_binning_reference) {}
+
+  //! Get-accessor for the bin width
+  T get_binning_width() const {return binning_width;}
+  //! Set-accessor for the bin width
+  void set_binning_width(T value) { binning_width = value; }
+  //! Get-accessor for the reference point of the binning
+  T get_binning_reference() const {return binning_reference;}
+  //! Set-accessor for the reference point of the binning
+  void set_binning_reference(T value) { binning_reference = value; }
 
   //! Functor for binning
   std::vector<T> operator()(const std::vector<T>& value)
   {
-    std::vector<T> result(bin_widths.size(), 0);
+    std::vector<T> result(binning_width.size(), 0);
     for (unsigned int i = 0; i < result.size(); i++)
-      result[i] = base_values[i] + bin_widths[i]*(T)(floor((value[i] - base_values[i]) / static_cast<double>(bin_widths[i])));
+      result[i] = binning_reference[i] + binning_width[i]*(T)(floor((value[i] - binning_reference[i]) / static_cast<double>(binning_width[i])));
     return result;
   }
 };

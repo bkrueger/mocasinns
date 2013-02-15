@@ -13,7 +13,8 @@ CppUnit::Test* TestHistogramAccumulator::suite()
 void TestHistogramAccumulator::setUp()
 {
   // Set the binning
-  histogram_accumulator.set_binning(1.0, 0.0);
+  histogram_accumulator.set_binning_width(1.0);
+  histogram_accumulator.set_binning_reference(0.0);
 
   // Set some values
   histogram_accumulator[-0.5] = 2;

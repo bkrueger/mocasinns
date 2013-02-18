@@ -9,6 +9,7 @@ CppUnit::Test* TestHistocrete::suite()
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_operator_increment", &TestHistocrete::test_operator_increment ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_operator_divide", &TestHistocrete::test_operator_divide ) );
 
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_initialise_empty", &TestHistocrete::test_initialise_empty ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_insert", &TestHistocrete::test_insert ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistocrete>("TestHistograms/TestHistocrete: test_serialize", &TestHistocrete::test_serialize ) );
 
@@ -138,6 +139,37 @@ void TestHistocrete::test_operator_increment()
 void TestHistocrete::test_operator_divide()
 { 
 
+}
+
+void TestHistocrete::test_initialise_empty()
+{
+  Histocrete<double, double> initialised_testhisto_double;
+  initialised_testhisto_double.initialise_empty(testhisto_double);
+  CPPUNIT_ASSERT_EQUAL(5, static_cast<int>(initialised_testhisto_double.size()));
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(1.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(2.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(3.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(4.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(5.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(1.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(2.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(3.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(4.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(5.0)->second);
+
+  Histocrete<double, int> initialised_testhisto_double_int;
+  initialised_testhisto_double_int.initialise_empty(testhisto_double);
+  CPPUNIT_ASSERT_EQUAL(5, static_cast<int>(initialised_testhisto_double_int.size()));
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(1.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(2.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(3.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(4.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(5.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(1.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(2.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(3.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(4.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(5.0)->second);
 }
 
 void TestHistocrete::test_insert()

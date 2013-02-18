@@ -85,6 +85,26 @@ double HistoBase<x_value_type,y_value_type>::flatness() const
   return static_cast<double>(min) / mean;
 }
 
+/*!
+  \tparam other_y_value_type Type of the y-values of the other HistoBase
+  \param other HistoBase that is used to initialise the data of this HistoBase
+
+  \details Initialises this histogram with 0 bins: The x-values are inserted into this histogram, the y-values are omitted.
+ */
+template<class x_value_type, class y_value_type>
+template<class other_y_value_type>
+void HistoBase<x_value_type, y_value_type>::initialise_empty(const HistoBase<x_value_type, other_y_value_type>& other)
+{
+  // Clear all entries of this HistoBase
+  clear();
+
+  // Enter all x-values
+  for (typename HistoBase<x_value_type, other_y_value_type>::const_iterator it = other.begin(); it != other.end(); ++it)
+  {
+    values.insert(std::pair<x_value_type, y_value_type>(it->first, y_value_type(0)));
+  }
+}
+
 template<class x_value_type, class y_value_type>
 typename HistoBase<x_value_type, y_value_type>::const_iterator HistoBase<x_value_type,y_value_type>::max_y_value() const
 {

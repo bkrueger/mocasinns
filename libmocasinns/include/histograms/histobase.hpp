@@ -53,13 +53,6 @@ public:
   //! Standard constructor, initialises a HistoBase without values
   HistoBase() { }
 
-  //! Get-Accessor for the bin width
-  virtual x_value_type get_binning_width() const { return x_value_type(1); }
-  //! Get-Accessor the the bin reference
-  virtual x_value_type get_binning_reference() const { return x_value_type(0); }
-  //! Set-Accessor for setting the binning
-  virtual void set_binning(x_value_type, x_value_type) { }
-
   //! Operator for testing equality
   virtual bool operator==(const HistoBase<x_value_type,y_value_type>& rhs) const;
   //! Operator for testing inequality
@@ -108,6 +101,10 @@ public:
 
   //! Calculates the flatness of the histogram
   double flatness() const;
+
+  //! Initialise the HistoBase with all necessary data of another HistoBase, but sets all y-values to 0
+  template <class other_y_value_type>
+  void initialise_empty(const HistoBase<x_value_type, other_y_value_type>& other);
 
   //! Maximal size of the HistoBase given trough implementation
   size_type max_size() const { return values.max_size(); }

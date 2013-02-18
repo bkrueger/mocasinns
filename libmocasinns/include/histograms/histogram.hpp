@@ -95,6 +95,10 @@ public:
   //! Bin a calue
   virtual x_value_type bin_value(x_value_type value) { return binning(value); }
 
+  //! Initialise the Histogram with all necessary data of another Histogram, but sets all y-values to 0
+  template <class other_y_value_type>
+  void initialise_empty(const Histogram<x_value_type, other_y_value_type, BinningFunctor>& other);
+
   //! Insert element, take binning into account
   std::pair<iterator, bool> insert(const value_type& x) { return this->values.insert(value_type(binning(x.first), x.second)); }
   //! Insert element, take binning into account

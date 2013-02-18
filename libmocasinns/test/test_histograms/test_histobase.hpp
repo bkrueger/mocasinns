@@ -27,6 +27,7 @@ public:
   void test_operator_equal();
   void test_derivative();
   void test_flatness();
+  void test_initialise_empty();
   void test_max_x_value();
   void test_max_y_value();
   void test_min_x_value();

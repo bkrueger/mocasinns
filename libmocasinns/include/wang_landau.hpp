@@ -135,6 +135,9 @@ public:
     
   //! Number of steps to take before checking again the flatness
   uint32_t sweep_steps;
+
+  //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
+  HistoType<EnergyType, int> prototype_histo;
     
   //! Constructor to set default values
   Parameters();
@@ -160,6 +163,7 @@ private:
     ar & modification_factor_final;
     ar & modification_factor_multiplyer;
     ar & sweep_steps;
+    ar & prototype_histo;
   }
 };
 

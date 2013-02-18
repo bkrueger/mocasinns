@@ -10,6 +10,7 @@ CppUnit::Test* TestHistogram::suite()
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_operator_increment", &TestHistogram::test_operator_increment ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_operator_divide", &TestHistogram::test_operator_divide ) );
 
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_initialise_empty", &TestHistogram::test_initialise_empty ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_insert", &TestHistogram::test_insert ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistogram>("TestHistograms/TestHistogram: test_serialize", &TestHistogram::test_serialize ) );
 
@@ -138,6 +139,36 @@ void TestHistogram::test_operator_divide()
 
 }
 
+void TestHistogram::test_initialise_empty()
+{
+  Histogram<double, double, BinningNumber<double> > initialised_testhisto_double;
+  initialised_testhisto_double.initialise_empty(*testhisto_double);
+  CPPUNIT_ASSERT_EQUAL(4, static_cast<int>(initialised_testhisto_double.size()));
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(0.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(2.5) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(5.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(7.5) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(0.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(2.5)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(5.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(7.5)->second);
+  CPPUNIT_ASSERT_EQUAL(2.5, initialised_testhisto_double.get_binning_width());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.get_binning_reference());
+
+  Histogram<double, int, BinningNumber<double> > initialised_testhisto_double_int;
+  initialised_testhisto_double_int.initialise_empty(*testhisto_double);
+  CPPUNIT_ASSERT_EQUAL(4, static_cast<int>(initialised_testhisto_double_int.size()));
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(0.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(2.5) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(5.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(7.5) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(0.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(2.5)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(5.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(7.5)->second);
+  CPPUNIT_ASSERT_EQUAL(2.5, initialised_testhisto_double_int.get_binning_width());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double_int.get_binning_reference());
+}
 void TestHistogram::test_insert()
 {
   // Test the insertion of a pair

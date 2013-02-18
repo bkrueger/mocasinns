@@ -24,7 +24,8 @@ WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator
   modification_factor_initial(1.0),
   modification_factor_final(1e-7),
   modification_factor_multiplyer(0.9),
-  sweep_steps(1000) 
+  sweep_steps(1000),
+  prototype_histo()
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 template <class ParameterEnergyType>
@@ -164,8 +165,8 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
   modification_factor_actual = simulation_parameters.modification_factor_initial;
 
   // Set the binnings of the density of states and the incidence counter
-  density_of_states.set_binning(simulation_parameters.binning_width, simulation_parameters.binning_reference);
-  incidence_counter.set_binning(simulation_parameters.binning_width, simulation_parameters.binning_reference);
+  density_of_states.initialise_empty(simulation_parameters.prototype_histo);
+  incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

@@ -65,6 +65,10 @@ public:
   //! Devides this Histocrete binwise through a given value
   Histocrete<x_value_type, y_value_type>& operator/= (const y_value_type& const_value); 
 
+  //! Initialise the Histocrete with all necessary data of another Histocrete, but sets all y-values to 0
+  template <class other_y_value_type>
+  void initialise_empty(const Histocrete<x_value_type, other_y_value_type>& other);
+
   //! Insert element
   std::pair<iterator, bool> insert(const value_type& x) { return this->values.insert(x); }
   //! Insert element

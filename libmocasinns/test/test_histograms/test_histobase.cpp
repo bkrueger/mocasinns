@@ -7,6 +7,7 @@ CppUnit::Test* TestHistoBase::suite()
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_derivative", &TestHistoBase::test_derivative ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_flatness", &TestHistoBase::test_flatness ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_initialise_empty", &TestHistoBase::test_initialise_empty ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_max_x_value", &TestHistoBase::test_max_x_value ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_max_y_value", &TestHistoBase::test_max_y_value ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_min_x_value", &TestHistoBase::test_min_x_value ) );
@@ -113,6 +114,36 @@ void TestHistoBase::test_flatness()
   testhisto_double[5.0] = 3.0;
 
   CPPUNIT_ASSERT(testhisto_double.flatness() == 2.0/mean);  
+}
+void TestHistoBase::test_initialise_empty()
+{
+  HistoBase<double, double> initialised_testhisto_double;
+  initialised_testhisto_double.initialise_empty(testhisto_double);
+  CPPUNIT_ASSERT_EQUAL(5, static_cast<int>(initialised_testhisto_double.size()));
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(1.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(2.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(3.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(4.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double.find(5.0) != initialised_testhisto_double.end());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(1.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(2.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(3.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(4.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(5.0)->second);
+
+  HistoBase<double, int> initialised_testhisto_double_int;
+  initialised_testhisto_double_int.initialise_empty(testhisto_double);
+  CPPUNIT_ASSERT_EQUAL(5, static_cast<int>(initialised_testhisto_double_int.size()));
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(1.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(2.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(3.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(4.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT(initialised_testhisto_double_int.find(5.0) != initialised_testhisto_double_int.end());
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(1.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(2.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(3.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(4.0)->second);
+  CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(5.0)->second);
 }
 void TestHistoBase::test_max_x_value()
 {

@@ -28,6 +28,7 @@ public:
   void test_operator_increment();
   void test_operator_divide();
 
+  void test_initialise_empty();
   void test_insert();
   void test_serialize();
 };

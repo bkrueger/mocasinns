@@ -37,10 +37,9 @@ namespace Mocasinns
 	// Calculate the sum of all histogram entries
 	unsigned long int counter = this->sum();
 
-	// Define the result and set the binning
+	// Define the result and initialize it with this histo
 	Histo<Observable, double> result;
-	result.set_binning_width(this->get_binning_width());
-	result.set_binning_reference(this->get_binning_reference());
+	result.initialise_empty(*this);
 
 	// Calculate the normalized histogram
 	for (typename BaseHisto::const_iterator it = this->begin(); it != this->end(); ++it)

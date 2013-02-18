@@ -71,6 +71,14 @@ public:
 
   //! Count elements with a specific x-value
   size_type count(const x_value_type& x) const { return values.count(x); }
+  //! Count elements with a specific y-value
+  size_type count_y(const y_value_type& y) const
+  {
+    size_type result = 0;
+    for (const_iterator it = begin(); it != end(); ++it)
+      if (it->second == y) result++;
+    return result;
+  }
 
   //! Calculate the derivative at given x_value_type
   double derivative(const_iterator x) const;

@@ -1,12 +1,6 @@
-/**
+/*!
  * \file optimal_ensemble_sampling.hpp
  * \brief Class for Optimal-Sampling-Monte-Carlo simulations with MoCaSinns
- * 
- * Does a Optimal-Sampling simulation and determines the density of states with respect to the energy functional. Usage examples are found in the test cases. 
- * 
- * The algorithm is based on the following two papers:
- * [1] S. Trebst, D. A. Huse, M. Troyer: "Optimizing the ensemble for equilibration in broad-histogram Monte Carlo simulations", PRE 70, 046701 (2004)
- * [2] S. Trebst, D. A. Huse, E. Gull, H. G. Katzgraber, U. H. E. Hansmann, M. Troyer: "Ensemble Optimization Techniques for the Simulation of Slowly Equilibrating Systems", in: Springer Proceedings in Physics Vol. 123, "Computer Simulation Studies in Condensed-Matter Physics XIX" (2007)
  * 
  * \author Benedikt Krüger
  */
@@ -23,7 +17,22 @@
 namespace Mocasinns
 {
 
-  //! Class for Optimal Ensemvle Sampling
+  //! 
+  /*!
+    \brief Class for Optimal Ensemble Sampling
+   
+    \tparam ConfigurationType Type of the configuration space considered.
+    \tparam StepType Type of the step considered.
+    \tparam EnergyType Return type of the ConfigurationType::energy() and StepType::delta_E() functions
+    \tparam HistoType Template template parameter giving the type of the histograms to use. The first template parameters specifies the type of the x-values, the second template parameter specifies the type of the y-values. Use e.g. the classes in Mocasinns::Histograms
+    \tparam RandomNumberGenerator Type of the random number generator to use.
+
+    \details Does a Optimal-Sampling simulation and determines the density of states with respect to the energy functional. Usage examples are found in the test cases. 
+    
+    The algorithm is based on the following two papers:
+    [1] S. Trebst, D. A. Huse, M. Troyer: "Optimizing the ensemble for equilibration in broad-histogram Monte Carlo simulations", PRE 70, 046701 (2004)
+    [2] S. Trebst, D. A. Huse, E. Gull, H. G. Katzgraber, U. H. E. Hansmann, M. Troyer: "Ensemble Optimization Techniques for the Simulation of Slowly Equilibrating Systems", in: Springer Proceedings in Physics Vol. 123, "Computer Simulation Studies in Condensed-Matter Physics XIX" (2007)
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
   class OptimalEnsembleSampling : public Simulation<ConfigurationType, RandomNumberGenerator>
   {
@@ -33,6 +42,7 @@ namespace Mocasinns
 
     //! Typedef for a Wang-Landau simulation (used to estimate the weights)
     typedef WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator> WangLandauSimulation;
+    //! Typedef for the parameters of a Wang-Landau simulation (used to estimate the weights)
     typedef typename WangLandauSimulation::template Parameters<EnergyType> WangLandauParameters;
 
     //! Initialise a optimal ensemble sampling Monte-Carlo simulation with default parameters and default initial configuration space

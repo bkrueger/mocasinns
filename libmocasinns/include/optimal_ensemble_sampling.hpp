@@ -16,8 +16,6 @@
 
 namespace Mocasinns
 {
-
-  //! 
   /*!
     \brief Class for Optimal Ensemble Sampling
    
@@ -44,6 +42,9 @@ namespace Mocasinns
     typedef WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator> WangLandauSimulation;
     //! Typedef for the parameters of a Wang-Landau simulation (used to estimate the weights)
     typedef typename WangLandauSimulation::template Parameters<EnergyType> WangLandauParameters;
+
+    //! Boost signal handler invoked after every iteration
+    boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_iteration;
 
     //! Initialise a optimal ensemble sampling Monte-Carlo simulation with default parameters and default initial configuration space
     OptimalEnsembleSampling();

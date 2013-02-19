@@ -42,6 +42,22 @@ bool HistoBase<x_value_type,y_value_type>::operator!=(const HistoBase<x_value_ty
 }
 
 template<class x_value_type, class y_value_type>
+bool HistoBase<x_value_type, y_value_type>::compatible(const HistoBase<x_value_type,y_value_type>& other) const
+{
+  // Check for size match
+  if (size() != other.size()) return false;
+
+  // Check for value match
+  for (const_iterator it_this = begin(), it_other = other.begin(); it_this != end(); ++it_this, ++it_other)
+  {
+    if (it_this->second != it_other->second) return false;
+  }
+
+  // If sizes and values match, return true
+  return true;
+}
+
+template<class x_value_type, class y_value_type>
 double HistoBase<x_value_type,y_value_type>::derivative(const_iterator x) const
 {
   // If the bin is the first or the last bin, use the simple formula using only one neighbour

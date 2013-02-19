@@ -5,6 +5,7 @@ CppUnit::Test* TestHistoBase::suite()
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistoBase");
     
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_compatible", &TestHistoBase::test_compatible ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_derivative", &TestHistoBase::test_derivative ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_flatness", &TestHistoBase::test_flatness ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_initialise_empty", &TestHistoBase::test_initialise_empty ) );
@@ -69,6 +70,28 @@ void TestHistoBase::test_operator_equal()
   // Test for inequality
   CPPUNIT_ASSERT(testhisto_int != testhisto_int_second);
   CPPUNIT_ASSERT(testhisto_double != testhisto_double_second);
+}
+
+void TestHistoBase::test_compatible()
+{
+  // Create a compatible and two non compativble Histos
+  Histocrete<int,int> testhisto_int_compatible;
+  testhisto_int_compatible[2] = 3;
+  testhisto_int_compatible[1] = 6;
+  testhisto_int_compatible[4] = 1;
+  testhisto_int_compatible[3] = 2;
+  testhisto_int_compatible[5] = 1;
+  Histocrete<int,int> testhisto_int_non_compatible_1;
+  testhisto_int_non_compatible_1[1] = 0;
+  testhisto_int_non_compatible_1[2] = 3;
+  testhisto_int_non_compatible_1[4] = 2;
+  testhisto_int_non_compatible_1[5] = 0;
+  Histocrete<int,int> testhisto_int_non_compatible_2;
+  testhisto_int_non_compatible_2[2] = 3;
+  testhisto_int_non_compatible_2[1] = 6;
+  testhisto_int_non_compatible_2[4] = 1;
+  testhisto_int_non_compatible_2[3] = 2;
+  testhisto_int_non_compatible_2[6] = 1;
 }
 
 void TestHistoBase::test_derivative()

@@ -69,6 +69,9 @@ public:
   //! Delete all x- and y-values of the histogram
   void clear() { values.clear(); }
 
+  //! Check whether this HistoBase and the HistoBase given as parameter have the same x-values
+  bool compatible(const HistoBase<x_value_type,y_value_type>& other) const;
+
   //! Count elements with a specific x-value
   size_type count(const x_value_type& x) const { return values.count(x); }
   //! Count elements with a specific y-value

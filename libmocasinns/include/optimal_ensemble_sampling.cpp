@@ -181,7 +181,7 @@ namespace Mocasinns
 	do_optimal_ensemble_sampling_steps(pow(2,iteration) * simulation_parameters.initial_steps_per_iteration);
 
 	// Check for signals and return if simulation should be terminated
-	if (this->check_for_posix_signal()) return;
+	if (this->check_for_posix_signal()) return HistoType<EnergyType, double>();
 
 	// Fill the fraction histogram
 	for (typename HistoType<EnergyType, unsigned long int>::const_iterator it = incidence_counter_positive.begin();
@@ -230,7 +230,7 @@ namespace Mocasinns
       }
 
       // Rescale the weights
-      weights.shift_bin_zero(weights.min_y_value);
+      weights.shift_bin_zero(weights.min_y_value());
 
       // Invoke the signal handler after iteration
       signal_handler_iteration(this);

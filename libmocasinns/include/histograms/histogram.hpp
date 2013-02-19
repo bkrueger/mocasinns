@@ -23,7 +23,7 @@ namespace Histograms
 
 //! Class for a binned histogram
 template <class x_value_type, class y_value_type, class BinningFunctor> 
-class Histogram : public HistoBase<x_value_type, y_value_type>
+class Histogram : public HistoBase<x_value_type, y_value_type, Histogram<x_value_type, y_value_type, BinningFunctor> >
 {
 private:
   BinningFunctor binning;
@@ -35,19 +35,21 @@ private:
   template<class Archive> void serialize(Archive & ar, const unsigned int)
   {
     // serialize base class information
-    ar & boost::serialization::base_object<HistoBase<x_value_type, y_value_type> >(*this);
+    ar & boost::serialization::base_object<Base>(*this);
     ar & binning;
   }
 
 public:
+  // Typedef for the base class
+  typedef HistoBase<x_value_type, y_value_type, Histogram<x_value_type, y_value_type, BinningFunctor> > Base;
   // Typedefs for iterator
   // Necessary because this is a class template
-  typedef typename HistoBase<x_value_type, y_value_type>::iterator iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::const_iterator const_iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::reverse_iterator reverse_iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::const_reverse_iterator const_reverse_iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::value_type value_type;
-  typedef typename HistoBase<x_value_type, y_value_type>::size_type size_type;
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
+  typedef typename Base::reverse_iterator reverse_iterator;
+  typedef typename Base::const_reverse_iterator const_reverse_iterator;
+  typedef typename Base::value_type value_type;
+  typedef typename Base::size_type size_type;
 
   //! Standard constructor
   Histogram() : binning(1.0, 0.0) {}
@@ -59,7 +61,7 @@ public:
   //! Constructor taking the binning width and the binning reference
   Histogram(x_value_type binning_width, x_value_type binning_reference) : binning(binning_width, binning_reference) {}
   //! Copy constructor
-  Histogram(HistoBase<x_value_type, y_value_type>& other) : HistoBase<x_value_type,y_value_type>(other), binning(other.binning) {}
+  Histogram(const Base& other) : Base(other), binning(1.0, 0.0) {}
 
   //! Get-accessor for the binning functor
   BinningFunctor get_binning() const { return binning; }
@@ -83,14 +85,28 @@ public:
   y_value_type& operator[] (const x_value_type & bin) { return this->values[binning(bin)]; }
   //! Value of the Histogram at given bin, takes binning into account
   const y_value_type& operator[] (const x_value_type & bin) const { return this->values[binning(bin)]; }
-  //! Adds a given HistoBase (using the binning function) to this Histogram
-  Histogram<x_value_type, y_value_type, BinningFunctor>& operator+= (HistoBase<x_value_type, y_value_type>& other_histobase);
+
   //! Adds a given value to all bins of this Histogram
-  Histogram<x_value_type, y_value_type, BinningFunctor>& operator+= (const y_value_type& const_value);
-  //! Devides this Histogram binwise through a given HistoBase
-  Histogram<x_value_type, y_value_type, BinningFunctor>& operator/= (HistoBase<x_value_type, y_value_type>& other_histobase);
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator+= (const y_value_type& scalar) { return Base::operator+=(scalar); }
+  //! Substracts a given value from all bins of this Histogram
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator-= (const y_value_type& scalar) { return Base::operator-=(scalar); }
+  //! Multiplies a given value with all bins of this Histogram
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator*= (const y_value_type& scalar) { return Base::operator*=(scalar); }
   //! Devides this Histogram binwise through a given value
-  Histogram<x_value_type, y_value_type, BinningFunctor>& operator/= (const y_value_type& const_value); 
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator/= (const y_value_type& scalar) { return Base::operator/=(scalar); }
+
+  //! Adds a given HistoBase to this Histogram
+  template<class ArbitraryDerived>
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator+=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator+=(rhs); }
+  //! Substracts a given HistoBase from this Histogram
+  template<class ArbitraryDerived>
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator-=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator-=(rhs); }
+  //! Multiplies this Histogram with given HistoBase
+  template<class ArbitraryDerived>
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator*=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator*=(rhs); }
+  //! Divides this Histogram by given HistoBase
+  template<class ArbitraryDerived>
+  Histogram<x_value_type, y_value_type, BinningFunctor>& operator/=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator/=(rhs); }
 
   //! Bin a calue
   virtual x_value_type bin_value(x_value_type value) { return binning(value); }
@@ -109,15 +125,6 @@ public:
     for (InputIterator it = first; it != last; ++it)
       this->insert(*it); 
   }
-
-  //! Load the data of the histogram from a serialization stream
-  virtual void load_serialize(std::istream& input_stream);
-  //! Load the data of the histogram from a serialization file
-  virtual void load_serialize(const char* filename);
-  //! Save the data of the histogram to a serialization stream
-  virtual void save_serialize(std::ostream& output_stream) const;
-  //! Save the data of the histogram to a serialization file
-  virtual void save_serialize(const char* filename) const;
 };
 
 //! Class implementing a histogram for number x_value_types
@@ -137,7 +144,7 @@ public:
   //! Constructor taking the binning width and the binning reference
   HistogramNumber(x_value_type binning_width, x_value_type binning_reference) : Base(binning_width, binning_reference) {}
   //! Copy constructor
-  HistogramNumber(const HistoBase<x_value_type, y_value_type>& other) : Base(other) {}  
+  HistogramNumber(const Base& other) : Base(other) {}  
 };
 
 /*!
@@ -165,21 +172,7 @@ public:
   //! Constructor taking the binning width and the binning reference
   HistogramVector(x_value_type binning_width, x_value_type binning_reference) : Base(binning_width, binning_reference) {}
   //! Copy constructor
-  HistogramVector(const HistoBase<x_value_type, y_value_type>& other) : Base(other) {}  
-
-  //! Load the data of the HistogramVector from a serialization stream
-  //! \todo Needs to be implemented
-  void load_serialize(std::istream& input_stream);
-  //! Load the data of the HistogramVector from a serialization file
-  //! \todo Needs to be implemented
-  void load_serialize(const char* filename);
-  //! Save the data of the HistogramVector to a serialization stream
-  //! \todo Needs to be implemented
-  void save_serialize(std::ostream& output_stream) const;
-  //! Save the data of the HistogramVector to a serialization file
-  //! \todo Needs to be implemented
-  void save_serialize(const char* filename) const;
-
+  HistogramVector(const Base& other) : Base(other) {}  
 };
 
 } // of namespace Histogram

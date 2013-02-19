@@ -140,7 +140,7 @@ void TestHistoBase::test_flatness()
 }
 void TestHistoBase::test_initialise_empty()
 {
-  HistoBase<double, double> initialised_testhisto_double;
+  HistoBase<double, double, Histocrete<double, double> > initialised_testhisto_double;
   initialised_testhisto_double.initialise_empty(testhisto_double);
   CPPUNIT_ASSERT_EQUAL(5, static_cast<int>(initialised_testhisto_double.size()));
   CPPUNIT_ASSERT(initialised_testhisto_double.find(1.0) != initialised_testhisto_double.end());
@@ -154,7 +154,7 @@ void TestHistoBase::test_initialise_empty()
   CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(4.0)->second);
   CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(5.0)->second);
 
-  HistoBase<double, int> initialised_testhisto_double_int;
+  HistoBase<double, int, Histocrete<double, double> > initialised_testhisto_double_int;
   initialised_testhisto_double_int.initialise_empty(testhisto_double);
   CPPUNIT_ASSERT_EQUAL(5, static_cast<int>(initialised_testhisto_double_int.size()));
   CPPUNIT_ASSERT(initialised_testhisto_double_int.find(1.0) != initialised_testhisto_double_int.end());

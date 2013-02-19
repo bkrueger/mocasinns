@@ -17,8 +17,9 @@ namespace Mocasinns
 namespace Histograms
 {
 
-template<class x_value_type, class y_value_type>
-bool HistoBase<x_value_type,y_value_type>::operator==(const HistoBase<x_value_type,y_value_type>& rhs) const
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+bool HistoBase<x_value_type,y_value_type,Derived>::operator==(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs) const
 {
   // Test that the sizes are equivalent
   if (size() != rhs.size()) return false;
@@ -35,14 +36,96 @@ bool HistoBase<x_value_type,y_value_type>::operator==(const HistoBase<x_value_ty
   // Everything is ok
   return true;
 }
-template<class x_value_type, class y_value_type>
-bool HistoBase<x_value_type,y_value_type>::operator!=(const HistoBase<x_value_type,y_value_type>& rhs) const
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+bool HistoBase<x_value_type,y_value_type,Derived>::operator!=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs) const
 {
   return !operator==(rhs);
 }
 
-template<class x_value_type, class y_value_type>
-bool HistoBase<x_value_type, y_value_type>::compatible(const HistoBase<x_value_type,y_value_type>& other) const
+template<class x_value_type, class y_value_type, class Derived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator+=(const y_value_type& scalar)
+{
+  for (iterator it = this->values.begin(); it != this->values.end(); it++)
+    it->second += scalar;
+
+  return *(static_cast<Derived*>(this));
+}
+template<class x_value_type, class y_value_type, class Derived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator-=(const y_value_type& scalar)
+{
+  for (iterator it = this->values.begin(); it != this->values.end(); it++)
+    it->second -= scalar;
+
+  return *(static_cast<Derived*>(this));
+}
+template<class x_value_type, class y_value_type, class Derived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator*=(const y_value_type& scalar)
+{
+  for (iterator it = this->values.begin(); it != this->values.end(); it++)
+    it->second *= scalar;
+
+  return *(static_cast<Derived*>(this));
+}
+template<class x_value_type, class y_value_type, class Derived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator/=(const y_value_type& scalar)
+{
+  for (iterator it = this->values.begin(); it != this->values.end(); it++)
+    it->second /= scalar;
+
+  return *(static_cast<Derived*>(this));
+}
+
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator+=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs)
+{
+  typedef HistoBase<x_value_type,y_value_type,ArbitraryDerived> rhs_const_iterator;
+
+  for (typename HistoBase<x_value_type,y_value_type,ArbitraryDerived>::const_iterator it = rhs.begin(); it != rhs.end(); it++)
+  {
+    static_cast<Derived*>(this)->operator[](it->first) += it->second;
+  }
+  return *(static_cast<Derived*>(this));
+}
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator-=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs)
+{
+  for (typename HistoBase<x_value_type,y_value_type,ArbitraryDerived>::const_iterator it = rhs.begin(); it != rhs.end(); it++)
+  {
+    static_cast<Derived*>(this)->operator[](it->first) -= it->second;
+  }
+  return *(static_cast<Derived*>(this));
+}
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator*=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs)
+{
+  if (!compatible(rhs)) throw ExceptionNonCompatible();
+
+  for (typename HistoBase<x_value_type,y_value_type,ArbitraryDerived>::const_iterator it = rhs.begin(); it != rhs.end(); it++)
+  {
+    static_cast<Derived*>(this)->operator[](it->first) *= it->second;
+  }
+  return *(static_cast<Derived*>(this));
+}
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+Derived& HistoBase<x_value_type, y_value_type, Derived>::operator/=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs)
+{
+  if (!compatible(rhs)) throw ExceptionNonCompatible();
+
+  for (typename HistoBase<x_value_type,y_value_type,ArbitraryDerived>::const_iterator it = rhs.begin(); it != rhs.end(); it++)
+  {
+    static_cast<Derived*>(this)->operator[](it->first) /= it->second;
+  }
+  return *(static_cast<Derived*>(this));
+}
+
+template<class x_value_type, class y_value_type, class Derived>
+template<class ArbitraryDerived>
+bool HistoBase<x_value_type,y_value_type,Derived>::compatible(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& other) const
 {
   // Check for size match
   if (size() != other.size()) return false;
@@ -57,8 +140,8 @@ bool HistoBase<x_value_type, y_value_type>::compatible(const HistoBase<x_value_t
   return true;
 }
 
-template<class x_value_type, class y_value_type>
-double HistoBase<x_value_type,y_value_type>::derivative(const_iterator x) const
+template<class x_value_type, class y_value_type, class Derived>
+double HistoBase<x_value_type,y_value_type,Derived>::derivative(const_iterator x) const
 {
   // If the bin is the first or the last bin, use the simple formula using only one neighbour
   if (x == min_x_value())
@@ -80,8 +163,8 @@ double HistoBase<x_value_type,y_value_type>::derivative(const_iterator x) const
   }
 }
 
-template<class x_value_type, class y_value_type>
-double HistoBase<x_value_type,y_value_type>::flatness() const
+template<class x_value_type, class y_value_type, class Derived>
+double HistoBase<x_value_type,y_value_type,Derived>::flatness() const
 {
   unsigned int bin_number = 0;
   y_value_type sum = 0;
@@ -107,22 +190,22 @@ double HistoBase<x_value_type,y_value_type>::flatness() const
 
   \details Initialises this histogram with 0 bins: The x-values are inserted into this histogram, the y-values are omitted.
  */
-template<class x_value_type, class y_value_type>
-template<class other_y_value_type>
-void HistoBase<x_value_type, y_value_type>::initialise_empty(const HistoBase<x_value_type, other_y_value_type>& other)
+template<class x_value_type, class y_value_type, class Derived>
+template<class other_y_value_type, class ArbitraryDerived>
+void HistoBase<x_value_type,y_value_type,Derived>::initialise_empty(const HistoBase<x_value_type, other_y_value_type, ArbitraryDerived>& other)
 {
   // Clear all entries of this HistoBase
   clear();
 
   // Enter all x-values
-  for (typename HistoBase<x_value_type, other_y_value_type>::const_iterator it = other.begin(); it != other.end(); ++it)
+  for (typename HistoBase<x_value_type, other_y_value_type, ArbitraryDerived>::const_iterator it = other.begin(); it != other.end(); ++it)
   {
     values.insert(std::pair<x_value_type, y_value_type>(it->first, y_value_type(0)));
   }
 }
 
-template<class x_value_type, class y_value_type>
-typename HistoBase<x_value_type, y_value_type>::const_iterator HistoBase<x_value_type,y_value_type>::max_y_value() const
+template<class x_value_type, class y_value_type, class Derived>
+typename HistoBase<x_value_type,y_value_type,Derived>::const_iterator HistoBase<x_value_type,y_value_type,Derived>::max_y_value() const
 {
   const_iterator result = begin();
   y_value_type max_value = begin()->second;
@@ -137,8 +220,8 @@ typename HistoBase<x_value_type, y_value_type>::const_iterator HistoBase<x_value
   return result;
 }
 
-template<class x_value_type, class y_value_type>
-typename HistoBase<x_value_type, y_value_type>::const_iterator HistoBase<x_value_type,y_value_type>::min_y_value() const
+template<class x_value_type, class y_value_type, class Derived>
+typename HistoBase<x_value_type,y_value_type,Derived>::const_iterator HistoBase<x_value_type,y_value_type,Derived>::min_y_value() const
 {
   const_iterator result = begin();
   y_value_type min_value = begin()->second;
@@ -153,8 +236,8 @@ typename HistoBase<x_value_type, y_value_type>::const_iterator HistoBase<x_value
   return result;
 }
 
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::print() const
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::print() const
 {
   std::cout << "Debug-Printing HistoBase data:" << std::endl;
   for (const_iterator it = values.begin(); it != values.end(); it++)
@@ -163,8 +246,8 @@ void HistoBase<x_value_type,y_value_type>::print() const
   }
 }
 
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::set_all_y_values(const y_value_type& const_value)
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::set_all_y_values(const y_value_type& const_value)
 {
   for (iterator it = values.begin(); it != values.end(); it++)
   {
@@ -175,8 +258,8 @@ void HistoBase<x_value_type,y_value_type>::set_all_y_values(const y_value_type& 
 /*!
  * /param it Iterator pointing to the pair that should be used as a reference
  */
-template<class x_value_type, class y_value_type> 
-void HistoBase<x_value_type, y_value_type>::shift_bin_zero(const_iterator it)
+template<class x_value_type, class y_value_type, class Derived> 
+void HistoBase<x_value_type,y_value_type,Derived>::shift_bin_zero(const_iterator it)
 {
   y_value_type binValue = it->second;
   typename std::map<x_value_type, y_value_type>::iterator entry = values.begin();
@@ -187,8 +270,8 @@ void HistoBase<x_value_type, y_value_type>::shift_bin_zero(const_iterator it)
   }
 }
 
-template<class x_value_type, class y_value_type>
-y_value_type HistoBase<x_value_type,y_value_type>::sum() const
+template<class x_value_type, class y_value_type, class Derived>
+y_value_type HistoBase<x_value_type,y_value_type,Derived>::sum() const
 {
   y_value_type sum = 0;
   for (const_iterator it = values.begin(); it != values.end(); it++)
@@ -198,34 +281,34 @@ y_value_type HistoBase<x_value_type,y_value_type>::sum() const
   return sum;
 }
 
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::load_serialize(std::istream& input_stream)
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::load_serialize(std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
-  input_archive >> (*this);
+  input_archive >> *static_cast<Derived*>(this);
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::load_serialize(const char* filename)
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::load_serialize(const char* filename)
 {
   std::ifstream input_filestream(filename);
   load_serialize(input_filestream);
   input_filestream.close();
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::save_serialize(std::ostream& output_stream) const
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::save_serialize(std::ostream& output_stream) const
 {
   boost::archive::text_oarchive output_archive(output_stream);
-  output_archive << (*this);
+  output_archive << *static_cast<const Derived*>(this);
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::save_serialize(const char* filename) const
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::save_serialize(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_serialize(output_filestream);
   output_filestream.close();
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::load_csv(std::istream& input_stream)
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::load_csv(std::istream& input_stream)
 {
   std::string line;
   this->clear();
@@ -236,11 +319,11 @@ void HistoBase<x_value_type,y_value_type>::load_csv(std::istream& input_stream)
     line.erase(line.begin(), find_if(line.begin(), line.end(), not1(std::ptr_fun<int, int>(isspace)))); // remove leading whitespace
     if(line[0] == '#') continue; // ignore comments
     std::stringstream(line) >> x >> y;
-    values.insert(std::pair<x_value_type, y_value_type>(x,y));
+    static_cast<Derived*>(this)->insert(std::pair<x_value_type, y_value_type>(x,y));
   }
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::load_csv(const char* filename)
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::load_csv(const char* filename)
 {
   std::ifstream input_filestream(filename);
   if(input_filestream.fail())
@@ -250,20 +333,72 @@ void HistoBase<x_value_type,y_value_type>::load_csv(const char* filename)
   load_csv(input_filestream);
   input_filestream.close();
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::save_csv(std::ostream& output_stream) const
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::save_csv(std::ostream& output_stream) const
 {
   for (const_iterator it = values.begin(); it != values.end(); it++)
   {
     output_stream << it->first << "\t" << it->second << "\n";
   }
 }
-template<class x_value_type, class y_value_type>
-void HistoBase<x_value_type,y_value_type>::save_csv(const char* filename) const
+template<class x_value_type, class y_value_type, class Derived>
+void HistoBase<x_value_type,y_value_type,Derived>::save_csv(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_csv(output_filestream);
   output_filestream.close();
+}
+
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator+(const Derived& lhs, const y_value_type& scalar)
+{
+  return Derived(lhs) += scalar;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator+(const y_value_type& scalar, const Derived& rhs)
+{
+  return Derived(rhs) += scalar;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator-(const Derived& lhs, const y_value_type& scalar)
+{
+  return Derived(lhs) -= scalar;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator*(const Derived& lhs, const y_value_type& scalar)
+{
+  return Derived(lhs) *= scalar;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator*(const y_value_type& scalar, const Derived& rhs)
+{
+  return Derived(rhs) *= scalar;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator/(const Derived& lhs, const y_value_type& scalar)
+{
+  return Derived(lhs) /= scalar;
+}
+
+template<class x_value_type, class y_value_type, class DerivedLeft, class DerivedRight>
+const DerivedLeft operator+(const HistoBase<x_value_type, y_value_type, DerivedLeft>& lhs, const HistoBase<x_value_type, y_value_type, DerivedRight>& rhs)
+{
+  return DerivedLeft(lhs) += rhs;
+}
+template<class x_value_type, class y_value_type, class DerivedLeft, class DerivedRight>
+const DerivedLeft operator-(const HistoBase<x_value_type, y_value_type, DerivedLeft>& lhs, const HistoBase<x_value_type, y_value_type, DerivedRight>& rhs)
+{
+  return DerivedLeft(lhs) -= rhs;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator*(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const HistoBase<x_value_type, y_value_type, Derived>& rhs)
+{
+  return Derived(lhs) *= rhs;
+}
+template<class x_value_type, class y_value_type, class Derived>
+const Derived operator/(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const HistoBase<x_value_type, y_value_type, Derived>& rhs)
+{
+  return Derived(lhs) /= rhs;
 }
 
 } // of namespace Histograms

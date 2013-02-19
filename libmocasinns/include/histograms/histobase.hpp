@@ -22,8 +22,20 @@ namespace Mocasinns
 namespace Histograms
 {
 
-//! Class for a histogram used in the Wang-Landau-Algorithm
-template <class x_value_type, class y_value_type> class HistoBase
+/*! 
+ \brief Base class for all histograms used in Mocasinns
+
+ \details This base class provides nearly all functionality for histograms and has an interface similiar to std::map (plus additional functionality). The derived classes then provide how to accumulate data into the histogram (i.e. to which bin a new value has to be assigned, or which additional parameters have to be altered).
+ 
+ The derived class has to be given as a template parameter and has to implement the insert-functionality and an operator[]. The derived class will be used to specify the return values of operators and to access the insert- and operator[]-functionality of the derived class to be able to have general algorithms just written once in the base class.
+
+ \tparam x_value_type Type of the x-values of the histogram
+ \tparam y_value_type Type of the y-values of the histogram
+ \tparam Derived Class that will be derived of this Histobase (must implement an insert-functionality and an operator[])
+
+ \todo Implement specialised functions for output (save_csv) and input (load_csv) of vectors, arrays, ... as x-values
+*/
+template <class x_value_type, class y_value_type, class Derived> class HistoBase
 {
 protected:
   // Private typedefs of the class  
@@ -42,6 +54,9 @@ protected:
   }
 
 public:
+  //! Exception class for arithmetic operations with not-compatible histograms
+  class ExceptionNonCompatible;
+  
   // Typedefs for iterator
   typedef typename histobase_container::iterator iterator;
   typedef typename histobase_container::const_iterator const_iterator;
@@ -54,10 +69,34 @@ public:
   HistoBase() { }
 
   //! Operator for testing equality
-  virtual bool operator==(const HistoBase<x_value_type,y_value_type>& rhs) const;
+  template <class ArbitraryDerived>
+  bool operator==(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs) const;
   //! Operator for testing inequality
-  virtual bool operator!=(const HistoBase<x_value_type,y_value_type>& rhs) const;
-  
+  template <class ArbitraryDerived>
+  bool operator!=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs) const;
+
+  //! Operator for adding a scalar to every bin of this HistoBase
+  Derived& operator+=(const y_value_type& scalar);
+  //! Operator for substracting a scalar of every bin of this HistoBase
+  Derived& operator-=(const y_value_type& scalar);
+  //! Operator for multiplying every bin of this HistoBase with a scalar
+  Derived& operator*=(const y_value_type& scalar);
+  //! Operator for dividing every bin of this HistoBase by a scalar
+  Derived& operator/=(const y_value_type& scalar);
+
+  //! Operator for adding another HistoBase to this one, using the insert functionality of the derived histogram
+  template <class ArbitraryDerived>
+  Derived& operator+=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs);
+  //! Operator for substracting another HistoBase from this one, using the insert functionality of the derived histogram
+  template <class ArbitraryDerived>
+  Derived& operator-=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs);
+  //! Operator for multiplying the y-values of this HistoBase with the y-values of another compatible HistoBase
+  template <class ArbitraryDerived>
+  Derived& operator*=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs);
+  //! Operator for dividing the y-values of this Histobase by the y-values of another compatible HistoBase
+  template <class ArbitraryDerived>
+  Derived& operator/=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs);
+
   //! Return iterator to beginning
   iterator begin() { return values.begin(); }
   //! Return const_iterator to beginning
@@ -70,7 +109,8 @@ public:
   void clear() { values.clear(); }
 
   //! Check whether this HistoBase and the HistoBase given as parameter have the same x-values
-  bool compatible(const HistoBase<x_value_type,y_value_type>& other) const;
+  template <class ArbitraryDerived>
+  bool compatible(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& other) const;
 
   //! Count elements with a specific x-value
   size_type count(const x_value_type& x) const { return values.count(x); }
@@ -114,8 +154,8 @@ public:
   double flatness() const;
 
   //! Initialise the HistoBase with all necessary data of another HistoBase, but sets all y-values to 0
-  template <class other_y_value_type>
-  void initialise_empty(const HistoBase<x_value_type, other_y_value_type>& other);
+  template <class other_y_value_type, class ArbitraryDerived>
+  void initialise_empty(const HistoBase<x_value_type, other_y_value_type, ArbitraryDerived>& other);
 
   //! Maximal size of the HistoBase given trough implementation
   size_type max_size() const { return values.max_size(); }
@@ -155,22 +195,60 @@ public:
   y_value_type sum() const;
 
   //! Load the data of the histocrete from a serialization stream
-  virtual void load_serialize(std::istream& input_stream);
+  void load_serialize(std::istream& input_stream);
   //! Load the data of the histocrete from a serialization file
-  virtual void load_serialize(const char* filename);
+  void load_serialize(const char* filename);
   //! Save the data of the histocrete to a serialization stream
-  virtual void save_serialize(std::ostream& output_stream) const;
+  void save_serialize(std::ostream& output_stream) const;
   //! Save the data of the histocrete to a serialization file
-  virtual void save_serialize(const char* filename) const;
+  void save_serialize(const char* filename) const;
   //! Load the data of the histocrete from a csv stream
-  virtual void load_csv(std::istream& input_stream);
+  void load_csv(std::istream& input_stream);
   //! Load the data of the histocrete from a csv file
-  virtual void load_csv(const char* filename);
+  void load_csv(const char* filename);
   //! Save the data of the histocrete to a csv file
-  virtual void save_csv(std::ostream& output_stream) const;
+  void save_csv(std::ostream& output_stream) const;
   //! Save the data of the histocrete to a csv file
-  virtual void save_csv(const char* filename) const;
+  void save_csv(const char* filename) const;
 };
+
+  template<class x_value_type, class y_value_type, class Derived>
+  class HistoBase<x_value_type,y_value_type,Derived>::ExceptionNonCompatible : public std::out_of_range
+  {
+    ExceptionNonCompatible() : std::out_of_range("Arithmetic calculation with non-compatible histograms.") {}
+  };
+
+  //! Adds a scalar and a HistoBase
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator+(const Derived& lhs, const y_value_type& scalar);
+  //! Adds a HistoBase and a scalar
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator+(const y_value_type& scalar, const Derived& rhs);
+  //! Substract a scalar from a HistoBase
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator-(const Derived& lhs, const y_value_type& scalar);
+  //! Multipliess a scalar and a HistoBase
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator*(const Derived& lhs, const y_value_type& scalar);
+  //! Multiplies a HistoBase and a scalar
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator*(const y_value_type& scalar, const Derived& rhs);
+  //! Divides a HistoBase through a scalar
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator/(const Derived& lhs, const y_value_type& scalar);
+
+  //! Adds two histograms (the type of the left hand side determines the type of the result)
+  template<class x_value_type, class y_value_type, class DerivedLeft, class DerivedRight>
+  const DerivedLeft operator+(const HistoBase<x_value_type, y_value_type, DerivedLeft>& lhs, const HistoBase<x_value_type, y_value_type, DerivedRight>& rhs);
+  //! Substracts two histograms (the type of the left hand side determines the type of the result)
+  template<class x_value_type, class y_value_type, class DerivedLeft, class DerivedRight>
+  const DerivedLeft operator-(const HistoBase<x_value_type, y_value_type, DerivedLeft>& lhs, const HistoBase<x_value_type, y_value_type, DerivedRight>& rhs);
+  //! Multiplies two histograms
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator*(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const HistoBase<x_value_type, y_value_type, Derived>& rhs);
+  //! Divides two histograms
+  template<class x_value_type, class y_value_type, class Derived>
+  const Derived operator/(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const HistoBase<x_value_type, y_value_type, Derived>& rhs);
 
 } // of namespace Histograms
 } // of namespace Mocasinns

@@ -21,7 +21,7 @@ namespace Histograms
 {
 
 template <class x_value_type, class y_value_type> 
-class Histocrete : public HistoBase<x_value_type, y_value_type>
+class Histocrete : public HistoBase<x_value_type, y_value_type, Histocrete<x_value_type, y_value_type> >
 {
 private:
   // Serialization stuff
@@ -31,21 +31,25 @@ private:
   template<class Archive> void serialize(Archive & ar, const unsigned int)
   {
     // serialize base class information
-    ar & boost::serialization::base_object<HistoBase<x_value_type, y_value_type> >(*this);
+    ar & boost::serialization::base_object<Base>(*this);
   }
 
 public:
+  // Typedef for base class
+  typedef HistoBase<x_value_type, y_value_type, Histocrete<x_value_type, y_value_type> > Base;
   // Typedefs for iterator
   // Necessary because this is a class template
-  typedef typename HistoBase<x_value_type, y_value_type>::iterator iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::const_iterator const_iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::reverse_iterator reverse_iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::const_reverse_iterator const_reverse_iterator;
-  typedef typename HistoBase<x_value_type, y_value_type>::value_type value_type;
-  typedef typename HistoBase<x_value_type, y_value_type>::size_type size_type;
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
+  typedef typename Base::reverse_iterator reverse_iterator;
+  typedef typename Base::const_reverse_iterator const_reverse_iterator;
+  typedef typename Base::value_type value_type;
+  typedef typename Base::size_type size_type;
 
   //! Standard constructor
   Histocrete() { }
+  //! Copy constructor
+  Histocrete(const Base& other) : Base(other) {}
 
   // Operators
   //! Increment the y-value of the given Histocrete bin by one
@@ -56,14 +60,28 @@ public:
   y_value_type& operator[] (const x_value_type & bin) { return this->values[bin]; }
   //! Value of the Histocrete at given bin
   const y_value_type& operator[] (const x_value_type & bin) const { return this->values[bin]; }
-  //! Adds a given HistoBase to this Histocrete
-  Histocrete<x_value_type, y_value_type>& operator+= (HistoBase<x_value_type, y_value_type>& other_histobase);
+
   //! Adds a given value to all bins of this Histocrete
-  Histocrete<x_value_type, y_value_type>& operator+= (const y_value_type& const_value);
-  //! Devides this Histocrete binwise through a given HistoBase
-  Histocrete<x_value_type, y_value_type>& operator/= (HistoBase<x_value_type, y_value_type>& other_histobase);
+  Histocrete<x_value_type, y_value_type>& operator+= (const y_value_type& scalar) { return Base::operator+=(scalar); }
+  //! Substracts a given value from all bins of this Histocrete
+  Histocrete<x_value_type, y_value_type>& operator-= (const y_value_type& scalar) { return Base::operator-=(scalar); }
+  //! Multiplies a given value with all bins of this Histocrete
+  Histocrete<x_value_type, y_value_type>& operator*= (const y_value_type& scalar) { return Base::operator*=(scalar); }
   //! Devides this Histocrete binwise through a given value
-  Histocrete<x_value_type, y_value_type>& operator/= (const y_value_type& const_value); 
+  Histocrete<x_value_type, y_value_type>& operator/= (const y_value_type& scalar) { return Base::operator/=(scalar); }
+
+  //! Adds a given HistoBase to this Histocrete
+  template<class ArbitraryDerived>
+  Histocrete<x_value_type, y_value_type>& operator+=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator+=(rhs); }
+  //! Substracts a given HistoBase from this Histocrete
+  template<class ArbitraryDerived>
+  Histocrete<x_value_type, y_value_type>& operator-=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator-=(rhs); }
+  //! Multiplies this Histocrete with given HistoBase
+  template<class ArbitraryDerived>
+  Histocrete<x_value_type, y_value_type>& operator*=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator*=(rhs); }
+  //! Divides this Histocrete by given HistoBase
+  template<class ArbitraryDerived>
+  Histocrete<x_value_type, y_value_type>& operator/=(const HistoBase<x_value_type, y_value_type, ArbitraryDerived>& rhs) { return Base::operator/=(rhs); }
 
   //! Initialise the Histocrete with all necessary data of another Histocrete, but sets all y-values to 0
   template <class other_y_value_type>
@@ -75,15 +93,6 @@ public:
   iterator insert(iterator position, const value_type& x) { return this->values.insert(position, x); }
   //! Insert elements
   template <class InputIterator> void insert(InputIterator first, InputIterator last) { this->values.insert(first, last); }
-
-  //! Load the data of the histocrete from a serialization stream
-  virtual void load_serialize(std::istream& input_stream);
-  //! Load the data of the histocrete from a serialization file
-  virtual void load_serialize(const char* filename);
-  //! Save the data of the histocrete to a serialization stream
-  virtual void save_serialize(std::ostream& output_stream) const;
-  //! Save the data of the histocrete to a serialization file
-  virtual void save_serialize(const char* filename) const;
 };
 
 } // of namespace Histograms

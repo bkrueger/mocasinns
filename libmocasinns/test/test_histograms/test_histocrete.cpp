@@ -108,6 +108,13 @@ void TestHistocrete::test_operator_increment()
   CPPUNIT_ASSERT(testhisto_int[4] == 2);
   CPPUNIT_ASSERT(testhisto_int[5] == 2);
 
+  Histocrete<int,int> testhisto_int_binary = testhisto_int + histo2;
+  CPPUNIT_ASSERT(testhisto_int_binary[1] == 0);
+  CPPUNIT_ASSERT(testhisto_int_binary[2] == 6);
+  CPPUNIT_ASSERT(testhisto_int_binary[3] == -8);
+  CPPUNIT_ASSERT(testhisto_int_binary[4] == 4);
+  CPPUNIT_ASSERT(testhisto_int_binary[5] == 3);
+
   Histocrete<double,double> histo_double2;
   histo_double2[1.0] = 0.0;
   histo_double2[2.0] = 3.0;

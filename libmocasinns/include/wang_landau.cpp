@@ -103,15 +103,18 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     {
       EnergyType delta_E = next_step.delta_E();
       
-      // Calculate the acceptance probability
-      double acceptance_probability = exp(density_of_states[energy] - density_of_states[energy + delta_E])/next_step.selection_probability_factor();
+      if (simulation_parameters.energy_cutoff_use && energy + delta_E < simulation_parameters.energy_cutoff)
+	{
+	  // Calculate the acceptance probability
+	  double acceptance_probability = exp(density_of_states[energy] - density_of_states[energy + delta_E])/next_step.selection_probability_factor();
 
-      if (this->rng->random_double() < acceptance_probability)
-      {
-	// Do the flip
-	energy += delta_E;
-	next_step.execute();
-      }
+	  if (this->rng->random_double() < acceptance_probability)
+	    {
+	      // Do the flip
+	      energy += delta_E;
+	      next_step.execute();
+	    }
+	}
     }
 
     // Update the histograms

@@ -250,6 +250,10 @@ public:
   template<class x_value_type, class y_value_type, class Derived>
   const Derived operator/(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const HistoBase<x_value_type, y_value_type, Derived>& rhs);
 
+  //! Writes a histogram to an output stream with format "x_value\ty_value\n"
+  template<class x_value_type, class y_value_type, class Derived>
+  std::ostream& operator<<(std::ostream& stream, const HistoBase<x_value_type, y_value_type, Derived>& rhs);
+
 } // of namespace Histograms
 } // of namespace Mocasinns
 

@@ -401,6 +401,16 @@ const Derived operator/(const HistoBase<x_value_type, y_value_type, Derived>& lh
   return Derived(lhs) /= rhs;
 }
 
+template<class x_value_type, class y_value_type, class Derived>
+std::ostream& operator<<(std::ostream& stream, const HistoBase<x_value_type, y_value_type, Derived>& rhs)
+{
+  for (typename HistoBase<x_value_type, y_value_type, Derived>::const_iterator it = rhs.begin(); it != rhs.end(); ++it)
+  {
+    stream << it->first << "\t" << it->second << std::endl;
+  }
+  return stream;
+}
+
 } // of namespace Histograms
 } // of namespace Mocasinns
 

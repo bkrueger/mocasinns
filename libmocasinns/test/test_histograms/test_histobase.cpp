@@ -5,6 +5,7 @@ CppUnit::Test* TestHistoBase::suite()
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistoBase");
     
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_output", &TestHistoBase::test_operator_output ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_compatible", &TestHistoBase::test_compatible ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_derivative", &TestHistoBase::test_derivative ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_flatness", &TestHistoBase::test_flatness ) );
@@ -70,6 +71,23 @@ void TestHistoBase::test_operator_equal()
   // Test for inequality
   CPPUNIT_ASSERT(testhisto_int != testhisto_int_second);
   CPPUNIT_ASSERT(testhisto_double != testhisto_double_second);
+}
+void TestHistoBase::test_operator_output()
+{
+  // Export the operator to a stringstream
+  std::stringstream ss;
+  ss << testhisto_int;
+
+  // Create a stringstream for comparison
+  std::stringstream comparison;
+  comparison << "1\t0" << std::endl;
+  comparison << "2\t0" << std::endl;
+  comparison << "3\t0" << std::endl;
+  comparison << "4\t0" << std::endl;
+  comparison << "5\t1" << std::endl;
+
+  // Compare the two strings
+  CPPUNIT_ASSERT_EQUAL(comparison.str(), ss.str());
 }
 
 void TestHistoBase::test_compatible()

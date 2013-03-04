@@ -25,6 +25,7 @@ public:
   void tearDown();
 
   void test_operator_equal();
+  void test_operator_output();
   void test_compatible();
   void test_derivative();
   void test_flatness();

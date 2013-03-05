@@ -18,7 +18,7 @@ void TestWangLandau::setUp()
   size_1d.push_back(16);
   parameters_1d.modification_factor_initial = 1.0;
   parameters_1d.modification_factor_final = 1e-6;
-  parameters_1d.modification_factor_multiplyer = 0.9;
+  parameters_1d.modification_factor_multiplier = 0.9;
   parameters_1d.flatness = 0.8;
   parameters_1d.sweep_steps = 1000;
 
@@ -30,7 +30,7 @@ void TestWangLandau::setUp()
   size_2d.push_back(4); size_2d.push_back(4);
   parameters_2d.modification_factor_initial = 1.0;
   parameters_2d.modification_factor_final = 1e-6;
-  parameters_2d.modification_factor_multiplyer = 0.9;
+  parameters_2d.modification_factor_multiplier = 0.9;
   parameters_2d.flatness = 0.8;
   parameters_2d.sweep_steps = 1000;
 

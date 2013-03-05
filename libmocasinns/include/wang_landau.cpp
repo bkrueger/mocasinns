@@ -103,7 +103,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     {
       EnergyType delta_E = next_step.delta_E();
       
-      if (simulation_parameters.energy_cutoff_use && energy + delta_E < simulation_parameters.energy_cutoff)
+      if ((!simulation_parameters.energy_cutoff_use) || (energy + delta_E < simulation_parameters.energy_cutoff))
 	{
 	  // Calculate the acceptance probability
 	  double acceptance_probability = exp(density_of_states[energy] - density_of_states[energy + delta_E])/next_step.selection_probability_factor();

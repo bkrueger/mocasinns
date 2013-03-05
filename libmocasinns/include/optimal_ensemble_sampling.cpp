@@ -85,7 +85,7 @@ namespace Mocasinns
     wl_parameters.sweep_steps = simulation_parameters.initial_steps_per_iteration;
     wl_parameters.modification_factor_initial = 1;
     wl_parameters.modification_factor_final = 1e-6;
-    wl_parameters.modification_factor_multiplyer = 0.5;
+    wl_parameters.modification_factor_multiplier = 0.5;
     wl_parameters.flatness = 0.8;
 
     // Call the general function

@@ -131,7 +131,7 @@ public:
   //! Modification factor for the entropy histogram at the end of the simulation, triggers the exit
   double modification_factor_final;
   //! Factor to modify the multiplication factor after the desired flatness has been reached
-  double modification_factor_multiplyer;
+  double modification_factor_multiplier;
     
   //! Number of steps to take before checking again the flatness
   uint32_t sweep_steps;
@@ -161,7 +161,7 @@ private:
     ar & flatness;
     ar & modification_factor_initial;
     ar & modification_factor_final;
-    ar & modification_factor_multiplyer;
+    ar & modification_factor_multiplier;
     ar & sweep_steps;
     ar & prototype_histo;
   }

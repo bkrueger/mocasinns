@@ -23,7 +23,7 @@ WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator
   flatness(0.8),
   modification_factor_initial(1.0),
   modification_factor_final(1e-7),
-  modification_factor_multiplyer(0.9),
+  modification_factor_multiplier(0.9),
   sweep_steps(1000),
   prototype_histo()
 {}
@@ -38,7 +38,7 @@ bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 	  (flatness == rhs.flatness) &&
 	  (modification_factor_initial == rhs.modification_factor_initial) &&
 	  (modification_factor_final == rhs.modification_factor_final) &&
-	  (modification_factor_multiplyer == rhs.modification_factor_multiplyer) &&
+	  (modification_factor_multiplier == rhs.modification_factor_multiplier) &&
 	  (sweep_steps == rhs.sweep_steps));
 }
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -103,7 +103,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     {
       EnergyType delta_E = next_step.delta_E();
       
-      if (simulation_parameters.energy_cutoff_use && energy + delta_E < simulation_parameters.energy_cutoff)
+      if ((!simulation_parameters.energy_cutoff_use) || (energy + delta_E < simulation_parameters.energy_cutoff))
 	{
 	  // Calculate the acceptance probability
 	  double acceptance_probability = exp(density_of_states[energy] - density_of_states[energy + delta_E])/next_step.selection_probability_factor();
@@ -157,7 +157,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     // Renormalize the density of states
     density_of_states.shift_bin_zero(density_of_states.min_x_value());
     // Decrease the modification factor
-    modification_factor_actual *= simulation_parameters.modification_factor_multiplyer;
+    modification_factor_actual *= simulation_parameters.modification_factor_multiplier;
   }
 }
 

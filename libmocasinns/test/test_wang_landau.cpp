@@ -119,8 +119,8 @@ void TestWangLandau::test_serialize()
 		 test_ising_simulation_1d->get_incidence_counter());
   CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_simulation_parameters() ==
 		 test_ising_simulation_1d->get_simulation_parameters());
-  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_modification_factor_actual() ==
-		 test_ising_simulation_1d->get_modification_factor_actual());
+  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_modification_factor_current() ==
+		 test_ising_simulation_1d->get_modification_factor_current());
   // Delete the loaded simulation
   delete test_ising_simulation_1d_loaded;
 
@@ -138,8 +138,8 @@ void TestWangLandau::test_serialize()
 		 test_ising_simulation_1d->get_incidence_counter());
   CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_simulation_parameters() ==
 		 test_ising_simulation_1d->get_simulation_parameters());
-  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_modification_factor_actual() ==
-		 test_ising_simulation_1d->get_modification_factor_actual());
+  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_modification_factor_current() ==
+		 test_ising_simulation_1d->get_modification_factor_current());
   // Delete the loaded simulation
   delete test_ising_simulation_1d_loaded;
 }

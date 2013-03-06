@@ -86,7 +86,7 @@ ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::Configuratio
   : work_configuration(start_and_reference_configuration), reference_configuration(new ConfigurationType(*start_and_reference_configuration))
 {
   reference_configuration_energy = reference_configuration->energy();
-  actual_energy = work_configuration->energy();
+  current_energy = work_configuration->energy();
   is_reference_configuration = 1;
 }
 
@@ -95,7 +95,7 @@ ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::Configuratio
   : work_configuration(start_configuration), reference_configuration(new ConfigurationType(*new_reference_configuration))
 {
   reference_configuration_energy = reference_configuration->energy();
-  actual_energy = work_configuration->energy();
+  current_energy = work_configuration->energy();
   if (start_configuration == reference_configuration)
     is_reference_configuration = 1;
   else
@@ -112,7 +112,7 @@ template <class ConfigurationType, class StepType, class EnergyType>
 void ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::commit(StepTypeExtended<ConfigurationType, StepType, EnergyType>& step_to_commit)
 {
   // Set the new energy
-  actual_energy += step_to_commit.delta_E().get_original_energy();
+  current_energy += step_to_commit.delta_E().get_original_energy();
   
   // Set the reference configuration indicator
   if (is_reference_configuration + step_to_commit.delta_E().get_in_groundstate() == 1)
@@ -127,7 +127,7 @@ void ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::commit(
 template <class ConfigurationType, class StepType, class EnergyType>
 EnergyTypeExtended<EnergyType> ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::energy()
 {
-  return EnergyTypeExtended<EnergyType>(actual_energy, is_reference_configuration);
+  return EnergyTypeExtended<EnergyType>(current_energy, is_reference_configuration);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType>

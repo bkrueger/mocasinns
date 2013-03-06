@@ -55,7 +55,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 {
   WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>* simulation_wang_landau = static_cast<WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>*>(simulation);
   std::cout << simulation_wang_landau->get_config_space()->get_simulation_time() << "\t";
-  std::cout << simulation_wang_landau->get_modification_factor_actual() << "\t";
+  std::cout << simulation_wang_landau->get_modification_factor_current() << "\t";
   std::cout << simulation_wang_landau->get_incidence_counter().flatness() << std::endl;
 }
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -118,7 +118,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     }
 
     // Update the histograms
-    density_of_states[energy] += modification_factor_actual;
+    density_of_states[energy] += modification_factor_current;
     incidence_counter[energy]++;
   }
 }
@@ -142,7 +142,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_wang_landau_simulation()
 {
-  while (modification_factor_actual > simulation_parameters.modification_factor_final)
+  while (modification_factor_current > simulation_parameters.modification_factor_final)
   {
     // Do steps until the flatness criterion is reached
     do_wang_landau_steps();
@@ -157,15 +157,15 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     // Renormalize the density of states
     density_of_states.shift_bin_zero(density_of_states.min_x_value());
     // Decrease the modification factor
-    modification_factor_actual *= simulation_parameters.modification_factor_multiplier;
+    modification_factor_current *= simulation_parameters.modification_factor_multiplier;
   }
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::initialise_with_parameters()
 {
-  // Set the actual modification factor to the initial modification factor
-  modification_factor_actual = simulation_parameters.modification_factor_initial;
+  // Set the current modification factor to the initial modification factor
+  modification_factor_current = simulation_parameters.modification_factor_initial;
 
   // Set the binnings of the density of states and the incidence counter
   density_of_states.initialise_empty(simulation_parameters.prototype_histo);

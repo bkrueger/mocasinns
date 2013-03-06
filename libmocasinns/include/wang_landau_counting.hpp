@@ -73,7 +73,7 @@ private:
   //! Energy of the reference configuration
   EnergyType reference_configuration_energy;
   //! Saved energy of the configuration (to not calculate the energy again and again ...)
-  EnergyType actual_energy;
+  EnergyType current_energy;
   //! Flag that indicates whether this configuration is the reference configuration
   int is_reference_configuration;
 

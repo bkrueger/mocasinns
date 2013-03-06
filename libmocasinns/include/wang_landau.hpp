@@ -32,7 +32,7 @@ public:
 
   //! Boost signal handler invoked after every sweep
   boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_sweep;
-  //! Boost signal handler invoked if the actual modification factor is altered by the simulation
+  //! Boost signal handler invoked if the current modification factor is altered by the simulation
   boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_modfac_change;
 
   //! Initialise a WangLanday-MC simulation with default parameters, default configuration space and default RandomNumberGenerator
@@ -46,10 +46,10 @@ public:
   const Parameters<EnergyType>& get_simulation_parameters() const { return simulation_parameters; }
   //! Set-Accessor for the parameters of the simulation
   void set_simulation_parameters(const Parameters<EnergyType>& value) { simulation_parameters = value; initialise_with_parameters(); }
-  //! Get-Accessor for the actual modification factor
-  double get_modification_factor_actual() const { return modification_factor_actual; }
-  //! Set-Accessor for the actual modification factor
-  void set_modification_factor_actual(double value) { modification_factor_actual = value; }
+  //! Get-Accessor for the current modification factor
+  double get_modification_factor_current() const { return modification_factor_current; }
+  //! Set-Accessor for the current modification factor
+  void set_modification_factor_current(double value) { modification_factor_current = value; }
   //! Get-Accessor for the estimation of the density of states
   const HistoType<EnergyType, double>& get_density_of_states() const { return density_of_states; }
   //! Set-Accessor for the estimation of the density of states
@@ -59,7 +59,7 @@ public:
   //! Get-Accessor for the sweep counter
   long get_sweep_counter() const { return sweep_counter; }
 
-  //! Do a certain number of wang-landau steps updating the density_of_states and the incidence_counter at the actual modification factor
+  //! Do a certain number of wang-landau steps updating the density_of_states and the incidence_counter at the current modification factor
   void do_wang_landau_steps(const uint32_t& number);
   //! Do wang-landau steps until the incidence counter is flat
   void do_wang_landau_steps();
@@ -79,8 +79,8 @@ private:
   //! Parameters of the simulation
   Parameters<EnergyType> simulation_parameters;
 
-  //! Actual value of the modification factor
-  double modification_factor_actual;
+  //! Current value of the modification factor
+  double modification_factor_current;
 
   //! Histogram for the estimation of the density of states
   HistoType<EnergyType, double> density_of_states;
@@ -101,7 +101,7 @@ private:
     // serialize base class information
     ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator> >(*this);
     ar & simulation_parameters;
-    ar & modification_factor_actual;
+    ar & modification_factor_current;
     ar & density_of_states;
     ar & incidence_counter;
   }
@@ -174,7 +174,7 @@ struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumb
   //! Operator for for calling the SimulationStatus function
   /*!
    * \param simulation Pointer to the simulation of which the information should be written
-   * \details Writes the following information in this order: simulation_time, modfactor_actual, incidence_flatness
+   * \details Writes the following information in this order: simulation_time, modfactor_current, incidence_flatness
      */
   void operator()(Simulation<ConfigurationType,RandomNumberGenerator>*);
 };

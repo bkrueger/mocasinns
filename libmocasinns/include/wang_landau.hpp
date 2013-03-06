@@ -56,6 +56,8 @@ public:
   void set_density_of_states(const HistoType<EnergyType, double>& value) { density_of_states = value; }
   //! Get-Accessor for the incidence counter
   const HistoType<EnergyType, long long int>& get_incidence_counter() const { return incidence_counter; }
+  //! Set-Accessor for the incidence counter
+  void set_incidence_counter(const HistoType<EnergyType, double>& value) { incidence_counter = value; }
   //! Get-Accessor for the sweep counter
   long get_sweep_counter() const { return sweep_counter; }
 

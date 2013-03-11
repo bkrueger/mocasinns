@@ -17,13 +17,13 @@ CppUnit::Test* TestArrayObservable::suite()
 
 void TestArrayObservable::setUp()
 {
-  std::array<double,3> init_double;
+  boost::array<double,3> init_double;
   init_double[0] = 1.0;
   init_double[1] = 2.5;
   init_double[2] = -2.0;
   array_observable_double = new ArrayObservable<double,3>(init_double);
 
-  std::array<int,3> init_int;
+  boost::array<int,3> init_int;
   init_int[0] = 2;
   init_int[1] = 6;
   init_int[2] = -1;

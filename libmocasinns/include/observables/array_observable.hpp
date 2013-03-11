@@ -1,7 +1,7 @@
 #ifndef MOCASINNS_OBSERVABLES_ARRAY_OBSERVABLE_HPP
 #define MOCASINNS_OBSERVABLES_ARRAY_OBSERVABLE_HPP
 
-#include <array>
+#include <boost/array.hpp>
 #include <cmath>
 
 #include <boost/accumulators/numeric/functional_fwd.hpp>
@@ -15,37 +15,46 @@ namespace Mocasinns
     class ArrayObservable
     {
     private:
+      //! Typedef for the inner data structure
+#ifdef MOCASINNS_USE_CPLUSPLUS_11
+      typedef std::array<T,N> data_type;
+#else
+      typedef boost::array<T,N> data_type;
+#endif
+
       //! STL-Vector containing the data
-      std::array<T,N> data;
+      data_type data;
 
     public:
       //! The type of the object stored in the ArrayObservable (T)
-      typedef typename std::array<T,N>::value_type value_type;
+      typedef typename data_type::value_type value_type;
+#ifdef MOCASINNS_USE_CPLUSPLUS_11
       //! Pointer to T
-      typedef typename std::array<T,N>::pointer pointer;
+      typedef typename data_type::pointer pointer;
+#endif
       //! Reference to T
-      typedef typename std::array<T,N>::reference reference;
+      typedef typename data_type::reference reference;
       //! Const-Reference to T
-      typedef typename std::array<T,N>::const_reference const_reference;
+      typedef typename data_type::const_reference const_reference;
       //! An unsigned integral type
-      typedef typename std::array<T,N>::size_type size_type;
+      typedef typename data_type::size_type size_type;
       //! A signed integral type
-      typedef typename std::array<T,N>::difference_type difference_type;
+      typedef typename data_type::difference_type difference_type;
       //! Iterator used to iterate through a ArrayObservable
-      typedef typename std::array<T,N>::iterator iterator;
+      typedef typename data_type::iterator iterator;
       //! Const-Iterator used to iterate through a ArrayObservable
-      typedef typename std::array<T,N>::const_iterator const_iterator;
+      typedef typename data_type::const_iterator const_iterator;
       //! Iterator used to iterate backwards through a ArrayObservable
-      typedef typename std::array<T,N>::reverse_iterator reverse_iterator;
+      typedef typename data_type::reverse_iterator reverse_iterator;
       //! Const-Iterator used to iterate backwards through a ArrayObservable
-      typedef typename std::array<T,N>::const_reverse_iterator const_reverse_iterator;
+      typedef typename data_type::const_reverse_iterator const_reverse_iterator;
 
       //! Creates an empty ArrayObservable
       ArrayObservable() {}
       //! Creates a ArrayObservable with copies of t
       ArrayObservable(const T& t) { data.fill(t); }
       //! Creates a ArrayObservable with a std::array
-      ArrayObservable(const std::array<T,N>& std_array) { data = std_array; }
+      ArrayObservable(const data_type& std_array) { data = std_array; }
       //! Copy-Constructor
       ArrayObservable(const ArrayObservable<T,N>& other) { data = other.data; }
 

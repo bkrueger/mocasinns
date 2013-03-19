@@ -7,7 +7,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <observables/array_observable.hpp>
+#include <mocasinns/observables/array_observable.hpp>
 
 using namespace Mocasinns::Observables;
 

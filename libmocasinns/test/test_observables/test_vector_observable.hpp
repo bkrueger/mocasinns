@@ -7,7 +7,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <observables/vector_observable.hpp>
+#include <mocasinns/observables/vector_observable.hpp>
 
 using namespace Mocasinns::Observables;
 

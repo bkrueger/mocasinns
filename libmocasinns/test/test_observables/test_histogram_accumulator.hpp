@@ -7,8 +7,8 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <histograms/histogram.hpp>
-#include <observables/histogram_accumulator.hpp>
+#include <mocasinns/histograms/histogram.hpp>
+#include <mocasinns/observables/histogram_accumulator.hpp>
 
 using namespace Mocasinns::Observables;
 using namespace Mocasinns::Histograms;

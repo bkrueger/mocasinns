@@ -12,9 +12,9 @@ namespace ba = boost::accumulators;
 #include <spinlattice.hpp>
 #include <spin_ising.hpp>
 // Includes from libmocasinns
-#include <metropolis.hpp>
-#include <histograms/histogram.hpp>
-#include <observables/histogram_accumulator.hpp>
+#include <mocasinns/metropolis.hpp>
+#include <mocasinns/histograms/histogram.hpp>
+#include <mocasinns/observables/histogram_accumulator.hpp>
 // Includes from librandom
 #include <random_boost_mt19937.hpp>
 

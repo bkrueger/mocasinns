@@ -83,6 +83,12 @@ void TestMetropolis::test_do_metropolis_steps()
 
 void TestMetropolis::test_do_metropolis_simulation()
 {
+  // Create a boost accumulator and test the default observable(energy)
+  ba::accumulator_set<double, ba::stats<ba::tag::mean, ba::tag::error_of<ba::tag::mean> > > acc_default;
+  // Perform the simulation with the defualt observable
+  test_simulation->do_metropolis_simulation(0.0, acc_default);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, ba::mean(acc_default), 0.1);
+
   // Create a boost accumulator
   ba::accumulator_set<double, ba::stats<ba::tag::mean, ba::tag::error_of<ba::tag::mean> > > acc;
   // Perform the simulation with accumulators

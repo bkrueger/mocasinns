@@ -10,8 +10,8 @@
 #include <spinlattice.hpp>
 #include <spin_ising.hpp>
 
-#include <optimal_ensemble_sampling.hpp>
-#include <histograms/histocrete.hpp>
+#include <mocasinns/optimal_ensemble_sampling.hpp>
+#include <mocasinns/histograms/histocrete.hpp>
 #include <random_boost_mt19937.hpp>
 
 using namespace Mocasinns;

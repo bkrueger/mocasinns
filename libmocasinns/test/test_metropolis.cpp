@@ -8,7 +8,7 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/error_of_mean.hpp>
 
-#include <observables/vector_observable.hpp>
+#include <mocasinns/observables/vector_observable.hpp>
 
 namespace ba = boost::accumulators;
 

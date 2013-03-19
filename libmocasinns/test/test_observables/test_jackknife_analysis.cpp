@@ -5,7 +5,7 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 
-#include <observables/vector_observable.hpp>
+#include <mocasinns/observables/vector_observable.hpp>
 
 namespace ba = boost::accumulators;
 

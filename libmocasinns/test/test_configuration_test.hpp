@@ -10,7 +10,7 @@
 #include <spinlattice.hpp>
 #include <spin_ising.hpp>
 
-#include <configuration_test.hpp>
+#include <mocasinns/configuration_test.hpp>
 #include <random_boost_mt19937.hpp>
 
 using namespace Mocasinns;

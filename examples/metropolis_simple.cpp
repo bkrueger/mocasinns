@@ -5,8 +5,8 @@
 #include <spinlattice.hpp>
 #include <spin_ising.hpp>
 // Includes from libmocasinns
-#include <metropolis.hpp>
-#include <observables/array_observable.hpp>
+#include <mocasinns/metropolis.hpp>
+#include <mocasinns/observables/array_observable.hpp>
 // Includes from librandom
 #include <random_boost_mt19937.hpp>
 

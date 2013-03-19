@@ -10,8 +10,8 @@
 #include <spinlattice.hpp>
 #include <spin_ising.hpp>
 
-#include <metropolis.hpp>
-#include <metropolis_parallel.hpp>
+#include <mocasinns/metropolis.hpp>
+#include <mocasinns/metropolis_parallel.hpp>
 #include <random_boost_mt19937.hpp>
 
 using namespace Mocasinns;

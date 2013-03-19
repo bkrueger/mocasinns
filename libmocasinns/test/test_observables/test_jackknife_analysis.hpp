@@ -7,7 +7,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <observables/jackknife_analysis.hpp>
+#include <mocasinns/observables/jackknife_analysis.hpp>
 
 using namespace Mocasinns::Observables;
 

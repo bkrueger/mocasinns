@@ -7,7 +7,7 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <histograms/binnings.hpp>
+#include <mocasinns/histograms/binnings.hpp>
 
 using namespace Mocasinns::Histograms;
 

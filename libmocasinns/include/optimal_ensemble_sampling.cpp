@@ -127,11 +127,32 @@ namespace Mocasinns
       if (next_step.is_executable())
       {
 	EnergyType delta_E = next_step.delta_E();
-	
+
+	// Check whether one leaves the energy range
+	bool new_range = false;
+	if (energy + delta_E > simulation_parameters.maximal_energy)
+	{
+	  // Set the weight of the new bin to the weight of the maximal bin
+	  weights[energy + delta_E] = weights[simulation_parameters.maximal_energy];
+	  // Reset the maximal energy parameter
+	  simulation_parameters.maximal_energy = energy + delta_E;
+	  // Set the new_range flag to true
+	  new_range = true;
+	}
+	if (energy + delta_E < simulation_parameters.minimal_energy)
+	{
+	  // Set the weight of the new bin to the weight of the minimal bin
+	  weights[energy + delta_E] = weights[simulation_parameters.minimal_energy];
+	  // Reset the minimal energy parameter
+	  simulation_parameters.minimal_energy = energy + delta_E;
+	  // Set the new_range flag to true
+	  new_range = true;
+	}
+
 	// Calculate the acceptance probability
 	double acceptance_probability = exp(weights[energy + delta_E] - weights[energy])/next_step.selection_probability_factor();
 	
-	if (this->rng->random_double() < acceptance_probability)
+	if (new_range || this->rng->random_double() < acceptance_probability)
 	{
 	  // Do the flip
 	  energy += delta_E;

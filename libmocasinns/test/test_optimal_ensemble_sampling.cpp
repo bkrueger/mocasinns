@@ -54,10 +54,10 @@ void TestOptimalEnsembleSampling::test_do_optimal_ensemble_sampling_simulation()
   entropy_estimation_1d.print();
 
   // Test the density of states histocrete
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[-16], 0.01);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[-12], 0.1);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[-8], 0.1);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[-4], 0.1);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[-16], 0.2);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[-12], 0.2);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[-8], 0.2);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[-4], 0.2);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(9.4627, entropy_estimation_1d[0], 0.2);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[4], 0.2);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[8], 0.2);

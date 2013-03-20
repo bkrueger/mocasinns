@@ -71,6 +71,13 @@ namespace Mocasinns
     //! Estimate the weights from the density of states calculated in a Wang-Landau simulation with given Wang-Landau parameters
     void estimate_weights(const WangLandauParameters& wang_landau_parameters);
 
+    //! Calculate the acceptance probability of a step
+    double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+    //! Handle an accepted step
+    void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+    //! Handle a rejected step
+    void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
+
     //! Do a certain number of steps updating the density_of_states and the incidence_counter
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);
 

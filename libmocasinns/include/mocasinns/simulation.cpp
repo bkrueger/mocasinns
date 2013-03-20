@@ -92,9 +92,9 @@ bool Simulation<ConfigurationType, RandomNumberGenerator>::check_for_posix_signa
 
 template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-void Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const uint64_t& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+void Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
 {
-  for (uint32_t i = 0; i < step_number; ++i)
+  for (StepNumberType i = 0; i < step_number; ++i)
   {
     // Propose a new step
     StepType next_step = this->configuration_space->propose_step(this->rng);

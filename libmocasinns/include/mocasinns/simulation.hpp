@@ -30,9 +30,43 @@ namespace Mocasinns
 template <class ConfigurationType, class RandomNumberGenerator>
 class Simulation
 {
-private:
-  //! Set the signals for POSIX signals
-  void register_posix_signal_handler();
+  public:
+  //! Typedef for the step number
+  typedef uint64_t StepNumberType;
+
+  //! Boost signal handler invoked when SIGTERM is caught
+  boost::signals2::signal<void (Simulation*)> signal_handler_sigterm;
+  //! Boost signal handler invoked when SIGUSR1 is caught
+  boost::signals2::signal<void (Simulation*)> signal_handler_sigusr1;
+  //! Boost signal handler invoked when SIGUSR1 is caught
+  boost::signals2::signal<void (Simulation*)> signal_handler_sigusr2;
+
+  //! Initialise a Simulation with default configuration space and default RandomNumberGenerator
+  Simulation();
+  //! Initialise a Simulation with given configuration space and default RandomNumberGenerator
+  Simulation(ConfigurationType*);
+  //! Virtual destructor, deletes the random number generator created in the constructors
+  virtual ~Simulation();
+
+  //! Get-Accessor for the pointer to the configuration space
+  ConfigurationType* get_config_space() const;
+  //! Get-Accessor for the seed of the RandomNumberGenerator
+  int get_random_seed() const;
+  //! Set-Accessor for the seed of the RandomNumberGenerator
+  void set_random_seed(int seed);
+  //! Get-Accessor for the path and name of the dumped file
+  const std::string& get_dump_filename() const;
+  //! Set-Accesspr for the path and name of the dumped file
+  void set_dump_filename(const std::string& value);
+
+  //! Load the data of the simulation from a serialization stream
+  virtual void load_serialize(std::istream& input_stream);
+  //! Load the data of the simulation from a serialization file
+  virtual void load_serialize(const char* filename);
+  //! Save the data of the simulation to a serialization stream
+  virtual void save_serialize(std::ostream& output_stream) const;
+  //! Save the data of the simulation to a serialization file
+  virtual void save_serialize(const char* filename) const;
 
 protected:
   //! Pointer to the RandomNumberGenerator used in the Simulation
@@ -73,42 +107,11 @@ protected:
 
   //! Do a number of steps using an acceptance probability provided by the actual algorithm
   template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-  void do_steps(const uint64_t& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
-  
-public:
-  //! Boost signal handler invoked when SIGTERM is caught
-  boost::signals2::signal<void (Simulation*)> signal_handler_sigterm;
-  //! Boost signal handler invoked when SIGUSR1 is caught
-  boost::signals2::signal<void (Simulation*)> signal_handler_sigusr1;
-  //! Boost signal handler invoked when SIGUSR1 is caught
-  boost::signals2::signal<void (Simulation*)> signal_handler_sigusr2;
+  void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
 
-  //! Initialise a Simulation with default configuration space and default RandomNumberGenerator
-  Simulation();
-  //! Initialise a Simulation with given configuration space and default RandomNumberGenerator
-  Simulation(ConfigurationType*);
-  //! Virtual destructor, deletes the random number generator created in the constructors
-  virtual ~Simulation();
-
-  //! Get-Accessor for the pointer to the configuration space
-  ConfigurationType* get_config_space() const;
-  //! Get-Accessor for the seed of the RandomNumberGenerator
-  int get_random_seed() const;
-  //! Set-Accessor for the seed of the RandomNumberGenerator
-  void set_random_seed(int seed);
-  //! Get-Accessor for the path and name of the dumped file
-  const std::string& get_dump_filename() const;
-  //! Set-Accesspr for the path and name of the dumped file
-  void set_dump_filename(const std::string& value);
-
-  //! Load the data of the simulation from a serialization stream
-  virtual void load_serialize(std::istream& input_stream);
-  //! Load the data of the simulation from a serialization file
-  virtual void load_serialize(const char* filename);
-  //! Save the data of the simulation to a serialization stream
-  virtual void save_serialize(std::ostream& output_stream) const;
-  //! Save the data of the simulation to a serialization file
-  virtual void save_serialize(const char* filename) const;
+private:
+  //! Set the signals for POSIX signals
+  void register_posix_signal_handler();
 };
 
 // Initialisation of the static member signal_number_caught

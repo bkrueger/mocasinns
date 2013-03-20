@@ -246,8 +246,8 @@ namespace Mocasinns
 	   it != incidence_counter_positive.end(); ++it)
       {
 	EnergyType energy = it->first;
-	unsigned long int positive_incidence = it->second;
-	unsigned long int negative_incidence = incidence_counter_negative[it->first];
+	IncidenceCounterYValueType positive_incidence = it->second;
+	IncidenceCounterYValueType negative_incidence = incidence_counter_negative[it->first];
 	fraction_histogram[energy] = static_cast<double>(positive_incidence) / static_cast<double>(positive_incidence + negative_incidence);
       }
       

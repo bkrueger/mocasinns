@@ -9,7 +9,7 @@
 
 #ifdef MOCASINNS_OPTIMAL_ENSEMBLE_SAMPLING_HPP
 
-#include "metropolis.hpp"
+#include "../metropolis.hpp"
 
 namespace Mocasinns
 {

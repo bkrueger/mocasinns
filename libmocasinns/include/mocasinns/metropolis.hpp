@@ -148,6 +148,6 @@ struct Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameter
   
 } // of namespace Mocasinns
 
-#include "metropolis.cpp"
+#include "src/metropolis.cpp"
 
 #endif

@@ -168,6 +168,6 @@ public:
   double do_wang_landau_counting();
 };
 
-#include "wang_landau_counting.cpp"
+#include "src/wang_landau_counting.cpp"
 
 #endif

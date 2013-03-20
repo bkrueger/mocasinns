@@ -178,6 +178,6 @@ public:
 } // of namespace Histogram
 } // of namespace Mocasinns
 
-#include "histogram.cpp"
+#include "../src/histograms/histogram.cpp"
 
 #endif

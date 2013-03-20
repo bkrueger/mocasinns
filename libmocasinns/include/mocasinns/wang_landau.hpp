@@ -206,6 +206,6 @@ struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumb
 
 } // of namespace Mocasinns
 
-#include "wang_landau.cpp"
+#include "src/wang_landau.cpp"
 
 #endif

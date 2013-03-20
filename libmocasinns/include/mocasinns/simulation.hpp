@@ -120,6 +120,6 @@ volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator>::sign
 
 } // of namespace Mocasinns
 
-#include "simulation.cpp"
+#include "src/simulation.cpp"
 
 #endif

@@ -160,6 +160,6 @@ namespace Mocasinns
   
 } // of namespace Mocasinns
 
-#include "optimal_ensemble_sampling.cpp"
+#include "src/optimal_ensemble_sampling.cpp"
 
 #endif

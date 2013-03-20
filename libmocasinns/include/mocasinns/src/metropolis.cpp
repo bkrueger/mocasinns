@@ -21,7 +21,7 @@
 
 namespace ba = boost::accumulators;
 
-#include "details/metropolis/vector_accumulator.hpp"
+#include "../details/metropolis/vector_accumulator.hpp"
 
 namespace Mocasinns
 {

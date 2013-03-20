@@ -106,6 +106,6 @@ struct MetropolisParallel<ConfigurationType, StepType, RandomNumberGenerator>::P
 
 } // of namespace Mocasinns
 
-#include "metropolis_parallel.cpp"
+#include "src/metropolis_parallel.cpp"
 
 #endif

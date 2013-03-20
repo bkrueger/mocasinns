@@ -70,6 +70,10 @@ protected:
     ar & configuration_space;
     ar & rng_seed;
   }
+
+  //! Do a number of steps using an acceptance probability provided by the actual algorithm
+  template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
+  void do_steps(const uint64_t& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
   
 public:
   //! Boost signal handler invoked when SIGTERM is caught

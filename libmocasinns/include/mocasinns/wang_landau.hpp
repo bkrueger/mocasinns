@@ -61,6 +61,13 @@ public:
   //! Get-Accessor for the sweep counter
   long get_sweep_counter() const { return sweep_counter; }
 
+  //! Calculate the acceptance probability of a step
+  double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+  //! Handle an accepted step
+  void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+  //! Handle a rejected step
+  void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
+
   //! Do a certain number of wang-landau steps updating the density_of_states and the incidence_counter at the current modification factor
   void do_wang_landau_steps(const uint32_t& number);
   //! Do wang-landau steps until the incidence counter is flat

@@ -2,10 +2,10 @@ CXX = g++
 OPT=-O2
 CFLAGS = $(OPT) -Wall -Wextra -pedantic -std=c++0x -fopenmp
 
-LDFLAGS = -L../libising/lib -L../librandom/lib
+LDFLAGS = -L../libising/lib
 INCLUDE = -I../libising/src -I../librandom/include -I../libmocasinns/include
 
-LIBRARIES = -lising -lrandom -lboost_serialization -lboost_signals
+LIBRARIES = -lising -lboost_serialization -lboost_signals
 
 all: metropolis wang_landau simple_ising_metropolis
 
@@ -23,3 +23,6 @@ simple_ising_metropolis: simple_ising_metropolis.o
 
 %.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+
+clean:
+	rm *.o metropolis_simple metropolis_accumulator metropolis_histogram wang_landau_simple simple_ising_metropolis

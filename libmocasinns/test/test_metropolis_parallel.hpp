@@ -12,7 +12,7 @@
 
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/metropolis_parallel.hpp>
-#include <random_boost_mt19937.hpp>
+#include <mocasinns/random/boost_random.hpp>
 
 using namespace Mocasinns;
 
@@ -20,8 +20,8 @@ class TestMetropolisParallel : CppUnit::TestFixture
 {
   typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
   typedef Ising::Step<2, Ising::SpinIsing> StepType;
-  typedef MetropolisParallel<ConfigurationType, StepType, Boost_MT19937> SimulationType;
-  typedef Metropolis<ConfigurationType, StepType, Boost_MT19937> SimulationTypeSerial;
+  typedef MetropolisParallel<ConfigurationType, StepType, Random::Boost_MT19937> SimulationType;
+  typedef Metropolis<ConfigurationType, StepType, Random::Boost_MT19937> SimulationTypeSerial;
 
 private:
   ConfigurationType* test_config_space;

@@ -15,15 +15,14 @@ namespace ba = boost::accumulators;
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/histograms/histogram.hpp>
 #include <mocasinns/accumulators/histogram_accumulator.hpp>
-// Includes from librandom
-#include <random_boost_mt19937.hpp>
+#include <mocasinns/random/boost_random.hpp>
 
 // Typedef for the configuration and the step
 typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
 typedef Ising::Step<2, Ising::SpinIsing> StepType;
 
 // Typedef for the Simulation
-typedef Mocasinns::Metropolis<ConfigurationType, StepType, Boost_MT19937> Simulation;
+typedef Mocasinns::Metropolis<ConfigurationType, StepType, Mocasinns::Random::Boost_MT19937> Simulation;
 
 // Class for observing the energy and the magnetization of the ising-system
 struct IsingEnergyObserver

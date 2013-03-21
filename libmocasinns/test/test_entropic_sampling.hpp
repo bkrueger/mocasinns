@@ -12,7 +12,7 @@
 
 #include <mocasinns/entropic_sampling.hpp>
 #include <mocasinns/histograms/histocrete.hpp>
-#include <random_boost_mt19937.hpp>
+#include <mocasinns/random/boost_random.hpp>
 
 using namespace Mocasinns;
 
@@ -21,11 +21,11 @@ class TestEntropicSampling : CppUnit::TestFixture
 public:
   typedef Ising::SpinLattice<1, Ising::SpinIsing> IsingConfiguration1d;
   typedef Ising::Step<1, Ising::SpinIsing> IsingStep1d;
-  typedef EntropicSampling<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Boost_MT19937> IsingSimulation1d;
+  typedef EntropicSampling<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation1d;
   
   typedef Ising::SpinLattice<2, Ising::SpinIsing> IsingConfiguration2d;
   typedef Ising::Step<2, Ising::SpinIsing> IsingStep2d;
-  typedef EntropicSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Boost_MT19937> IsingSimulation2d;
+  typedef EntropicSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation2d;
 
 private:
   IsingConfiguration1d* test_ising_config_1d;

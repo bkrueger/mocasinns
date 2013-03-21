@@ -11,7 +11,7 @@
 #include <spin_ising.hpp>
 
 #include <mocasinns/simulation.hpp>
-#include <random_boost_mt19937.hpp>
+#include <mocasinns/random/boost_random.hpp>
 
 using namespace Mocasinns;
 
@@ -19,7 +19,7 @@ class TestSimulation : CppUnit::TestFixture
 {
   typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
   typedef Ising::Step<2, Ising::SpinIsing> StepType;
-  typedef Simulation<ConfigurationType, Boost_MT19937> SimulationType;
+  typedef Simulation<ConfigurationType, Random::Boost_MT19937> SimulationType;
 
 private:
   ConfigurationType* test_config_space;

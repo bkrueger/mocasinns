@@ -4,15 +4,14 @@
 // Includes from libmocasinns
 #include <mocasinns/wang_landau.hpp>
 #include <mocasinns/histograms/histocrete.hpp>
-// Includes from librandom
-#include <random_boost_mt19937.hpp>
+#include <mocasinns/random/boost_random.hpp>
 
 // Typedef for the configuration and the step
 typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
 typedef Ising::Step<2, Ising::SpinIsing> StepType;
 
 // Typedef for the Simulation
-typedef Mocasinns::WangLandau<ConfigurationType, StepType, int, Mocasinns::Histograms::Histocrete, Boost_MT19937> Simulation;
+typedef Mocasinns::WangLandau<ConfigurationType, StepType, int, Mocasinns::Histograms::Histocrete, Mocasinns::Random::Boost_MT19937> Simulation;
 
 int main()
 {

@@ -17,6 +17,8 @@
 #include "test_metropolis_parallel.hpp"
 #include "test_wang_landau.hpp"
 #include "test_optimal_ensemble_sampling.hpp"
+#include "test_accumulators/test_histogram_accumulator.hpp"
+#include "test_accumulators/test_file_accumulator.hpp"
 #include "test_histograms/test_binnings.hpp"
 #include "test_histograms/test_histobase.hpp"
 #include "test_histograms/test_histocrete.hpp"
@@ -50,6 +52,11 @@ int main(int argc, char *argv[])
     runner.addTest(TestWangLandau::suite());
   if (test_all || test_name == "OptimalEnsembleSampling")
     runner.addTest(TestOptimalEnsembleSampling::suite());
+  if (test_all || test_name == "Accumulators")
+  {
+    runner.addTest(TestFileAccumulator::suite());
+    runner.addTest(TestHistogramAccumulator::suite());
+  }
   if (test_all || test_name == "Histograms")
   {
     runner.addTest(TestBinningNumber::suite());
@@ -63,7 +70,6 @@ int main(int argc, char *argv[])
   {
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
-    runner.addTest(TestHistogramAccumulator::suite());
     runner.addTest(TestJackknifeAnalysis::suite());
   }
 

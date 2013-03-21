@@ -1,5 +1,5 @@
-#ifndef MOCASINNS_OBSERVABLES_OBSERVABLE_FUNCTORS_HPP
-#define MOCASINNS_OBSERVABLES_OBSERVABLE_FUNCTORS_HPP
+#ifndef MOCASINNS_ANALYSIS_OBSERVABLE_FUNCTORS_HPP
+#define MOCASINNS_ANALYSIS_OBSERVABLE_FUNCTORS_HPP
 
 // Boost accumulator
 #include <boost/accumulators/accumulators.hpp>
@@ -10,7 +10,7 @@ namespace ba = boost::accumulators;
 
 namespace Mocasinns
 {
-  namespace Observables
+  namespace Analysis
   {
     template <class Observable, class BoostAccumulatorTag>
     struct ObservableFunctorBoostAccumulator

@@ -1,9 +1,9 @@
-#ifndef MOCASINNS_OBSERVABLES_HISTOGRAM_ACCUMULATOR_HPP
-#define MOCASINNS_OBSERVABLES_HISTOGRAM_ACCUMULATOR_HPP
+#ifndef MOCASINNS_ACCUMULATORS_HISTOGRAM_ACCUMULATOR_HPP
+#define MOCASINNS_ACCUMULATORS_HISTOGRAM_ACCUMULATOR_HPP
 
 namespace Mocasinns
 {
-  namespace Observables
+  namespace Accumulators
   {
     //! Class template for accumulating measured observables into a histogram.
     /*!

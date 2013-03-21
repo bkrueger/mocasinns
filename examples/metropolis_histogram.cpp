@@ -14,7 +14,7 @@ namespace ba = boost::accumulators;
 // Includes from libmocasinns
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/histograms/histogram.hpp>
-#include <mocasinns/observables/histogram_accumulator.hpp>
+#include <mocasinns/accumulators/histogram_accumulator.hpp>
 // Includes from librandom
 #include <random_boost_mt19937.hpp>
 
@@ -54,7 +54,7 @@ int main()
   sim.set_random_seed(0);
 
   // Define an accumulator with an standard observable_type to copy
-  Mocasinns::Observables::HistogramAccumulator<Mocasinns::Histograms::HistogramNumber, double> acc;
+  Mocasinns::Accumulators::HistogramAccumulator<Mocasinns::Histograms::HistogramNumber, double> acc;
   acc.set_binning_width(2.0);
   acc.set_binning_reference(0.0);
 

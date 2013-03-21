@@ -7,6 +7,8 @@
 
 #include <mocasinns/observables/vector_observable.hpp>
 
+using namespace Mocasinns::Observables;
+
 namespace ba = boost::accumulators;
 
 CppUnit::Test* TestJackknifeAnalysis::suite()

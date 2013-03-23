@@ -23,6 +23,10 @@ template <class ConfigurationType, class StepType, class EnergyType, template<cl
 class WangLandau : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
 public:
+  // Typedefs for integers
+  typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+  typedef uint64_t IncidenceCounterYValueType;
+
   // Forward declaration of the parameters for the WangLandau-Simulation
   template <class ParameterEnergyType = EnergyType> struct Parameters;
   // Forward declaration of struct used in signals to write the simulation status into std::cout
@@ -55,11 +59,18 @@ public:
   //! Set-Accessor for the estimation of the density of states
   void set_density_of_states(const HistoType<EnergyType, double>& value) { density_of_states = value; }
   //! Get-Accessor for the incidence counter
-  const HistoType<EnergyType, long long int>& get_incidence_counter() const { return incidence_counter; }
+  const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
   //! Set-Accessor for the incidence counter
-  void set_incidence_counter(const HistoType<EnergyType, long long int>& value) { incidence_counter = value; }
+  void set_incidence_counter(const HistoType<EnergyType, IncidenceCounterYValueType>& value) { incidence_counter = value; }
   //! Get-Accessor for the sweep counter
-  long get_sweep_counter() const { return sweep_counter; }
+  StepNumberType get_sweep_counter() const { return sweep_counter; }
+
+  //! Calculate the acceptance probability of a step
+  double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+  //! Handle an accepted step
+  void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+  //! Handle a rejected step
+  void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
 
   //! Do a certain number of wang-landau steps updating the density_of_states and the incidence_counter at the current modification factor
   void do_wang_landau_steps(const uint32_t& number);
@@ -87,10 +98,10 @@ private:
   //! Histogram for the estimation of the density of states
   HistoType<EnergyType, double> density_of_states;
   //! Histogram for the incidence counter
-  HistoType<EnergyType, long long int> incidence_counter;
+  HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
 
   //! Counter for the number of sweeps
-  long sweep_counter;
+  StepNumberType sweep_counter;
 
   //! Set the class properties that depend on the parameters, this function can be called each time the parameters will be updated
   void initialise_with_parameters();
@@ -136,10 +147,10 @@ public:
   double modification_factor_multiplier;
     
   //! Number of steps to take before checking again the flatness
-  uint32_t sweep_steps;
+  StepNumberType sweep_steps;
 
   //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
-  HistoType<EnergyType, int> prototype_histo;
+  HistoType<EnergyType, IncidenceCounterYValueType> prototype_histo;
     
   //! Constructor to set default values
   Parameters();
@@ -195,6 +206,6 @@ struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumb
 
 } // of namespace Mocasinns
 
-#include "wang_landau.cpp"
+#include "src/wang_landau.cpp"
 
 #endif

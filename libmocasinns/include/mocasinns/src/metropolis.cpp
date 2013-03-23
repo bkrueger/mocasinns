@@ -21,37 +21,10 @@
 
 namespace ba = boost::accumulators;
 
-#include "details/metropolis/vector_accumulator.hpp"
+#include "../details/metropolis/vector_accumulator.hpp"
 
 namespace Mocasinns
 {
-
-/*!
- * \param num_steps Number of Metropolis steps that will be performed
- * \param beta Inverse temperature that will be used for calculation of the acceptance probability of the Metropolis steps.
- */
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-template <class TemperatureType>
-void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_steps(const uint32_t& num_steps, const TemperatureType& beta = 0)
-{
-  for (uint32_t i = 0; i < num_steps; i++)
-  {
-    Step next_step = this->configuration_space->propose_step(this->rng);
-
-    if (next_step.is_executable())
-    {
-      // One does need to define this in advance, because the Temperature Type need not to be comparable to an double 0.0
-      double beta_times_delta_E = beta*next_step.delta_E();
-      double selection_probability_factor = next_step.selection_probability_factor();
-      double random_accept = this->rng->random_double();
-      if (beta_times_delta_E <= -log(selection_probability_factor) || random_accept < (1.0/selection_probability_factor)*exp(-beta_times_delta_E))
-      {
-	next_step.execute();
-      }
-    }
-  }
-}
-
 /*!
   \fn std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
   \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.

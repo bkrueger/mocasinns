@@ -23,6 +23,11 @@ template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
 public:
+  //! Typedef of this class
+  typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> this_type;
+  // Typedefs for integers
+  typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+  typedef uint32_t MeasurementNumberType;
   //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
   struct Parameters;
 
@@ -50,9 +55,35 @@ public:
   //! Set-accessor for the parameters of the Metropolis simulation
   void set_parameters(const Parameters& value) { simulation_parameters = value; }
 
+  //! Calculate the acceptance probability for a given step, must be implemented to use Simulation::do_steps
+  /*!
+    \tparam TemperatureType Type of the temperatures
+    \param step_to_execute Step of which the acceptance probability should be calculated
+    \param beta Temperature at which the step is done
+   */
+  template <class TemperatureType>
+  inline double acceptance_probability(StepType& step_to_execute, const TemperatureType& beta = 0)
+  {
+    return exp( -beta * step_to_execute.delta_E());
+  }
+  //! Handle an executed step (do nothing, must be implemented to use Simulation::do_steps)
+  template <class NotImportant>
+  inline void handle_executed_step(StepType&, NotImportant) {}
+  //! Handle a rejected step (do nothing, must be implemented to use Simulation::do_steps)
+  template <class NotImportant>
+  inline void handle_rejected_step(StepType&, NotImportant) {}
+
   //! Execute a given number of Metropolis-MC steps on the configuration at inverse temperatur beta
+  /*!
+    \details This function is just syntax sugar and calls the Simulation::do_steps() function
+    \param number Number of Metropolis steps that will be performed
+    \param beta Inverse temperature that will be used for calculation of the acceptance probability of the Metropolis steps.
+   */
   template<class TemperaturType = double>
-  void do_metropolis_steps(const uint32_t& number, const TemperaturType& beta);
+  void do_metropolis_steps(const StepNumberType& number, const TemperaturType& beta = 0.0)
+  {
+    this->template do_steps<this_type, StepType>(number, beta);
+  }
 
   //! Execute a Metropolis Monte-Carlo simulation at given inverse temperature
   template<class Observable = DefaultObservable, class TemperatureType = double>
@@ -103,11 +134,11 @@ template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 struct Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters
 {
   //! Number of steps to perform before taking data
-  unsigned long int relaxation_steps;
+  StepNumberType relaxation_steps;
   //! Number of data points per temperature
-  unsigned int measurement_number;
+  MeasurementNumberType measurement_number;
   //! Number of steps to perform between two data measurements
-  unsigned int steps_between_measurement;
+  StepNumberType steps_between_measurement;
   
   //! Standard constructor for setting default values
   Parameters() : relaxation_steps(1000),
@@ -117,6 +148,6 @@ struct Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameter
   
 } // of namespace Mocasinns
 
-#include "metropolis.cpp"
+#include "src/metropolis.cpp"
 
 #endif

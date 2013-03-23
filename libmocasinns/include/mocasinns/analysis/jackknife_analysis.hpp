@@ -1,5 +1,5 @@
-#ifndef MOCASINNS_OBSERVABLES_JACKKNIFE_ANALYSIS_HPP
-#define MOCASINNS_OBSERVABLES_JACKKNIFE_ANALYSIS_HPP
+#ifndef MOCASINNS_ANALYSIS_JACKKNIFE_ANALYSIS_HPP
+#define MOCASINNS_ANALYSIS_JACKKNIFE_ANALYSIS_HPP
 
 // Standard observable functions
 #include "observable_functors.hpp"
@@ -13,7 +13,7 @@ namespace ba = boost::accumulators;
 
 namespace Mocasinns
 {
-  namespace Observables
+  namespace Analysis
   {
     //! Class for doing a bootstrap analysis of a number of data points.
     /*!

@@ -98,6 +98,6 @@ public:
 } // of namespace Histograms
 } // of namespace Mocasinns
 
-#include "histocrete.cpp"
+#include "../src/histograms/histocrete.cpp"
 
 #endif

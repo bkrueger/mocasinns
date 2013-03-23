@@ -24,6 +24,10 @@ template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class MetropolisParallel : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
 public:
+  // Typedefs for integers
+  typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+  typedef uint32_t RunNumberType;
+
   // Forward declaration of the parameters used for a parallel Metropolis Simulation
   struct Parameters;
 
@@ -89,9 +93,9 @@ struct MetropolisParallel<ConfigurationType, StepType, RandomNumberGenerator>::P
   : Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters
 {
   //! Number of independent runs to perform
-  unsigned int run_number;
+  RunNumberType run_number;
   //! Number of processes to use
-  unsigned int process_number;
+  RunNumberType process_number;
   
   //! Standard constructor for setting default values
   Parameters() : MetropolisSerial::Parameters(),
@@ -102,6 +106,6 @@ struct MetropolisParallel<ConfigurationType, StepType, RandomNumberGenerator>::P
 
 } // of namespace Mocasinns
 
-#include "metropolis_parallel.cpp"
+#include "src/metropolis_parallel.cpp"
 
 #endif

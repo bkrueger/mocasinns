@@ -1,5 +1,5 @@
-#ifndef TEST_OPTIMAL_ENSEMBLE_SAMPLING_HPP
-#define TEST_OPTIMAL_ENSEMBLE_SAMPLING_HPP
+#ifndef TEST_ENTROPIC_SAMPLING_HPP
+#define TEST_ENTROPIC_SAMPLING_HPP
 
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
@@ -10,22 +10,22 @@
 #include <spinlattice.hpp>
 #include <spin_ising.hpp>
 
-#include <mocasinns/optimal_ensemble_sampling.hpp>
+#include <mocasinns/entropic_sampling.hpp>
 #include <mocasinns/histograms/histocrete.hpp>
 #include <mocasinns/random/boost_random.hpp>
 
 using namespace Mocasinns;
 
-class TestOptimalEnsembleSampling : CppUnit::TestFixture
+class TestEntropicSampling : CppUnit::TestFixture
 {
 public:
   typedef Ising::SpinLattice<1, Ising::SpinIsing> IsingConfiguration1d;
   typedef Ising::Step<1, Ising::SpinIsing> IsingStep1d;
-  typedef OptimalEnsembleSampling<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation1d;
+  typedef EntropicSampling<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation1d;
   
   typedef Ising::SpinLattice<2, Ising::SpinIsing> IsingConfiguration2d;
   typedef Ising::Step<2, Ising::SpinIsing> IsingStep2d;
-  typedef OptimalEnsembleSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation2d;
+  typedef EntropicSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation2d;
 
 private:
   IsingConfiguration1d* test_ising_config_1d;
@@ -42,7 +42,10 @@ public:
   void setUp();
   void tearDown();
 
-  void test_do_optimal_ensemble_sampling_simulation();
+  void test_do_entropic_sampling_steps();
+  void test_do_entropic_sampling_simulation();
+
+  void test_serialize();
 };
 
 #endif

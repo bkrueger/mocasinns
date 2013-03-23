@@ -258,6 +258,6 @@ public:
 } // of namespace Mocasinns
 
 // Include implementation file because this is a template class
-#include "histobase.cpp"
+#include "../src/histograms/histobase.cpp"
 
 #endif

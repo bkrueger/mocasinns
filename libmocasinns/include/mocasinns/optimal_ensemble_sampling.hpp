@@ -35,6 +35,10 @@ namespace Mocasinns
   class OptimalEnsembleSampling : public Simulation<ConfigurationType, RandomNumberGenerator>
   {
   public:
+    // Typedefs for integers
+    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef uint64_t IncidenceCounterYValueType;
+    
     //! Struct storing the parameters of the optimal ensemble sampling simulation
     struct Parameters;
 
@@ -58,9 +62,9 @@ namespace Mocasinns
     //! Get-Accessor for the weights
     const HistoType<EnergyType, double>& get_weights() { return weights; }
     //! Get-Accessor for the incidence counter of positive labled walkers
-    const HistoType<EnergyType, int>& get_incidence_counter_positive() { return incidence_counter_positive; }
+    const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter_positive() { return incidence_counter_positive; }
     //! Get-Accessor for the incidence counter of negative labled walkers
-    const HistoType<EnergyType, int>& get_incidence_counter_negative() { return incidence_counter_negative; }
+    const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter_negative() { return incidence_counter_negative; }
 
     //! Find the minimal and the maximal energy of the system
     template<class TemperatureType>
@@ -70,6 +74,13 @@ namespace Mocasinns
     void estimate_weights();
     //! Estimate the weights from the density of states calculated in a Wang-Landau simulation with given Wang-Landau parameters
     void estimate_weights(const WangLandauParameters& wang_landau_parameters);
+
+    //! Calculate the acceptance probability of a step
+    double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+    //! Handle an accepted step
+    void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+    //! Handle a rejected step
+    void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
 
     //! Do a certain number of steps updating the density_of_states and the incidence_counter
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);
@@ -93,9 +104,9 @@ namespace Mocasinns
     //! Histogram for the weights of the simulation
     HistoType<EnergyType, double> weights;
     //! Histogram for the incidence counter for positive labled walkers
-    HistoType<EnergyType, unsigned long int> incidence_counter_positive;
+    HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter_positive;
     //! Histogram for the incidence counter for negative labled walkers
-    HistoType<EnergyType, unsigned long int> incidence_counter_negative;
+    HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter_negative;
 
     //! Enum for the possible labels of the walker
     enum WalkerLabel { positive, negative};
@@ -137,7 +148,7 @@ namespace Mocasinns
     EnergyType maximal_energy;
 
     //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
-    HistoType<EnergyType, int> prototype_histo;
+    HistoType<EnergyType, IncidenceCounterYValueType> prototype_histo;
 
     //! Constructor setting the default values
     Parameters() : initial_steps_per_iteration(1000),
@@ -149,6 +160,6 @@ namespace Mocasinns
   
 } // of namespace Mocasinns
 
-#include "optimal_ensemble_sampling.cpp"
+#include "src/optimal_ensemble_sampling.cpp"
 
 #endif

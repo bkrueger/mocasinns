@@ -9,7 +9,7 @@
 
 #ifdef MOCASINNS_OPTIMAL_ENSEMBLE_SAMPLING_HPP
 
-#include "metropolis.hpp"
+#include "../metropolis.hpp"
 
 namespace Mocasinns
 {
@@ -110,6 +110,66 @@ namespace Mocasinns
     }
   }
 
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+  double OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, EnergyType& total_energy)
+  {
+    // Calculate the energy difference of the step
+    EnergyType delta_E = step_to_execute.delta_E();
+    
+    // Check whether one leaves the energy range (then allways do the step)
+    if (total_energy + delta_E > simulation_parameters.maximal_energy)
+    {
+      // Set the weight of the new bin to the weight of the maximal bin
+      weights[total_energy + delta_E] = weights[simulation_parameters.maximal_energy];
+      // Reset the maximal energy parameter
+      simulation_parameters.maximal_energy = total_energy + delta_E;
+      // Execute the step 
+      return 1.0;
+    }
+    if (total_energy + delta_E < simulation_parameters.minimal_energy)
+    {
+      // Set the weight of the new bin to the weight of the minimal bin
+      weights[total_energy + delta_E] = weights[simulation_parameters.minimal_energy];
+      // Reset the minimal energy parameter
+      simulation_parameters.minimal_energy = total_energy + delta_E;
+      // Execute the step
+      return 1.0;
+    }
+    
+    // calculate the normal acceptance probability
+    return exp(weights[total_energy + delta_E] - weights[total_energy]);
+  }
+  
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType& executed_step, EnergyType& total_energy)
+  {
+    // Increment the total energy
+    total_energy += executed_step.delta_E();
+
+    // If the negative energy barrier was reached, set the walker_label
+    if (total_energy == simulation_parameters.minimal_energy)
+      walker_label = negative;
+    // If the positive energy barrier was reached, set the walker_label
+    if (total_energy == simulation_parameters.maximal_energy)
+      walker_label = positive;
+
+    // Update the counting histograms
+    if (walker_label == positive)
+      incidence_counter_positive[total_energy]++;
+    else
+      incidence_counter_negative[total_energy]++;
+  }
+  
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, EnergyType& total_energy)
+  {
+    // Update the counting histograms
+    if (walker_label == positive)
+      incidence_counter_positive[total_energy]++;
+    else
+      incidence_counter_negative[total_energy]++;
+  }
+
   /*!
     \details Performs a number of steps with the acceptance probability given by the weights. Records the step in the positive and negative incidence counter histograms and resets the walker label if necessary.
     \param number Number of steps to perform.
@@ -119,60 +179,9 @@ namespace Mocasinns
   {
     // Variable to track the energy
     EnergyType energy = this->configuration_space->energy();
-
-    for (uint32_t i = 0; i < number; ++i)
-    {
-      StepType next_step = this->configuration_space->propose_step(this->rng);
-      
-      if (next_step.is_executable())
-      {
-	EnergyType delta_E = next_step.delta_E();
-
-	// Check whether one leaves the energy range
-	bool new_range = false;
-	if (energy + delta_E > simulation_parameters.maximal_energy)
-	{
-	  // Set the weight of the new bin to the weight of the maximal bin
-	  weights[energy + delta_E] = weights[simulation_parameters.maximal_energy];
-	  // Reset the maximal energy parameter
-	  simulation_parameters.maximal_energy = energy + delta_E;
-	  // Set the new_range flag to true
-	  new_range = true;
-	}
-	if (energy + delta_E < simulation_parameters.minimal_energy)
-	{
-	  // Set the weight of the new bin to the weight of the minimal bin
-	  weights[energy + delta_E] = weights[simulation_parameters.minimal_energy];
-	  // Reset the minimal energy parameter
-	  simulation_parameters.minimal_energy = energy + delta_E;
-	  // Set the new_range flag to true
-	  new_range = true;
-	}
-
-	// Calculate the acceptance probability
-	double acceptance_probability = exp(weights[energy + delta_E] - weights[energy])/next_step.selection_probability_factor();
-	
-	if (new_range || this->rng->random_double() < acceptance_probability)
-	{
-	  // Do the flip
-	  energy += delta_E;
-	  next_step.execute();
-	}
-
-	// If the negative energy barrier was reached, set the walker_label
-	if (energy == simulation_parameters.minimal_energy)
-	  walker_label = negative;
-	// If the positive energy barrier was reached, set the walker_label
-	if (energy == simulation_parameters.maximal_energy)
-	  walker_label = positive;
-      }
-
-      // Update the counting histograms
-      if (walker_label == positive)
-	incidence_counter_positive[energy]++;
-      else
-	incidence_counter_negative[energy]++;
-    }  
+    
+    // Call the generic method
+    this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType>(number, energy);
   }
 
   /*!
@@ -237,8 +246,8 @@ namespace Mocasinns
 	   it != incidence_counter_positive.end(); ++it)
       {
 	EnergyType energy = it->first;
-	unsigned long int positive_incidence = it->second;
-	unsigned long int negative_incidence = incidence_counter_negative[it->first];
+	IncidenceCounterYValueType positive_incidence = it->second;
+	IncidenceCounterYValueType negative_incidence = incidence_counter_negative[it->first];
 	fraction_histogram[energy] = static_cast<double>(positive_incidence) / static_cast<double>(positive_incidence + negative_incidence);
       }
       

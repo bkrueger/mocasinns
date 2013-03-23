@@ -38,6 +38,6 @@ namespace Mocasinns
 
 } // of namespace Mocasinns
 
-#include "configuration_test.cpp"
+#include "src/configuration_test.cpp"
 
 #endif

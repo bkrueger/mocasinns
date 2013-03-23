@@ -12,10 +12,13 @@
 // Header for all the test classes
 #include "test_simulation.hpp"
 #include "test_configuration_test.hpp"
+#include "test_entropic_sampling.hpp"
 #include "test_metropolis.hpp"
 #include "test_metropolis_parallel.hpp"
 #include "test_wang_landau.hpp"
 #include "test_optimal_ensemble_sampling.hpp"
+#include "test_accumulators/test_histogram_accumulator.hpp"
+#include "test_accumulators/test_file_accumulator.hpp"
 #include "test_histograms/test_binnings.hpp"
 #include "test_histograms/test_histobase.hpp"
 #include "test_histograms/test_histocrete.hpp"
@@ -23,8 +26,8 @@
 #include "test_histograms/test_histogram_number.hpp"
 #include "test_observables/test_vector_observable.hpp"
 #include "test_observables/test_array_observable.hpp"
-#include "test_observables/test_histogram_accumulator.hpp"
-#include "test_observables/test_jackknife_analysis.hpp"
+#include "test_accumulators/test_histogram_accumulator.hpp"
+#include "test_analysis/test_jackknife_analysis.hpp"
 
 bool read_test_name(int argc, char *argv[], std::string& test_name);
 
@@ -39,6 +42,8 @@ int main(int argc, char *argv[])
     runner.addTest(TestSimulation::suite());
   if (test_all || test_name == "ConfigurationTest")
     runner.addTest(TestConfigurationTest::suite());
+  if (test_all || test_name == "EntropicSampling")
+    runner.addTest(TestEntropicSampling::suite());
   if (test_all || test_name == "Metropolis")
     runner.addTest(TestMetropolis::suite());
   if (test_all || test_name == "MetropolisParallel")
@@ -47,6 +52,11 @@ int main(int argc, char *argv[])
     runner.addTest(TestWangLandau::suite());
   if (test_all || test_name == "OptimalEnsembleSampling")
     runner.addTest(TestOptimalEnsembleSampling::suite());
+  if (test_all || test_name == "Accumulators")
+  {
+    runner.addTest(TestFileAccumulator::suite());
+    runner.addTest(TestHistogramAccumulator::suite());
+  }
   if (test_all || test_name == "Histograms")
   {
     runner.addTest(TestBinningNumber::suite());
@@ -60,7 +70,6 @@ int main(int argc, char *argv[])
   {
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
-    runner.addTest(TestHistogramAccumulator::suite());
     runner.addTest(TestJackknifeAnalysis::suite());
   }
 

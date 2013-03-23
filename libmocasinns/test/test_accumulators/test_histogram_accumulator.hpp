@@ -8,9 +8,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <mocasinns/histograms/histogram.hpp>
-#include <mocasinns/observables/histogram_accumulator.hpp>
+#include <mocasinns/accumulators/histogram_accumulator.hpp>
 
-using namespace Mocasinns::Observables;
+using namespace Mocasinns::Accumulators;
 using namespace Mocasinns::Histograms;
 
 class TestHistogramAccumulator : CppUnit::TestFixture

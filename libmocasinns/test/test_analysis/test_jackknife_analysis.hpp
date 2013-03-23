@@ -7,9 +7,9 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <mocasinns/observables/jackknife_analysis.hpp>
+#include <mocasinns/analysis/jackknife_analysis.hpp>
 
-using namespace Mocasinns::Observables;
+using namespace Mocasinns::Analysis;
 
 class TestJackknifeAnalysis : CppUnit::TestFixture
 {

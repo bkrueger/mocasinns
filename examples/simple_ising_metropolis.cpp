@@ -3,11 +3,10 @@
 // Includes from libmocasinns
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/observables/array_observable.hpp>
-// Includes from librandom
-#include <random_boost_mt19937.hpp>
+#include <mocasinns/random/boost_random.hpp>
 
 // Typedef for the Simulation
-typedef Mocasinns::Metropolis<SimpleIsingSystem, SimpleIsingStep, Boost_MT19937> Simulation;
+typedef Mocasinns::Metropolis<SimpleIsingSystem, SimpleIsingStep, Mocasinns::Random::Boost_MT19937> Simulation;
 
 int main()
 {

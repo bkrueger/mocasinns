@@ -90,37 +90,45 @@ WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+double WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, EnergyType& total_energy)
+{
+  // Calculate the energy difference of the step
+  EnergyType delta_E = step_to_execute.delta_E();
+
+  // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
+  if (simulation_parameters.energy_cutoff_use && total_energy + delta_E > simulation_parameters.energy_cutoff)
+    return 0.0;
+
+  // Calculate and return the acceptance probability
+  return exp(density_of_states[total_energy] - density_of_states[total_energy + delta_E]);
+}
+
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType& executed_step, EnergyType& total_energy)
+{
+  // Increment the total energy
+  total_energy += executed_step.delta_E();
+  // Update the histograms
+  density_of_states[total_energy] += modification_factor_current;
+  incidence_counter[total_energy]++;
+}
+
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, EnergyType& total_energy)
+{
+  // Update the histograms
+  density_of_states[total_energy] += modification_factor_current;
+  incidence_counter[total_energy]++;
+}
+
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_wang_landau_steps(const uint32_t& number)
 {
   // Variable to track the energy
   EnergyType energy = this->configuration_space->energy();
 
-  for (uint32_t i = 0; i < number; ++i)
-  {
-    StepType next_step = this->configuration_space->propose_step(this->rng);
-
-    if (next_step.is_executable())
-    {
-      EnergyType delta_E = next_step.delta_E();
-      
-      if ((!simulation_parameters.energy_cutoff_use) || (energy + delta_E < simulation_parameters.energy_cutoff))
-	{
-	  // Calculate the acceptance probability
-	  double acceptance_probability = exp(density_of_states[energy] - density_of_states[energy + delta_E])/next_step.selection_probability_factor();
-
-	  if (this->rng->random_double() < acceptance_probability)
-	    {
-	      // Do the flip
-	      energy += delta_E;
-	      next_step.execute();
-	    }
-	}
-    }
-
-    // Update the histograms
-    density_of_states[energy] += modification_factor_current;
-    incidence_counter[energy]++;
-  }
+  // Call the generic function of Simulation
+  this->template do_steps<WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>, StepType>(number, energy);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

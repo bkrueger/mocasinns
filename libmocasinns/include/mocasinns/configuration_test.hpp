@@ -14,6 +14,7 @@
 #define MOCASINNS_CONFIGURATION_TEST_HPP
 
 #include "simulation.hpp"
+#include "concepts/concepts.hpp"
 
 namespace Mocasinns
 {
@@ -22,6 +23,11 @@ namespace Mocasinns
   template <class ConfigurationType, class StepType, class EnergyType, class RandomNumberGenerator>
   class ConfigurationTest : public Simulation<ConfigurationType, RandomNumberGenerator>
   {
+    // Check the configuration concept
+    BOOST_CONCEPT_ASSERT((Concepts::ConfigurationConcept<ConfigurationType, StepType>));
+    // Check the step concept
+    BOOST_CONCEPT_ASSERT((Concepts::StepConcept<StepType>));
+
   public:
     //! Constructor providing a initial configuration upon which the tests are executed
     ConfigurationTest(ConfigurationType* initial_configuration) : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration) {}

@@ -9,6 +9,7 @@
 #include "configuration_concept.hpp"
 #include "step_concept.hpp"
 #include "energy_concept.hpp"
+#include "histo_concept.hpp"
 #include "random_number_generator_concept.hpp"
 
 #endif

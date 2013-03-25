@@ -58,11 +58,21 @@ public:
   class ExceptionNonCompatible;
   
   // Typedefs for iterator
+  typedef typename histobase_container::key_type key_type;
+  typedef typename histobase_container::mapped_type mapped_type;
+  typedef typename histobase_container::value_type value_type;
+  typedef typename histobase_container::key_compare key_compare;
+  typedef typename histobase_container::value_compare value_compare;
+  typedef typename histobase_container::allocator_type allocator_type;
   typedef typename histobase_container::iterator iterator;
   typedef typename histobase_container::const_iterator const_iterator;
   typedef typename histobase_container::reverse_iterator reverse_iterator;
   typedef typename histobase_container::const_reverse_iterator const_reverse_iterator;
-  typedef typename histobase_container::value_type value_type;
+  typedef typename histobase_container::difference_type difference_type;
+  typedef typename histobase_container::reference reference;
+  typedef typename histobase_container::const_reference const_reference;
+  typedef typename histobase_container::pointer pointer;
+  typedef typename histobase_container::const_pointer const_pointer;
   typedef typename histobase_container::size_type size_type;
 
   //! Standard constructor, initialises a HistoBase without values
@@ -133,6 +143,11 @@ public:
   iterator end() { return values.end(); }
   //! Return const_iterator to end
   const_iterator end() const { return values.end(); }
+
+  //! Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
+  std::pair<const_iterator,const_iterator> equal_range (const key_type& k) const { return values.equal_range(k); }
+  //! Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
+  std::pair<iterator,iterator> equal_range (const key_type& k) { return values.equal_range(k); }
 
   //! Erase one element given by the iterator position
   void erase(iterator position) { values.erase(position); }
@@ -215,6 +230,7 @@ public:
   template<class x_value_type, class y_value_type, class Derived>
   class HistoBase<x_value_type,y_value_type,Derived>::ExceptionNonCompatible : public std::out_of_range
   {
+  public:
     ExceptionNonCompatible() : std::out_of_range("Arithmetic calculation with non-compatible histograms.") {}
   };
 

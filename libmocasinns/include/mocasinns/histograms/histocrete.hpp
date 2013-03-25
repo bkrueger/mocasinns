@@ -39,11 +39,21 @@ public:
   typedef HistoBase<x_value_type, y_value_type, Histocrete<x_value_type, y_value_type> > Base;
   // Typedefs for iterator
   // Necessary because this is a class template
+  typedef typename Base::key_type key_type;
+  typedef typename Base::mapped_type mapped_type;
+  typedef typename Base::value_type value_type;
+  typedef typename Base::key_compare key_compare;
+  typedef typename Base::value_compare value_compare;
+  typedef typename Base::allocator_type allocator_type;
   typedef typename Base::iterator iterator;
   typedef typename Base::const_iterator const_iterator;
   typedef typename Base::reverse_iterator reverse_iterator;
   typedef typename Base::const_reverse_iterator const_reverse_iterator;
-  typedef typename Base::value_type value_type;
+  typedef typename Base::difference_type difference_type;
+  typedef typename Base::reference reference;
+  typedef typename Base::const_reference const_reference;
+  typedef typename Base::pointer pointer;
+  typedef typename Base::const_pointer const_pointer;
   typedef typename Base::size_type size_type;
 
   //! Standard constructor

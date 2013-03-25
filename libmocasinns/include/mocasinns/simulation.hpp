@@ -23,14 +23,17 @@
 // Header for signal handling
 #include <boost/signals2/signal.hpp>
 
+// Header for the standard random number generator
+#include "random/boost_random.hpp"
+
 namespace Mocasinns
 {
 
 //! Base class for all Simulations in MoCaSinns
-template <class ConfigurationType, class RandomNumberGenerator>
+template <class ConfigurationType, class RandomNumberGenerator = Random::Boost_MT19937>
 class Simulation
 {
-  public:
+public:
   //! Typedef for the step number
   typedef uint64_t StepNumberType;
 

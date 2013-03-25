@@ -11,17 +11,28 @@
 #define MOCASINNS_WANG_LANDAU_HPP
 
 #include "simulation.hpp"
+#include "concepts/concepts.hpp"
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
 
 namespace Mocasinns
 {
-
 //! Class for Metropolis-Monte-Carlo simulations
 template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
 class WangLandau : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
+  // Check the configuration concept
+  BOOST_CONCEPT_ASSERT((Concepts::ConfigurationConcept<ConfigurationType, StepType>));
+  // Check the step concept
+  BOOST_CONCEPT_ASSERT((Concepts::StepConcept<StepType>));
+  // Check the energy concept
+  BOOST_CONCEPT_ASSERT((Concepts::EnergyConcept<EnergyType>));
+  // Check the histo concept
+  BOOST_CONCEPT_ASSERT((Concepts::HistoConcept<HistoType>));
+  // Check the random number generator concept
+  BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
+  
 public:
   // Typedefs for integers
   typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;

@@ -11,6 +11,7 @@
 #define MOCASINNS_METROPOLIS_HPP
 
 #include "simulation.hpp"
+#include "concepts/concepts.hpp"
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
@@ -38,6 +39,13 @@ namespace Mocasinns
 template <class ConfigurationType, class StepType, class RandomNumberGenerator>
 class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>
 {
+  // Check the configuration concept
+  BOOST_CONCEPT_ASSERT((Concepts::ConfigurationConcept<ConfigurationType, StepType>));  
+  // Check the step concept
+  BOOST_CONCEPT_ASSERT((Concepts::StepConcept<StepType>));
+  // Check the random number generator concept
+  BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
+
 public:
   //! Typedef of this class
   typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> this_type;

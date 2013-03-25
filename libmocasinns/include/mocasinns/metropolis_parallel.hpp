@@ -28,6 +28,8 @@ class MetropolisParallel : public Simulation<ConfigurationType, RandomNumberGene
   BOOST_CONCEPT_ASSERT((Concepts::ConfigurationConcept<ConfigurationType, StepType>));
   // Check the step concept
   BOOST_CONCEPT_ASSERT((Concepts::StepConcept<StepType>));
+  // Check the random number generator concept
+  BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
 public:
   // Typedefs for integers

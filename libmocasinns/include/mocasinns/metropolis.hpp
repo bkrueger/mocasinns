@@ -27,6 +27,8 @@ class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>
   BOOST_CONCEPT_ASSERT((Concepts::ConfigurationConcept<ConfigurationType, StepType>));  
   // Check the step concept
   BOOST_CONCEPT_ASSERT((Concepts::StepConcept<StepType>));
+  // Check the random number generator concept
+  BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
 public:
   //! Typedef of this class

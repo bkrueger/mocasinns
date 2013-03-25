@@ -28,6 +28,8 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::StepConcept<StepType>));
     // Check the energy concept
     BOOST_CONCEPT_ASSERT((Concepts::EnergyConcept<EnergyType>));
+    // Check the random number generator concept
+    BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
   public:
     // Typedefs for integers

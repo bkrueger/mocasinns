@@ -26,8 +26,8 @@
 #include "test_histograms/test_histogram_number.hpp"
 #include "test_observables/test_vector_observable.hpp"
 #include "test_observables/test_array_observable.hpp"
-#include "test_accumulators/test_histogram_accumulator.hpp"
 #include "test_analysis/test_jackknife_analysis.hpp"
+#include "test_details/test_stl_extensions/test_vector_addable.hpp"
 
 bool read_test_name(int argc, char *argv[], std::string& test_name);
 
@@ -71,6 +71,10 @@ int main(int argc, char *argv[])
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
     runner.addTest(TestJackknifeAnalysis::suite());
+  }
+  if (test_all || test_name == "Details")
+  {
+    runner.addTest(TestVectorAddable::suite());
   }
 
   CppUnit::BriefTestProgressListener listener;

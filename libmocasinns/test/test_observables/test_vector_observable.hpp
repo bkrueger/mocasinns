@@ -25,8 +25,6 @@ public:
 
   void test_constructor();
 
-  void test_operator_add();
-  void test_operator_substract();
   void test_operator_multiply();
   void test_operator_divide();
   void test_pow();

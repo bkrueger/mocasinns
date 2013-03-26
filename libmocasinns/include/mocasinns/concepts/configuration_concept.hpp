@@ -28,7 +28,7 @@ namespace Mocasinns
       BOOST_CONCEPT_USAGE(ConfigurationConcept)
       {
 	// There must be a function for proposing a step and returning a StepType
-	proposed_step = configuration.propose_step(&rng);
+	same_type(proposed_step, configuration.propose_step(&rng));
 	
 	// There must be a function energy
 	configuration.energy();
@@ -42,6 +42,9 @@ namespace Mocasinns
       StepType proposed_step;
       Random::Boost_MT19937 rng;
 
+      // Type deduction will fail unless the arguments have the same type.
+      template <typename T>
+      void same_type(T const&, T const&);
     };
   }
 }

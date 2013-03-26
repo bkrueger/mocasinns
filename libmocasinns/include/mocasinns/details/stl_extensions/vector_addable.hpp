@@ -10,8 +10,8 @@ namespace Mocasinns
   {
     namespace STL_Extensions
     {
-      //! Class altering an STL-vector to be addable. Defines also scalar multiplication and division. The class is used as a base class for VectorObservable and VectorEnergy.
-      template <class T>
+      //! Class altering an STL-vector to be addable. Defines also scalar multiplication and division. The class is used as a base class for VectorObservable and VectorEnergy. Uses the CRTP
+      template <class T, class Derived>
       class VectorAddable
       {
       protected:
@@ -56,13 +56,13 @@ namespace Mocasinns
 	//! Creates a VectorAddable with a std::vector
 	VectorAddable(const std::vector<T>& std_vector) : data(std_vector) {}
 	//! Copy-Constructor
-	VectorAddable(const VectorAddable<T>& other) : data(other.data) {}
+	VectorAddable(const VectorAddable<T, Derived>& other) : data(other.data) {}
 	//! Creates a VectorAddable with a copy of a range
 	template<class InputIterator>
 	VectorAddable(InputIterator first, InputIterator last) : data(first, last) {}
 
 	//! The assignment operator
-	VectorAddable<T>& operator=(const VectorAddable<T>& other) 
+	VectorAddable<T, Derived>& operator=(const VectorAddable<T, Derived>& other) 
 	{ 
 	  data = other.data;
 	  return *this;
@@ -72,48 +72,48 @@ namespace Mocasinns
 	//! Returns the n'th element
 	const_reference operator[](size_type n) const { return data[n]; }
 
-	template <class TT>
-	friend bool operator==(const VectorAddable<TT>&, const VectorAddable<TT>&);
-	template <class TT>      
-	friend bool operator!=(const VectorAddable<TT>&, const VectorAddable<TT>&);
-	template <class TT>
-	friend bool operator<(const VectorAddable<TT>&, const VectorAddable<TT>&);
-	template <class TT>
-	friend bool operator<=(const VectorAddable<TT>&, const VectorAddable<TT>&);
-	template <class TT>
-	friend bool operator>(const VectorAddable<TT>&, const VectorAddable<TT>&);
-	template <class TT>
-	friend bool operator>=(const VectorAddable<TT>&, const VectorAddable<TT>&);
+	template <class TT, class OtherDerived>
+	friend bool operator==(const VectorAddable<TT,OtherDerived>&, const VectorAddable<TT,OtherDerived>&);
+	template <class TT, class OtherDerived>
+	friend bool operator!=(const VectorAddable<TT,OtherDerived>&, const VectorAddable<TT,OtherDerived>&);
+	template <class TT, class OtherDerived>
+	friend bool operator<(const VectorAddable<TT,OtherDerived>&, const VectorAddable<TT,OtherDerived>&);
+	template <class TT, class OtherDerived>
+	friend bool operator<=(const VectorAddable<TT,OtherDerived>&, const VectorAddable<TT,OtherDerived>&);
+	template <class TT, class OtherDerived>
+	friend bool operator>(const VectorAddable<TT,OtherDerived>&, const VectorAddable<TT,OtherDerived>&);
+	template <class TT, class OtherDerived>
+	friend bool operator>=(const VectorAddable<TT,OtherDerived>&, const VectorAddable<TT,OtherDerived>&);
 	
 	//! Adds a scalar to each component of this VectorAddable
-	VectorAddable<T>& operator+=(const T& rhs)
+	Derived& operator+=(const T& rhs)
 	{
 	  // Add the scalar component-wise
 	  for (iterator it_this = data.begin(); it_this != data.end(); ++it_this)
 	    (*it_this) += rhs;
 	  
-	  return *this;
+	  return *(static_cast<Derived*>(this));
 	}
 	//! Substracts a scalar of each component of this VectorAddable
-	VectorAddable<T>& operator-=(const T& rhs)
+	Derived& operator-=(const T& rhs)
 	{
 	  // Substract the scalar component-wise
 	  for (iterator it_this = data.begin(); it_this != data.end(); ++it_this)
 	    (*it_this) -= rhs;
 	  
-	  return *this;
+	  return *(static_cast<Derived*>(this));
 	}
 	//! Adds a VectorAddable to this VectorAddable
-	VectorAddable<T>& operator+=(const VectorAddable<T>& rhs)
+	Derived& operator+=(const VectorAddable<T, Derived>& rhs)
 	{
 	  // If the right hand side is empty, do nothing.
 	  // If this VectorAddable is empty, assign the rhs to this vector and return
 	  if (rhs.size() == 0)
-	    return *this;
+	    return *(static_cast<Derived*>(this));
 	  if (this->size() == 0)
 	  {
 	    data = rhs.data;
-	    return *this;
+	    return *(static_cast<Derived*>(this));
 	  }
 
 	  // Test the sizes for other mismatch
@@ -125,20 +125,20 @@ namespace Mocasinns
 	  for (; it_this != data.end(); ++it_this, ++it_rhs)
 	    (*it_this) += (*it_rhs);
 	  
-	  return *this;
+	  return *(static_cast<Derived*>(this));
 	}
 	//! Substracts a VectorAddable from this VectorAddable
-	VectorAddable<T>& operator-=(const VectorAddable<T>& rhs)
+	Derived& operator-=(const VectorAddable<T, Derived>& rhs)
 	{
 	  // If the right hand side is empty, do nothing.
 	  // If this VectorAddable is empty, assign the negative rhs to this vector and return
 	  if (rhs.size() == 0)
-	    return *this;
+	    return *(static_cast<Derived*>(this));
 	  if (this->size() == 0)
 	  {
 	    for (const_iterator it_rhs = rhs.data.begin(); it_rhs != rhs.data.end(); ++it_rhs)
 	      this->push_back(-(*it_rhs));
-	    return *this;
+	    return *(static_cast<Derived*>(this));
 	  }
 	  
 	  // Test the sizes for other mismatch
@@ -150,27 +150,27 @@ namespace Mocasinns
 	  for (; it_this != data.end(); ++it_this, ++it_rhs)
 	    (*it_this) -= (*it_rhs);
 	  
-	  return *this;
+	  return *(static_cast<Derived*>(this));
 	}
 	//! Multiplies this VectorAddable with a scalar. 
 	template<class S>
-	VectorAddable<T>& operator*=(const S& rhs)
+	Derived& operator*=(const S& rhs)
 	{
 	  for (iterator it = data.begin(); it != data.end(); ++it)
 	  {
 	    (*it) *= rhs;
 	  }
-	  return *this;
+	  return *(static_cast<Derived*>(this));
 	}
 	//! Devides this VectorAddable by a scalar
 	template<class S>
-	VectorAddable<T>& operator/=(const S& rhs)
+	Derived& operator/=(const S& rhs)
 	{
 	  for (iterator it = data.begin(); it != data.end(); ++it)
 	  {
 	    (*it) /= rhs;
 	  }
-	  return *this;
+	  return *(static_cast<Derived*>(this));
 	}
 
 	//! Returns an iterator pointing to the beginning of the VectorAddable
@@ -220,7 +220,7 @@ namespace Mocasinns
 	//! Removes the last element
 	void pop_back() { data.pop_back(); }
 	//! Swaps the contents of two VectorAddables
-	void swap(VectorAddable<T>& other) { data.swap(other); }
+	void swap(VectorAddable<T, Derived>& other) { data.swap(other); }
 	//! Inserts x before pos
 	iterator insert(iterator pos, const T& x) { data.insert(pos,x); }
 	//! Inserts the range [first, last) before pos. 
@@ -240,74 +240,118 @@ namespace Mocasinns
       };
       
       //! Tests two VectorAddables for equality
-      template <class T>
-      bool operator==(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs) { return lhs.data == rhs.data; }
+      template <class T, class Derived>
+      bool operator==(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs) { return lhs.data == rhs.data; }
       //! Tests two VectorAddables for inequality
-      template <class T>
-      bool operator!=(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs) { return lhs.data != rhs.data; }
+      template <class T, class Derived>
+      bool operator!=(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs) { return lhs.data != rhs.data; }
       
       //! Lexigographic comparison
-      template <class T>
-      bool operator<(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs) { return lhs.data < rhs.data; }
+      template <class T, class Derived>
+      bool operator<(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs) { return lhs.data < rhs.data; }
       //! Lexigographic comparison
-      template <class T>
-      bool operator<=(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs) { return lhs.data <= rhs.data; }
+      template <class T, class Derived>
+      bool operator<=(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs) { return lhs.data <= rhs.data; }
       //! Lexigographic comparison
-      template <class T>
-      bool operator>(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs) { return lhs.data > rhs.data; }
+      template <class T, class Derived>
+      bool operator>(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs) { return lhs.data > rhs.data; }
       //! Lexigographic comparison
-      template <class T>
-      bool operator>=(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs) { return lhs.data >= rhs.data; }
+      template <class T, class Derived>
+      bool operator>=(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs) { return lhs.data >= rhs.data; }
 
       //! Adds a VectorAddable and a scalar
-      template <class T>
-      const VectorAddable<T> operator+(const VectorAddable<T>& lhs, const T& rhs)
+      template <class T, class Derived>
+      const Derived operator+(const VectorAddable<T,Derived>& lhs, const T& rhs)
       {
-	return VectorAddable<T>(lhs) += rhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(lhs) += rhs);
       }
       //! Adds a scalar and a VectorAddable
-      template <class T>
-      const VectorAddable<T> operator+(const T& lhs, const VectorAddable<T>& rhs)
+      template <class T, class Derived>
+      const Derived operator+(const T& lhs, const VectorAddable<T,Derived>& rhs)
       {
-	return VectorAddable<T>(rhs) += lhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(rhs) += lhs);
       }
       //! Substracts a VectorAddable and a scalar
-      template <class T>
-      const VectorAddable<T> operator-(const VectorAddable<T>& lhs, const T& rhs)
+      template <class T, class Derived>
+      const Derived operator-(const VectorAddable<T,Derived>& lhs, const T& rhs)
       {
-	return VectorAddable<T>(lhs) -= rhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(lhs) -= rhs);
       }
       //! Adds two vectors
-      template <class T>
-      const VectorAddable<T> operator+(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs)
+      template <class T, class Derived>
+      const Derived operator+(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs)
       {
-	return VectorAddable<T>(lhs) += rhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(lhs) += rhs);
       }
       //! Substracts two vectors
-      template <class T>
-      const VectorAddable<T> operator-(const VectorAddable<T>& lhs, const VectorAddable<T>& rhs)
+      template <class T, class Derived>
+      const Derived operator-(const VectorAddable<T,Derived>& lhs, const VectorAddable<T,Derived>& rhs)
       {
-	return VectorAddable<T>(lhs) -= rhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(lhs) -= rhs);
       }
       
       //! Multiply a scalar and a ObservableVector
-      template <class T, class S>
-      const VectorAddable<T> operator*(const S& lhs, const VectorAddable<T>& rhs)
+      template <class T, class Derived, class S>
+      const Derived operator*(const S& lhs, const VectorAddable<T,Derived>& rhs)
       {
-	return VectorAddable<T>(rhs) *= lhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(rhs) *= lhs);
       }
       //! Multiply a scalar and a ObservableVector
-      template <class T, class S>
-      const VectorAddable<T> operator*(const VectorAddable<T>& lhs, const S& rhs)
+      template <class T, class Derived, class S>
+      const Derived operator*(const VectorAddable<T,Derived>& lhs, const S& rhs)
       {
-	return VectorAddable<T>(lhs) *= rhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(lhs) *= rhs);
       }
       //! Divide the ObservableVector by a scalar
-      template <class T, class S>
-      const VectorAddable<T> operator/(const VectorAddable<T>& lhs, const S& rhs)
+      template <class T, class Derived, class S>
+      const Derived operator/(const VectorAddable<T,Derived>& lhs, const S& rhs)
       {
-	return VectorAddable<T>(lhs) /= rhs;
+	return static_cast<Derived>(VectorAddable<T,Derived>(lhs) /= rhs);
       }
+
+      //! Class representing a plain VectorAddable that is not used as a base class
+      template <class T>
+      class VectorAddablePlain : public VectorAddable<T, VectorAddablePlain<T> >
+      {
+      public:
+	//! Definition for the base class
+	typedef VectorAddable<T, VectorAddablePlain> Base;
+
+	//! The type of the object stored in the VectorAddable (T)
+	typedef typename Base::value_type value_type;
+	//! Pointer to T
+	typedef typename Base::pointer pointer;
+	//! Reference to T
+	typedef typename Base::reference reference;
+	//! Const-Reference to T
+	typedef typename Base::const_reference const_reference;
+	//! An unsigned integral type
+	typedef typename Base::size_type size_type;
+	//! A signed integral type
+	typedef typename Base::difference_type difference_type;
+	//! Iterator used to iterate through a VectorAddable
+	typedef typename Base::iterator iterator;
+	//! Const-Iterator used to iterate through a VectorAddable
+	typedef typename Base::const_iterator const_iterator;
+	//! Iterator used to iterate backwards through a VectorAddable
+	typedef typename Base::reverse_iterator reverse_iterator;
+	//! Const-Iterator used to iterate backwards through a VectorAddable
+	typedef typename Base::const_reverse_iterator const_reverse_iterator;
+
+	//! Creates an empty VectorAddable
+	VectorAddablePlain() : Base() {}
+	//! Creates a VectorAddable with n Elements
+	explicit VectorAddablePlain(size_type n) : Base(n) {}
+	//! Creates a VectorAddable with n copies of t
+	VectorAddablePlain(size_type n, const T& t) : Base(n,t) {}
+	//! Creates a VectorAddable with a std::vector
+	VectorAddablePlain(const std::vector<T>& std_vector) : Base(std_vector) {}
+	//! Copy-Constructor
+	VectorAddablePlain(const VectorAddablePlain<T>& other) : Base(other.data) {}
+	//! Creates a VectorAddable with a copy of a range
+	template<class InputIterator>
+	VectorAddablePlain(InputIterator first, InputIterator last) : Base(first, last) {}
+      };
        
     }
   }

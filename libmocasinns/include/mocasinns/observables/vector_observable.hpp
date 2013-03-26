@@ -15,11 +15,11 @@ namespace Mocasinns
   {
     //! Class representing a vector observable with dynamic range check. Can be used like a std::vector and provides (component-wise) addition, substraction and exponentiation of the observables. For (faster) fixed range check use ArrayObservable or TupleObservable.
     template <class T>
-    class VectorObservable : public Details::STL_Extensions::VectorAddable<T>
+    class VectorObservable : public Details::STL_Extensions::VectorAddable<T, VectorObservable<T> >
     {
     public:
       //! Base class
-      typedef Details::STL_Extensions::VectorAddable<T> Base;
+      typedef Details::STL_Extensions::VectorAddable<T, VectorObservable<T> > Base;
       
       //! The type of the object stored in the VectorObservable (T)
       typedef typename Base::value_type value_type;

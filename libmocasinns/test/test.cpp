@@ -29,6 +29,7 @@
 #include "test_analysis/test_jackknife_analysis.hpp"
 #include "test_details/test_stl_extensions/test_vector_addable.hpp"
 #include "test_details/test_stl_extensions/test_array_addable.hpp"
+// #include "test_details/test_stl_extensions/test_tuple_addable.hpp"
 
 bool read_test_name(int argc, char *argv[], std::string& test_name);
 
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
   {
     runner.addTest(TestVectorAddable::suite());
     runner.addTest(TestArrayAddable::suite());
+    //    runner.addTest(TestTupleAddable::suite());
   }
 
   CppUnit::BriefTestProgressListener listener;

@@ -14,8 +14,8 @@ using namespace Mocasinns::Details::STL_Extensions;
 class TestVectorAddable : CppUnit::TestFixture
 {
 private:
-  VectorAddable<double>* vector_addable_double;
-  VectorAddable<int>* vector_addable_int;
+  VectorAddablePlain<double>* vector_addable_double;
+  VectorAddablePlain<int>* vector_addable_int;
 
 public:
   static CppUnit::Test* suite();

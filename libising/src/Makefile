@@ -4,11 +4,17 @@ CFLAGS   = $(OPT) -fPIC -Wall -Wextra -pedantic
 OBJ_LIB  = spin_ising.o spin_potts.o spin_real.o spinlattice.o step.o
 OBJ_COMP = $(OBJ_LIB) template_compile_test.o
 
+LIB_DEPLOY_DIR = ../lib
+
+
 all: library
 
-library: $(OBJ_COMP)
+library: $(OBJ_COMP) $(LIB_DEPLOY_DIR)
 	$(CC) -shared $(OBJ_LIB) -o ../lib/libising.so
 	ar -cvq ../lib/libising.a  $(OBJ_LIB)
+
+$(LIB_DEPLOY_DIR):
+	mkdir -p $@
 
 python_library : $(OBJS)
 	$(CC) $(CFLAGS) -I/usr/include/python2.6 -lboost_python -c libising_wrap.cpp -o libising_wrap.o

@@ -14,8 +14,8 @@ using namespace Mocasinns::Details::STL_Extensions;
 class TestArrayAddable : CppUnit::TestFixture
 {
 private:
-  ArrayAddable<double,3>* array_addable_double;
-  ArrayAddable<int,3>* array_addable_int;
+  ArrayAddablePlain<double,3>* array_addable_double;
+  ArrayAddablePlain<int,3>* array_addable_int;
 
 public:
   static CppUnit::Test* suite();

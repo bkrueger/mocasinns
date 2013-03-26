@@ -14,11 +14,11 @@ namespace Mocasinns
   {
     //! Class representing a array observable. Can be used like a std::array and provides (component-wise) addition, substraction and exponentiation of the observables. For using arrays of different types, use TupleObservables.
     template <class T, size_t N>
-    class ArrayObservable : public Details::STL_Extensions::ArrayAddable<T,N>
+    class ArrayObservable : public Details::STL_Extensions::ArrayAddable<T,N,ArrayObservable<T,N> >
     {
     public:
       //! Type of the base class
-      typedef Details::STL_Extensions::ArrayAddable<T,N> Base;
+      typedef Details::STL_Extensions::ArrayAddable<T,N,ArrayObservable<T,N> > Base;
 
       //! The type of the object stored in the ArrayObservable (T)
       typedef typename Base::value_type value_type;

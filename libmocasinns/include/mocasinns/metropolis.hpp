@@ -16,6 +16,11 @@
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
 
+// Boost function types for the standard observable
+#include <boost/function_types/result_type.hpp>
+#include <boost/typeof/std/utility.hpp>
+#include <boost/type_traits.hpp>
+
 namespace Mocasinns
 {
 
@@ -42,7 +47,10 @@ public:
   //! Standard class for observing the energy of the system
   struct ObserveEnergy
   {
-    typedef decltype(((ConfigurationType*)nullptr)->energy()) observable_type;
+    // typedef decltype(((ConfigurationType*)nullptr)->energy()) observable_type;
+    typedef BOOST_TYPEOF(&ConfigurationType::energy) energy_function_type;
+    typedef typename boost::function_types::result_type<energy_function_type>::type observable_type;
+    //    typedef typename boost::function_traits<energy_function_type>::result_type observable_type;
     static observable_type observe(ConfigurationType* config) { return config->energy(); }
   };
   //! Typedef for the default observable

@@ -29,9 +29,6 @@ namespace Mocasinns
       //! Type of the analysis result
       typedef std::pair<typename FunctionOfObservables::return_type, typename FunctionOfObservables::return_type> result_type;
 
-      //! Default constructor
-      JackknifeAnalysis();
-
       /*! 
 	\brief Do the analyis
 

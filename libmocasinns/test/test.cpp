@@ -27,6 +27,7 @@
 #include "test_observables/test_vector_observable.hpp"
 #include "test_observables/test_array_observable.hpp"
 #include "test_analysis/test_jackknife_analysis.hpp"
+#include "test_analysis/test_bootstrap_analysis.hpp"
 #include "test_details/test_stl_extensions/test_vector_addable.hpp"
 #include "test_details/test_stl_extensions/test_array_addable.hpp"
 // #include "test_details/test_stl_extensions/test_tuple_addable.hpp"
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
     runner.addTest(TestJackknifeAnalysis::suite());
+    runner.addTest(TestBootstrapAnalysis::suite());
   }
   if (test_all || test_name == "Details")
   {

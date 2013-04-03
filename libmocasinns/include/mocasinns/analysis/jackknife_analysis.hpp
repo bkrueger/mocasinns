@@ -15,11 +15,12 @@ namespace Mocasinns
 {
   namespace Analysis
   {
-    //! Class for doing a bootstrap analysis of a number of data points.
+    //! Class for doing a jackknife analysis of a number of data points.
     /*!
       \details 
       
-      \tparam Observable Type of the observables that should be bootstraped, must be able to calculate a pow with integers and a sqrt
+      \tparam Observable Type of the observables that should be jackknifed, must be able to calculate a pow with integers and a sqrt
+      \tparam FunctionOfObservables Functor that has a 1) static operator() that takes two Iterators and calculating a function of observables (e.g. the variance or the specific heat) and has 2) a type return_type typedefed that indicates the return type of the functor.
     */
     template <class Observable, class FunctionOfObservables = MeanOfObservables<Observable> >
     class JackknifeAnalysis
@@ -28,19 +29,18 @@ namespace Mocasinns
       //! Type of the analysis result
       typedef std::pair<typename FunctionOfObservables::return_type, typename FunctionOfObservables::return_type> result_type;
 
-      //! Constructor specifying the total size of the measurements
+      //! Default constructor
       JackknifeAnalysis();
 
       /*! 
 	\brief Do the analyis
 
-	\tparam FunctionOfObservables Functor that has a 1) static operator() that takes two Iterators and calculating a function of observables (e.g. the variance or the specific heat) and has 2) a type return_type typedefed that indicates the return type of the functor.
 	\tparam InputIterator Type of the iterator that is used to iterate through the measurments.
 	\param measurement_begin Iterator to the begin of the measurements
 	\param measurement_end Iterator to the end of the measurments
 	\param bin_size Number of successive measurements to gather in one jackknife bin (default value 1)
 
-	\returns Pair of Observables, the first entry is the mean of the observables and the second entry is the error of the mean of the observables.
+	\returns std::pair of Observables, the first entry is the mean of the observables and the second entry is the error of the mean of the observables.
       */
       template <class InputIterator>
       static result_type analyse(InputIterator measurement_begin, InputIterator measurement_end, unsigned int bin_size = 1, FunctionOfObservables observable_functor = FunctionOfObservables())

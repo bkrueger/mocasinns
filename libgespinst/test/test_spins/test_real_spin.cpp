@@ -1,4 +1,4 @@
-#include "spinrealtest.hpp"
+#include "test_real_spin.hpp"
 
 CppUnit::Test* TestSpinReal::suite()
 {

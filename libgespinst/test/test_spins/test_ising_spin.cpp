@@ -1,4 +1,4 @@
-#include "spinisingtest.hpp"
+#include "test_ising_spin.hpp"
 
 CppUnit::Test* TestSpinIsing::suite()
 {

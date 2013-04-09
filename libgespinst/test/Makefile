@@ -1,14 +1,17 @@
 LIBFILES=../lib/libising.a
-TESTFILES=spinisingtest.o spinpottstest.o spinrealtest.o spinlatticetest.o steptest.o
 GOPT=-ggdb
 CC=g++
 CFLAGS=$(GOPT) -Wall -Wextra -pedantic -I ../include
 
-test: test.o $(TESTFILES)
-	g++ $(GOPT) -o test test.o $(TESTFILES) $(LIBFILES) -lboost_serialization -lcppunit -ldl
+TEST_OBJECTS_MAIN = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+TEST_OBJECTS_SPINS = $(patsubst %.cpp,%.o,$(wildcard test_spins/*.cpp))
+TEST_OBJECTS = $(TEST_OBJECTS_MAIN) $(TEST_OBJECTS_SPINS)
+
+test: test.o $(TEST_OBJECTS)
+	g++ $(GOPT) -o test $(TEST_OBJECTS) $(LIBFILES) -lboost_serialization -lcppunit -ldl
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o test

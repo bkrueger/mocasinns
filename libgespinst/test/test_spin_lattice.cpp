@@ -1,4 +1,4 @@
-#include "spinlatticetest.hpp"
+#include "test_spin_lattice.hpp"
 
 #include "boost/multi_array.hpp"
 

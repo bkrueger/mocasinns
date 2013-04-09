@@ -1,4 +1,4 @@
-#include "spinpottstest.hpp"
+#include "test_potts_spin.hpp"
 
 CppUnit::Test* TestSpinPotts::suite()
 {

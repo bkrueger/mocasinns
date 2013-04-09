@@ -1,4 +1,4 @@
-#include "steptest.hpp"
+#include "test_spin_step.hpp"
 
 CppUnit::Test* TestStep::suite()
 {

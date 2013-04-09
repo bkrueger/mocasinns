@@ -8,7 +8,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-namespace Ising
+namespace Gespinst
 {
 
   typedef int value_type_ising;

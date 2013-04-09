@@ -8,7 +8,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-namespace Ising
+namespace Gespinst
 {
 
   typedef double value_type_spin_real;

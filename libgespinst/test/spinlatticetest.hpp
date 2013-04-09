@@ -11,7 +11,7 @@
 #include <gespinst/spins/potts_spin.hpp>
 #include <gespinst/spins/real_spin.hpp>
 
-using namespace Ising;
+using namespace Gespinst;
 
 typedef boost::multi_array<SpinIsing, 1> lattice_array_type_1d;
 typedef boost::array<lattice_array_type_1d::index, 1> index_type_1d;

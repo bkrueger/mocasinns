@@ -4,7 +4,7 @@
 #include <vector>
 #include "boost/multi_array.hpp"
 
-namespace Ising
+namespace Gespinst
 {
 
 template<unsigned int T, class V> class SpinLattice;

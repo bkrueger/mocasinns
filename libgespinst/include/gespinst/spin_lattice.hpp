@@ -12,7 +12,7 @@
 // Serialization of boost multi array
 #include "details/multi_array_serialize.hpp"
 
-namespace Ising
+namespace Gespinst
 {
 /*! 
  * \brief Class template for a arbitrary dimensional lattice of spins with next-neighbour interaction.

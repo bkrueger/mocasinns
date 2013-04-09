@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-namespace Ising
+namespace Gespinst
 {
 
 template<unsigned int dimension, class SpinType, class Derived>

@@ -2,7 +2,7 @@
 
 #include "../spin_lattice.hpp"
 
-namespace Ising
+namespace Gespinst
 {
 
 /*!

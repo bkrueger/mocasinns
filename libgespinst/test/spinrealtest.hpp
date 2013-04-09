@@ -8,7 +8,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <gespinst/spins/real_spin.hpp>
 
-using namespace Ising;
+using namespace Gespinst;
 
 class TestSpinReal : public CppUnit::TestFixture
 {

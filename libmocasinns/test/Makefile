@@ -2,10 +2,9 @@ CC = gcc
 CXX = g++
 OPT=-O2
 CFLAGS = -g -pg $(OPT) -Wall -Wextra -pedantic -std=c++0x -fopenmp
-LDFLAGS = -L../../libising/lib -L../../librandom/lib
 INCLUDE = -I../include -I../../libgespinst/include -I../../librandom/include
 
-TEST_LIBS = -lising -lboost_serialization -lboost_signals -lboost_program_options -lcppunit -ldl
+TEST_LIBS = -lboost_serialization -lboost_signals -lboost_program_options -lcppunit -ldl
 TEST_OBJECTS_MAIN = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 TEST_OBJECTS_ACCUMULATORS = $(patsubst %.cpp,%.o,$(wildcard test_accumulators/*.cpp))
 TEST_OBJECTS_ANALYSIS = $(patsubst %.cpp,%.o,$(wildcard test_analysis/*.cpp))
@@ -17,7 +16,7 @@ TEST_OBJECTS = $(TEST_OBJECTS_MAIN) $(TEST_OBJECTS_ACCUMULATORS) $(TEST_OBJECTS_
 all: test
 
 test: $(TEST_OBJECTS)
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(INCLUDE) $(TEST_OBJECTS) $(TEST_LIBS) -o test
+	$(CXX) $(CFLAGS) $(INCLUDE) $(TEST_OBJECTS) $(TEST_LIBS) -o test
 
 %.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<

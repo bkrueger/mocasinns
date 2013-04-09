@@ -19,12 +19,12 @@ using namespace Mocasinns;
 class TestEntropicSampling : CppUnit::TestFixture
 {
 public:
-  typedef Gespinst::SpinLattice<1, Gespinst::SpinIsing> IsingConfiguration1d;
-  typedef Gespinst::Step<1, Gespinst::SpinIsing> IsingStep1d;
+  typedef Gespinst::SpinLattice<1, Gespinst::IsingSpin> IsingConfiguration1d;
+  typedef Gespinst::Step<1, Gespinst::IsingSpin> IsingStep1d;
   typedef EntropicSampling<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation1d;
   
-  typedef Gespinst::SpinLattice<2, Gespinst::SpinIsing> IsingConfiguration2d;
-  typedef Gespinst::Step<2, Gespinst::SpinIsing> IsingStep2d;
+  typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> IsingConfiguration2d;
+  typedef Gespinst::Step<2, Gespinst::IsingSpin> IsingStep2d;
   typedef EntropicSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation2d;
 
 private:

@@ -17,8 +17,8 @@ using namespace Mocasinns;
 
 class TestConfigurationTest : CppUnit::TestFixture
 {
-  typedef Gespinst::SpinLattice<2, Gespinst::SpinIsing> ConfigurationType;
-  typedef Gespinst::Step<2, Gespinst::SpinIsing> StepType;
+  typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> ConfigurationType;
+  typedef Gespinst::Step<2, Gespinst::IsingSpin> StepType;
   typedef ConfigurationTest<ConfigurationType, StepType, double, Random::Boost_MT19937> SimulationType;
 
 private:

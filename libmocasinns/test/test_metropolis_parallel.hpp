@@ -18,8 +18,8 @@ using namespace Mocasinns;
 
 class TestMetropolisParallel : CppUnit::TestFixture
 {
-  typedef Gespinst::SpinLattice<2, Gespinst::SpinIsing> ConfigurationType;
-  typedef Gespinst::Step<2, Gespinst::SpinIsing> StepType;
+  typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> ConfigurationType;
+  typedef Gespinst::Step<2, Gespinst::IsingSpin> StepType;
   typedef MetropolisParallel<ConfigurationType, StepType, Random::Boost_MT19937> SimulationType;
   typedef Metropolis<ConfigurationType, StepType, Random::Boost_MT19937> SimulationTypeSerial;
 

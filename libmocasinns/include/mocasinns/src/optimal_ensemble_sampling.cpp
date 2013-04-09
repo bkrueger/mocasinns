@@ -111,63 +111,64 @@ namespace Mocasinns
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  double OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, EnergyType& total_energy)
+  double OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
     // Calculate the energy difference of the step
-    EnergyType delta_E = step_to_execute.delta_E();
-    
+    step_parameters.delta_E = step_to_execute.delta_E();
+    EnergyType total_energy_after_step = step_parameters.total_energy + step_parameters.delta_E;
+
     // Check whether one leaves the energy range (then allways do the step)
-    if (total_energy + delta_E > simulation_parameters.maximal_energy)
+    if (total_energy_after_step > simulation_parameters.maximal_energy)
     {
       // Set the weight of the new bin to the weight of the maximal bin
-      weights[total_energy + delta_E] = weights[simulation_parameters.maximal_energy];
+      weights[total_energy_after_step] = weights[simulation_parameters.maximal_energy];
       // Reset the maximal energy parameter
-      simulation_parameters.maximal_energy = total_energy + delta_E;
+      simulation_parameters.maximal_energy = total_energy_after_step;
       // Execute the step 
       return 1.0;
     }
-    if (total_energy + delta_E < simulation_parameters.minimal_energy)
+    if (total_energy_after_step < simulation_parameters.minimal_energy)
     {
       // Set the weight of the new bin to the weight of the minimal bin
-      weights[total_energy + delta_E] = weights[simulation_parameters.minimal_energy];
+      weights[total_energy_after_step] = weights[simulation_parameters.minimal_energy];
       // Reset the minimal energy parameter
-      simulation_parameters.minimal_energy = total_energy + delta_E;
+      simulation_parameters.minimal_energy = total_energy_after_step;
       // Execute the step
       return 1.0;
     }
     
     // calculate the normal acceptance probability
-    return exp(weights[total_energy + delta_E] - weights[total_energy]);
+    return exp(weights[total_energy_after_step] - weights[step_parameters.total_energy]);
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType& executed_step, EnergyType& total_energy)
+  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
     // Increment the total energy
-    total_energy += executed_step.delta_E();
+    step_parameters.total_energy += step_parameters.delta_E;
 
     // If the negative energy barrier was reached, set the walker_label
-    if (total_energy == simulation_parameters.minimal_energy)
+    if (step_parameters.total_energy == simulation_parameters.minimal_energy)
       walker_label = negative;
     // If the positive energy barrier was reached, set the walker_label
-    if (total_energy == simulation_parameters.maximal_energy)
+    if (step_parameters.total_energy == simulation_parameters.maximal_energy)
       walker_label = positive;
 
     // Update the counting histograms
     if (walker_label == positive)
-      incidence_counter_positive[total_energy]++;
+      incidence_counter_positive[step_parameters.total_energy]++;
     else
-      incidence_counter_negative[total_energy]++;
+      incidence_counter_negative[step_parameters.total_energy]++;
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, EnergyType& total_energy)
+  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
     // Update the counting histograms
     if (walker_label == positive)
-      incidence_counter_positive[total_energy]++;
+      incidence_counter_positive[step_parameters.total_energy]++;
     else
-      incidence_counter_negative[total_energy]++;
+      incidence_counter_negative[step_parameters.total_energy]++;
   }
 
   /*!
@@ -178,10 +179,11 @@ namespace Mocasinns
   void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_optimal_ensemble_sampling_steps(const uint32_t& number)
   {
     // Variable to track the energy
-    EnergyType energy = this->configuration_space->energy();
+    Details::Multicanonical::StepParameter<EnergyType> step_parameters;
+    step_parameters.total_energy = this->configuration_space->energy();
     
     // Call the generic method
-    this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType>(number, energy);
+    this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType>(number, step_parameters);
   }
 
   /*!

@@ -88,11 +88,11 @@ namespace Mocasinns
     void estimate_weights(const WangLandauParameters& wang_landau_parameters);
 
     //! Calculate the acceptance probability of a step
-    double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+    double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle an accepted step
-    void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+    void handle_executed_step(StepType& executed_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
-    void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
+    void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
 
     //! Do a certain number of steps updating the density_of_states and the incidence_counter
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);

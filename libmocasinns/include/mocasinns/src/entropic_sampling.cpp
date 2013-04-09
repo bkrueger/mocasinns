@@ -56,45 +56,47 @@ EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGen
   : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), simulation_parameters(params) { } 
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, EnergyType& total_energy)
+double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Calculate the energy difference of the step
-  EnergyType delta_E = step_to_execute.delta_E();
+  step_parameters.delta_E = step_to_execute.delta_E();
+  EnergyType total_energy_after_step = step_parameters.total_energy + step_parameters.delta_E;
 
   // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
   if (simulation_parameters.energy_cutoff_use && 
-      (total_energy + delta_E > simulation_parameters.energy_cutoff_upper || 
-       total_energy + delta_E < simulation_parameters.energy_cutoff_lower))
+      (total_energy_after_step > simulation_parameters.energy_cutoff_upper || 
+       total_energy_after_step < simulation_parameters.energy_cutoff_lower))
     return 0.0;
 
   // Calculate and return the acceptance probability
-  return exp(density_of_states[total_energy] - density_of_states[total_energy + delta_E]);
+  return exp(density_of_states[step_parameters.total_energy] - density_of_states[total_energy_after_step]);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType& executed_step, EnergyType& total_energy)
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Increment the total energy
-  total_energy += executed_step.delta_E();
+  step_parameters.total_energy += step_parameters.delta_E;
   // Update the histograms
-  incidence_counter[total_energy]++;
+  incidence_counter[step_parameters.total_energy]++;
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, EnergyType& total_energy)
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Update the histograms
-  incidence_counter[total_energy]++;
+  incidence_counter[step_parameters.total_energy]++;
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_entropic_sampling_steps(const StepNumberType& number)
 {
   // Variable to track the energy
-  EnergyType energy = this->configuration_space->energy();
+  Details::Multicanonical::StepParameter<EnergyType> step_parameters;
+  step_parameters.total_energy = this->configuration_space->energy();
 
   // Call the generic function of Simulation
-  this->template do_steps<EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>, StepType>(number, energy);
+  this->template do_steps<EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>, StepType>(number, step_parameters);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

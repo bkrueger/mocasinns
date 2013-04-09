@@ -12,6 +12,7 @@
 
 #include "simulation.hpp"
 #include "concepts/concepts.hpp"
+#include "details/multicanonical/step_parameter.hpp"
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
@@ -77,11 +78,11 @@ public:
   StepNumberType get_sweep_counter() const { return sweep_counter; }
 
   //! Calculate the acceptance probability of a step
-  double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+  double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
   //! Handle an accepted step
-  void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+  void handle_executed_step(StepType& executed_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
   //! Handle a rejected step
-  void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
+  void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
 
   //! Do a certain number of wang-landau steps updating the density_of_states and the incidence_counter at the current modification factor
   void do_wang_landau_steps(const uint32_t& number);

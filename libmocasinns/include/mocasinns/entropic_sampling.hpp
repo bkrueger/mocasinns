@@ -12,6 +12,7 @@
 
 #include "simulation.hpp"
 #include "concepts/concepts.hpp"
+#include "details/multicanonical/step_parameter.hpp"
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
@@ -67,11 +68,11 @@ namespace Mocasinns
     const double& get_flatness_current() const { return flatness_current; }
 
     //! Calculate the acceptance probability of a step
-    double acceptance_probability(StepType& step_to_execute, EnergyType& total_energy);
+    double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle an accepted step
-    void handle_executed_step(StepType& executed_step, EnergyType& total_energy);
+    void handle_executed_step(StepType& executed_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
-    void handle_rejected_step(StepType& rejected_step, EnergyType& total_energy);
+    void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
     //! Do a certain number of entropic sampling steps updating the incidence_counter
     void do_entropic_sampling_steps(const StepNumberType& number);

@@ -6,7 +6,7 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "../src/spin_potts.hpp"
+#include <gespinst/spins/potts_spin.hpp>
 
 using namespace Ising;
 

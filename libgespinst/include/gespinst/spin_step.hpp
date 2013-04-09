@@ -1,5 +1,5 @@
-#ifndef STEP_HPP
-#define STEP_HPP
+#ifndef GESPINST_SPIN_STEP_HPP
+#define GESPINST_SPIN_STEP_HPP
 
 #include <vector>
 #include "boost/multi_array.hpp"
@@ -62,6 +62,6 @@ public:
 
 } // of namespace Ising
 
-#include "step.cpp"
+#include "src/spin_step.cpp"
 
 #endif

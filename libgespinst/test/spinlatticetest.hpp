@@ -6,10 +6,10 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "../src/spinlattice.hpp"
-#include "../src/spin_ising.hpp"
-#include "../src/spin_potts.hpp"
-#include "../src/spin_real.hpp"
+#include <gespinst/spin_lattice.hpp>
+#include <gespinst/spins/ising_spin.hpp>
+#include <gespinst/spins/potts_spin.hpp>
+#include <gespinst/spins/real_spin.hpp>
 
 using namespace Ising;
 

@@ -1,6 +1,6 @@
-#ifdef STEP_HPP
+#ifdef GESPINST_SPIN_STEP_HPP
 
-#include "spinlattice.hpp"
+#include "../spin_lattice.hpp"
 
 namespace Ising
 {

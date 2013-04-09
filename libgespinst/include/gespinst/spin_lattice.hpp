@@ -1,7 +1,7 @@
-#ifndef _SPINLATTICE_HPP
-#define _SPINLATTICE_HPP
+#ifndef GESPINST_SPIN_LATTICE_HPP
+#define GESPINST_SPIN_LATTICE_HPP
 
-#include "step.hpp"
+#include "spin_step.hpp"
 
 #include <vector>
 #include "boost/multi_array.hpp"
@@ -10,7 +10,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 // Serialization of boost multi array
-#include "multi_array_serialize.hpp"
+#include "details/multi_array_serialize.hpp"
 
 namespace Ising
 {
@@ -225,6 +225,6 @@ public:
 } // of namespace Ising
 
 // Include the implementation
-#include "spinlattice.cpp"
+#include "src/spin_lattice.cpp"
 
 #endif

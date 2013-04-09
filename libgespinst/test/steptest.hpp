@@ -6,9 +6,9 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "../src/step.hpp"
-#include "../src/spinlattice.hpp"
-#include "../src/spin_ising.hpp"
+#include <gespinst/spin_step.hpp>
+#include <gespinst/spin_lattice.hpp>
+#include <gespinst/spins/ising_spin.hpp>
 
 using namespace Ising;
 

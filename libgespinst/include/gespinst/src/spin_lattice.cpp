@@ -1,6 +1,6 @@
-#ifdef _SPINLATTICE_HPP
+#ifdef GESPINST_SPIN_LATTICE_HPP
 
-#include "step.hpp"
+#include "../spin_step.hpp"
 
 #include <cmath>
 

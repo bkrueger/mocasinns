@@ -13,20 +13,20 @@
 
 using namespace Gespinst;
 
-typedef boost::multi_array<SpinIsing, 1> lattice_array_type_1d;
+typedef boost::multi_array<IsingSpin, 1> lattice_array_type_1d;
 typedef boost::array<lattice_array_type_1d::index, 1> index_type_1d;
-typedef boost::multi_array<SpinIsing, 1> lattice_array_real_type_1d;
+typedef boost::multi_array<IsingSpin, 1> lattice_array_real_type_1d;
 typedef boost::array<lattice_array_type_1d::index, 1> index__real_type_1d;
-typedef boost::multi_array<SpinIsing, 2> lattice_array_type_2d;
+typedef boost::multi_array<IsingSpin, 2> lattice_array_type_2d;
 typedef boost::array<lattice_array_type_2d::index, 2> index_type_2d;
 
 class TestSpinLattice : public CppUnit::TestFixture
 {
 private:
-  SpinLattice<1, SpinIsing>* testlattice_1d;
-  SpinLattice<2, SpinIsing>* testlattice_2d;
-  SpinLattice<2, SpinPotts>* testlattice_2d_potts;
-  SpinLattice<1, SpinReal>* testlattice_1d_real;
+  SpinLattice<1, IsingSpin>* testlattice_1d;
+  SpinLattice<2, IsingSpin>* testlattice_2d;
+  SpinLattice<2, PottsSpin>* testlattice_2d_potts;
+  SpinLattice<1, RealSpin>* testlattice_1d_real;
   
   index_type_1d index_0, index_1, index_2, index_3, index_4;
   index_type_2d index_00, index_01, index_02, index_10, index_11, index_12, index_20, index_21, index_22;

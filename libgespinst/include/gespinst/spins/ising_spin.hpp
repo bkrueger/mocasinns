@@ -17,7 +17,7 @@ namespace Gespinst
    * \brief Class for Ising spins (up and down).
    * \author Benedikt Krüger
    */
-  class SpinIsing
+  class IsingSpin
   {
   private:
     //! Internal storage for tha value of the spin
@@ -36,13 +36,13 @@ namespace Gespinst
     /*!
      * \details Default constructor, the value of the spin is set to 1 (spin up)
      */
-    SpinIsing() : _value(1) {}
+    IsingSpin() : _value(1) {}
     //! Constructor giving the value
     /*!
      * \details Constructor with specifying a value for the spin. Use a positive value for spin up and a negative value for spin down
      * \param value Value for the spin
      */
-    SpinIsing(value_type_ising value) { set_value(value); }
+    IsingSpin(value_type_ising value) { set_value(value); }
     
     //! Get-accessor for the value of the spin
     value_type_ising get_value() const { return _value; }
@@ -58,16 +58,16 @@ namespace Gespinst
      * \details Compares two Ising spins. Two spins are equal if they are both spin up or both spin down, otherwise they are not equal
      * \param other Spin to compare with
      */
-    bool operator==(const SpinIsing& other) const { return (_value == other._value); }
+    bool operator==(const IsingSpin& other) const { return (_value == other._value); }
     //! Operator for testing the inequality between two spins
     /*! 
      * \details Compares two Ising spins. Two spins are not equal if one is spin up and one is spin down, otherwise they are equal
      * \param other Spin to compare with
      */
-    bool operator!=(const SpinIsing& other) const { return !operator==(other); }
+    bool operator!=(const IsingSpin& other) const { return !operator==(other); }
     //! Operator for asigning an integer
     /*!
-     * \param value SpinIsing that should be assigned to this spin
+     * \param value IsingSpin that should be assigned to this spin
      */
     void operator=(const value_type_ising value)
     {
@@ -75,17 +75,17 @@ namespace Gespinst
       else _value = -1;
     }
     //! Friend operator for multiplying to spins to a double
-    friend double operator*(const SpinIsing& spin_1, const SpinIsing& spin_2);
+    friend double operator*(const IsingSpin& spin_1, const IsingSpin& spin_2);
 
     //! Create a vector with all different values of ising spins
     /*!
-     * \details Returns a STL vector of SpinIsing that represents all possible values a spin can have. This is a vector two spins, the first spin up and the second spin down.
+     * \details Returns a STL vector of IsingSpin that represents all possible values a spin can have. This is a vector two spins, the first spin up and the second spin down.
      */
-    std::vector<SpinIsing> all_possible_values() const
+    std::vector<IsingSpin> all_possible_values() const
     {
-      std::vector<SpinIsing> result;
-      result.push_back(SpinIsing(1));
-      result.push_back(SpinIsing(-1));
+      std::vector<IsingSpin> result;
+      result.push_back(IsingSpin(1));
+      result.push_back(IsingSpin(-1));
       return result;
     }
     
@@ -107,10 +107,10 @@ namespace Gespinst
      * \details Returns a "random" spin based on the given random double between 0 and 1, but no spin that equals this spin. This function returns spin up if this spin is down and returns spin down if this spin is up.
      * \param random_number Double value between 0 and 1
      */
-    SpinIsing random_differ(double) const
+    IsingSpin random_differ(double) const
     {
-      if (_value == 1) return SpinIsing(-1);
-      else return SpinIsing(1);
+      if (_value == 1) return IsingSpin(-1);
+      else return IsingSpin(1);
     }
     
   };
@@ -120,7 +120,7 @@ namespace Gespinst
    * \param spin_1 First Ising spin to multiply
    * \param spin_2 Second Ising spin to multiply
    */
-  inline double operator*(const SpinIsing& spin_1, const SpinIsing& spin_2)
+  inline double operator*(const IsingSpin& spin_1, const IsingSpin& spin_2)
   {
     return spin_1._value * spin_2._value;
   }

@@ -10,12 +10,12 @@
 
 using namespace Gespinst;
 
-class TestSpinReal : public CppUnit::TestFixture
+class TestRealSpin : public CppUnit::TestFixture
 {
 private:
-  SpinReal spin_1;
-  SpinReal spin_2;
-  SpinReal spin_3;
+  RealSpin spin_1;
+  RealSpin spin_2;
+  RealSpin spin_3;
 
 public:
   static CppUnit::Test* suite();

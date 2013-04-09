@@ -16,7 +16,7 @@ namespace Gespinst
    * \brief Class for Potts spins (integer spins between 0 and a given maximal value).
    * \author Benedikt Krüger
    */
-  class SpinPotts
+  class PottsSpin
   {
   private:
     //! Internal storage for the value of the spin
@@ -38,14 +38,14 @@ namespace Gespinst
     /*!
      * \details Default constructor, the value and the maximal value of the spin are set to 1.
      */
-    SpinPotts() : _value(1), _max_value(1) {}
+    PottsSpin() : _value(1), _max_value(1) {}
     //! Constructor giving the value and the max value
     /*!
      * \details Constructor with specifying a value and the maximal value for the spin. If the value is negative, it will be set to 0, if it is greater then the maximal value, it will be set to the maximal value.
      * \param value Value for the spin
      * \param max_value Maximal value for the spin
      */
-    SpinPotts(value_type_potts max_value, value_type_potts value) : _max_value(max_value) { set_value(value); }
+    PottsSpin(value_type_potts max_value, value_type_potts value) : _max_value(max_value) { set_value(value); }
     
     //! Get-accessor for the value of the spin
     value_type_potts get_value() const { return _value; }
@@ -69,30 +69,30 @@ namespace Gespinst
      * \details Compares two Potts spins. Two spins are equal if they have the same value and the same maximal value.
      * \param other Spin to compare with
      */
-    bool operator==(const SpinPotts& other) const { return ((_value == other._value) && (_max_value == other._max_value)); }
+    bool operator==(const PottsSpin& other) const { return ((_value == other._value) && (_max_value == other._max_value)); }
     //! Operator for testing the inequality between two spins
     /*! 
      * \details Compares two Potts spins. Two spins are not equal if they have different value or different maximal value.
      * \param other Spin to compare with
      */
-    bool operator!=(const SpinPotts& other) const { return !operator==(other); }
+    bool operator!=(const PottsSpin& other) const { return !operator==(other); }
     //! Operator for assigning and int to the value
     /*!
-     * \param value SpinIsing that should be assigned to this spin
+     * \param value IsingSpin that should be assigned to this spin
      */
     void operator=(const value_type_potts value) { set_value(value); }
     //! Friend operator for multiplying to spins to a double
-    friend double operator*(const SpinPotts& spin_1, const SpinPotts& spin_2);
+    friend double operator*(const PottsSpin& spin_1, const PottsSpin& spin_2);
 
     //! Create a vector with all different values of potts spins with this max_value
     /*!
-     * \details Returns a STL vector of SpinPotts that contains all possible values a spin can have. This is a vector with (maximal value + 1) spins, the first having value 0 and the last having the maximal value as value.
+     * \details Returns a STL vector of PottsSpin that contains all possible values a spin can have. This is a vector with (maximal value + 1) spins, the first having value 0 and the last having the maximal value as value.
      */
-    std::vector<SpinPotts> all_possible_values() const
+    std::vector<PottsSpin> all_possible_values() const
     {
-      std::vector<SpinPotts> result;
+      std::vector<PottsSpin> result;
       for (unsigned int value = 0; value <= _max_value; value++)
-	result.push_back(SpinPotts(_max_value, value));
+	result.push_back(PottsSpin(_max_value, value));
       return result;
     }
     
@@ -114,7 +114,7 @@ namespace Gespinst
      * \details Returns a "random" spin based on the given random double between 0 and 1, but no spin that equals this spin.
      * \param random_number Double value between 0 and 1
      */
-    SpinPotts random_differ(double random_number) const
+    PottsSpin random_differ(double random_number) const
     {
       // Generate an integer between 0 and (_max_value - 1) from the random double number
       unsigned int random_int = static_cast<unsigned int>(floor(random_number*_max_value));
@@ -122,9 +122,9 @@ namespace Gespinst
       // If the random int is at or above the current value, return rnd_int + 1
       // If the random ist is below the current value, use the rnd_int
       if (random_int >= _value)
-	return SpinPotts(_max_value, random_int + 1);
+	return PottsSpin(_max_value, random_int + 1);
       else
-	return SpinPotts(_max_value, random_int);
+	return PottsSpin(_max_value, random_int);
     }
   };
   
@@ -133,7 +133,7 @@ namespace Gespinst
    * \param spin_1 First Potts spin to multiply
    * \param spin_2 Second Potts spin to multiply
    */
-  inline double operator*(const SpinPotts& spin_1, const SpinPotts& spin_2)
+  inline double operator*(const PottsSpin& spin_1, const PottsSpin& spin_2)
   {
     if (spin_1._value == spin_2._value)
       return 1;

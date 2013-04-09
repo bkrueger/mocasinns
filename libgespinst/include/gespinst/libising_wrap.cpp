@@ -14,34 +14,34 @@ using namespace Ising;
 
 BOOST_PYTHON_MODULE(libising_wrap)
 {
-    class_<SpinIsing>("SpinIsing")
+    class_<IsingSpin>("SpinIsing")
       .def(init<int>())
-      .def("get_value", &SpinIsing::get_value)
-      .def("set_value", &SpinIsing::set_value)
+      .def("get_value", &IsingSpin::get_value)
+      .def("set_value", &IsingSpin::set_value)
       .def(self * self)
-      .def("all_possible_values", &SpinIsing::all_possible_values)
-      .def("random", &SpinIsing::random)
-      .def("random_differ", &SpinIsing::random_differ)
+      .def("all_possible_values", &IsingSpin::all_possible_values)
+      .def("random", &IsingSpin::random)
+      .def("random_differ", &IsingSpin::random_differ)
     ;
 
-    class_<SpinPotts>("SpinPotts")
+    class_<PottsSpin>("SpinPotts")
       .def(init<int, int>())
-      .def("get_value", &SpinPotts::get_value)
-      .def("set_value", &SpinPotts::set_value)
-      .def("get_max_value", &SpinPotts::get_value)
-      .def("set_max_value", &SpinPotts::set_value)
+      .def("get_value", &PottsSpin::get_value)
+      .def("set_value", &PottsSpin::set_value)
+      .def("get_max_value", &PottsSpin::get_value)
+      .def("set_max_value", &PottsSpin::set_value)
       .def(self * self)
-      .def("all_possible_values", &SpinPotts::all_possible_values)
-      .def("random", &SpinPotts::random)
-      .def("random_differ", &SpinPotts::random_differ)
+      .def("all_possible_values", &PottsSpin::all_possible_values)
+      .def("random", &PottsSpin::random)
+      .def("random_differ", &PottsSpin::random_differ)
     ;
 
-    // Python access to stl vectors of SpinIsing
-    class_< std::vector<SpinIsing> >("vectorSpinIsing")
-      .def(vector_indexing_suite<std::vector<SpinIsing> >())
+    // Python access to stl vectors of IsingSpin
+    class_< std::vector<IsingSpin> >("vectorSpinIsing")
+      .def(vector_indexing_suite<std::vector<IsingSpin> >())
       ;
-    // Python access to stl vectors of SpinPotts
-    class_< std::vector<SpinPotts> >("vectorSpinPotts")
-      .def(vector_indexing_suite<std::vector<SpinPotts> >())
+    // Python access to stl vectors of PottsSpin
+    class_< std::vector<PottsSpin> >("vectorSpinPotts")
+      .def(vector_indexing_suite<std::vector<PottsSpin> >())
       ;
 }

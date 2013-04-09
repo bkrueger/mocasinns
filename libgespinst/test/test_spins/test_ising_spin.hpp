@@ -10,11 +10,11 @@
 
 using namespace Gespinst;
 
-class TestSpinIsing : public CppUnit::TestFixture
+class TestIsingSpin : public CppUnit::TestFixture
 {
 private:
-  SpinIsing spin_up;
-  SpinIsing spin_down;
+  IsingSpin spin_up;
+  IsingSpin spin_down;
 
 public:
   static CppUnit::Test* suite();

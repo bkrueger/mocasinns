@@ -13,9 +13,9 @@ int main()
 {
   CppUnit::TextUi::TestRunner runner;
   
-  runner.addTest(TestSpinIsing::suite());
-  runner.addTest(TestSpinPotts::suite());
-  runner.addTest(TestSpinReal::suite());
+  runner.addTest(TestIsingSpin::suite());
+  runner.addTest(TestPottsSpin::suite());
+  runner.addTest(TestRealSpin::suite());
   runner.addTest(TestSpinLattice::suite());
   runner.addTest(TestStep::suite());
 

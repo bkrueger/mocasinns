@@ -10,13 +10,13 @@
 
 using namespace Gespinst;
 
-class TestSpinPotts : public CppUnit::TestFixture
+class TestPottsSpin : public CppUnit::TestFixture
 {
 private:
-  SpinPotts spin_0;
-  SpinPotts spin_1;
-  SpinPotts spin_2;
-  SpinPotts spin_3;
+  PottsSpin spin_0;
+  PottsSpin spin_1;
+  PottsSpin spin_2;
+  PottsSpin spin_3;
 
 public:
   static CppUnit::Test* suite();

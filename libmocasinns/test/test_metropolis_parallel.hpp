@@ -7,8 +7,8 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <spinlattice.hpp>
-#include <spin_ising.hpp>
+#include <gespinst/spin_lattice.hpp>
+#include <gespinst/spins/ising_spin.hpp>
 
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/metropolis_parallel.hpp>
@@ -18,8 +18,8 @@ using namespace Mocasinns;
 
 class TestMetropolisParallel : CppUnit::TestFixture
 {
-  typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
-  typedef Ising::Step<2, Ising::SpinIsing> StepType;
+  typedef Gespinst::SpinLattice<2, Gespinst::SpinIsing> ConfigurationType;
+  typedef Gespinst::Step<2, Gespinst::SpinIsing> StepType;
   typedef MetropolisParallel<ConfigurationType, StepType, Random::Boost_MT19937> SimulationType;
   typedef Metropolis<ConfigurationType, StepType, Random::Boost_MT19937> SimulationTypeSerial;
 

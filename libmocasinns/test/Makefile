@@ -3,7 +3,7 @@ CXX = g++
 OPT=-O2
 CFLAGS = -g -pg $(OPT) -Wall -Wextra -pedantic -std=c++0x -fopenmp
 LDFLAGS = -L../../libising/lib -L../../librandom/lib
-INCLUDE = -I../include -I../../libising/src -I../../librandom/include
+INCLUDE = -I../include -I../../libgespinst/include -I../../librandom/include
 
 TEST_LIBS = -lising -lboost_serialization -lboost_signals -lboost_program_options -lcppunit -ldl
 TEST_OBJECTS_MAIN = $(patsubst %.cpp,%.o,$(wildcard *.cpp))

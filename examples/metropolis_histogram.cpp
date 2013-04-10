@@ -9,8 +9,8 @@
 namespace ba = boost::accumulators;
 
 // Includes from libising
-#include <spinlattice.hpp>
-#include <spin_ising.hpp>
+#include <gespinst/spin_lattice.hpp>
+#include <gespinst/spins/ising_spin.hpp>
 // Includes from libmocasinns
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/histograms/histogram.hpp>
@@ -18,8 +18,8 @@ namespace ba = boost::accumulators;
 #include <mocasinns/random/boost_random.hpp>
 
 // Typedef for the configuration and the step
-typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
-typedef Ising::Step<2, Ising::SpinIsing> StepType;
+typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> ConfigurationType;
+typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> StepType;
 
 // Typedef for the Simulation
 typedef Mocasinns::Metropolis<ConfigurationType, StepType, Mocasinns::Random::Boost_MT19937> Simulation;

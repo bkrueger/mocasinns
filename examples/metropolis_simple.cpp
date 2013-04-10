@@ -1,17 +1,17 @@
 #include <vector>
 #include <iostream>
 
-// Includes from libising
-#include <spinlattice.hpp>
-#include <spin_ising.hpp>
+// Includes from libgespinst
+#include <gespinst/spin_lattice.hpp>
+#include <gespinst/spins/ising_spin.hpp>
 // Includes from libmocasinns
 #include <mocasinns/metropolis.hpp>
 #include <mocasinns/observables/array_observable.hpp>
 #include <mocasinns/random/boost_random.hpp>
 
 // Typedef for the configuration and the step
-typedef Ising::SpinLattice<2, Ising::SpinIsing> ConfigurationType;
-typedef Ising::Step<2, Ising::SpinIsing> StepType;
+typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> ConfigurationType;
+typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> StepType;
 
 // Typedef for the Simulation
 typedef Mocasinns::Metropolis<ConfigurationType, StepType, Mocasinns::Random::Boost_MT19937> Simulation;

@@ -1,24 +1,24 @@
-#include "test_spin_step.hpp"
+#include "test_spin_lattice_step.hpp"
 
-CppUnit::Test* TestStep::suite()
+CppUnit::Test* TestSpinLatticeStep::suite()
 {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestStep");
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestSpinLatticeStep");
     
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_constructor", &TestStep::test_constructor ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_constructor", &TestSpinLatticeStep::test_constructor ) );
 
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_get_flip_index", &TestStep::test_get_flip_index ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_get_old_spin", &TestStep::test_get_old_spin ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_get_new_spin", &TestStep::test_get_new_spin ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_get_creation_simulation_time", &TestStep::test_get_creation_simulation_time ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_get_flip_index", &TestSpinLatticeStep::test_get_flip_index ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_get_old_spin", &TestSpinLatticeStep::test_get_old_spin ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_get_new_spin", &TestSpinLatticeStep::test_get_new_spin ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_get_creation_simulation_time", &TestSpinLatticeStep::test_get_creation_simulation_time ) );
 
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_delta_E", &TestStep::test_delta_E ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_execute", &TestStep::test_execute ) );
-    suiteOfTests->addTest( new CppUnit::TestCaller<TestStep>("TestStep: test_undo", &TestStep::test_undo ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_delta_E", &TestSpinLatticeStep::test_delta_E ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_execute", &TestSpinLatticeStep::test_execute ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLatticeStep>("TestSpinLatticeStep: test_undo", &TestSpinLatticeStep::test_undo ) );
 
     return suiteOfTests;
 }
 
-void TestStep::setUp()
+void TestSpinLatticeStep::setUp()
 {
   // Assign the IsingSpins
   spin_up = IsingSpin(1);
@@ -67,33 +67,33 @@ void TestStep::setUp()
   testlattice_2d->set_spin(index_22, spin_up);
 
   // Set up the teststeps
-  teststep_1d_0 = new Step<1, IsingSpin>(testlattice_1d, index_0, spin_down);
-  teststep_1d_1 = new Step<1, IsingSpin>(testlattice_1d, index_1, spin_down);
-  teststep_1d_2 = new Step<1, IsingSpin>(testlattice_1d, index_2, spin_up);
-  teststep_1d_3 = new Step<1, IsingSpin>(testlattice_1d, index_3, spin_up);
-  teststep_1d_4 = new Step<1, IsingSpin>(testlattice_1d, index_4, spin_down);
-  teststep_2d_00 = new Step<2, IsingSpin>(testlattice_2d, index_00, spin_down);
-  teststep_2d_01 = new Step<2, IsingSpin>(testlattice_2d, index_01, spin_down);
-  teststep_2d_02 = new Step<2, IsingSpin>(testlattice_2d, index_02, spin_up);
-  teststep_2d_10 = new Step<2, IsingSpin>(testlattice_2d, index_10, spin_up);
-  teststep_2d_11 = new Step<2, IsingSpin>(testlattice_2d, index_11, spin_down);
-  teststep_2d_12 = new Step<2, IsingSpin>(testlattice_2d, index_12, spin_up);
-  teststep_2d_20 = new Step<2, IsingSpin>(testlattice_2d, index_20, spin_up);
-  teststep_2d_21 = new Step<2, IsingSpin>(testlattice_2d, index_21, spin_up);
-  teststep_2d_22 = new Step<2, IsingSpin>(testlattice_2d, index_22, spin_down);
+  teststep_1d_0 = new SpinLatticeStep<1, IsingSpin>(testlattice_1d, index_0, spin_down);
+  teststep_1d_1 = new SpinLatticeStep<1, IsingSpin>(testlattice_1d, index_1, spin_down);
+  teststep_1d_2 = new SpinLatticeStep<1, IsingSpin>(testlattice_1d, index_2, spin_up);
+  teststep_1d_3 = new SpinLatticeStep<1, IsingSpin>(testlattice_1d, index_3, spin_up);
+  teststep_1d_4 = new SpinLatticeStep<1, IsingSpin>(testlattice_1d, index_4, spin_down);
+  teststep_2d_00 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_00, spin_down);
+  teststep_2d_01 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_01, spin_down);
+  teststep_2d_02 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_02, spin_up);
+  teststep_2d_10 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_10, spin_up);
+  teststep_2d_11 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_11, spin_down);
+  teststep_2d_12 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_12, spin_up);
+  teststep_2d_20 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_20, spin_up);
+  teststep_2d_21 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_21, spin_up);
+  teststep_2d_22 = new SpinLatticeStep<2, IsingSpin>(testlattice_2d, index_22, spin_down);
 }
-void TestStep::tearDown()
+void TestSpinLatticeStep::tearDown()
 {
   delete testlattice_1d;
   delete testlattice_2d;
 }
 
-void TestStep::test_constructor()
+void TestSpinLatticeStep::test_constructor()
 {
-  Step<1, IsingSpin>* teststep_1d = new Step<1, IsingSpin>(testlattice_1d, index_0, spin_down);
+  SpinLatticeStep<1, IsingSpin>* teststep_1d = new SpinLatticeStep<1, IsingSpin>(testlattice_1d, index_0, spin_down);
 }
 
-void TestStep::test_get_flip_index()
+void TestSpinLatticeStep::test_get_flip_index()
 {
   CPPUNIT_ASSERT(teststep_1d_0->get_flip_index() == index_0);
   CPPUNIT_ASSERT(teststep_1d_1->get_flip_index() == index_1);
@@ -110,7 +110,7 @@ void TestStep::test_get_flip_index()
   CPPUNIT_ASSERT(teststep_2d_21->get_flip_index() == index_21);
   CPPUNIT_ASSERT(teststep_2d_22->get_flip_index() == index_22);
 }
-void TestStep::test_get_old_spin()
+void TestSpinLatticeStep::test_get_old_spin()
 {
   CPPUNIT_ASSERT(teststep_1d_0->get_old_spin() == spin_up);
   CPPUNIT_ASSERT(teststep_1d_1->get_old_spin() == spin_up);
@@ -127,7 +127,7 @@ void TestStep::test_get_old_spin()
   CPPUNIT_ASSERT(teststep_2d_21->get_old_spin() == spin_down);
   CPPUNIT_ASSERT(teststep_2d_22->get_old_spin() == spin_up);
 }
-void TestStep::test_get_new_spin()
+void TestSpinLatticeStep::test_get_new_spin()
 {
   CPPUNIT_ASSERT(teststep_1d_0->get_new_spin() == spin_down);
   CPPUNIT_ASSERT(teststep_1d_1->get_new_spin() == spin_down);
@@ -144,12 +144,12 @@ void TestStep::test_get_new_spin()
   CPPUNIT_ASSERT(teststep_2d_21->get_new_spin() == spin_up);
   CPPUNIT_ASSERT(teststep_2d_22->get_new_spin() == spin_down);
 }
-void TestStep::test_get_creation_simulation_time()
+void TestSpinLatticeStep::test_get_creation_simulation_time()
 {
   CPPUNIT_ASSERT_EQUAL(0, teststep_1d_0->get_creation_simulation_time());
 }
 
-void TestStep::test_delta_E()
+void TestSpinLatticeStep::test_delta_E()
 {
   CPPUNIT_ASSERT_EQUAL(4.0, teststep_1d_0->delta_E());
   CPPUNIT_ASSERT_EQUAL(0.0, teststep_1d_1->delta_E());
@@ -166,7 +166,7 @@ void TestStep::test_delta_E()
   CPPUNIT_ASSERT_EQUAL(-4.0, teststep_2d_21->delta_E());
   CPPUNIT_ASSERT_EQUAL(-8.0, teststep_2d_22->delta_E());
 }
-void TestStep::test_execute()
+void TestSpinLatticeStep::test_execute()
 {
   // Execute the 1d step
   teststep_1d_0->execute();
@@ -187,7 +187,7 @@ void TestStep::test_execute()
   CPPUNIT_ASSERT_EQUAL(1, testlattice_2d->get_simulation_time());
 }
 
-void TestStep::test_undo()
+void TestSpinLatticeStep::test_undo()
 {
   // Execute the 1d step
   teststep_1d_0->execute();

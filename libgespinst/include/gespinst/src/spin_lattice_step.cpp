@@ -1,4 +1,4 @@
-#ifdef GESPINST_SPIN_STEP_HPP
+#ifdef GESPINST_SPIN_LATTICE_STEP_HPP
 
 #include "../spin_lattice.hpp"
 
@@ -6,13 +6,13 @@ namespace Gespinst
 {
 
 /*!
- * \details Contructs a new Step object that belongs to the given lattice at the given index. The flip will be performed to the new spin.
+ * \details Contructs a new SpinLatticeStep object that belongs to the given lattice at the given index. The flip will be performed to the new spin.
  * \param lattice SpinLattice on which the step will be executed.
  * \param flip_index Index of the lattice where the flip will be done.
  * \param new_spin New spin value at the given lattice index.
  */
 template<unsigned int dimension, class SpinType>
-Step<dimension, SpinType>::Step(SpinLattice<dimension, SpinType>* lattice, index_type flip_index, SpinType new_spin)
+SpinLatticeStep<dimension, SpinType>::SpinLatticeStep(SpinLattice<dimension, SpinType>* lattice, index_type flip_index, SpinType new_spin)
   : _lattice(lattice),
     _flip_index(flip_index),
     _new_spin(new_spin)
@@ -26,7 +26,7 @@ Step<dimension, SpinType>::Step(SpinLattice<dimension, SpinType>* lattice, index
 }
 
 template<unsigned int dimension, class SpinType>
-double Step<dimension, SpinType>::delta_E()
+double SpinLatticeStep<dimension, SpinType>::delta_E()
 {
   std::vector<SpinType> neighbours = _lattice->next_neighbours(_flip_index);
 
@@ -47,16 +47,16 @@ double Step<dimension, SpinType>::delta_E()
  * \details Executes a step by commiting it to the corresponding SpinLattice.
  */
 template<unsigned int dimension, class SpinType>
-void Step<dimension, SpinType>::execute()
+void SpinLatticeStep<dimension, SpinType>::execute()
 {
   _lattice->commit(*this);
 }
 
 template<unsigned int dimension, class SpinType>
-void Step<dimension, SpinType>::undo()
+void SpinLatticeStep<dimension, SpinType>::undo()
 {
   // Create a new step that reverts this one
-  Step<dimension, SpinType> inverse_step(_lattice, _flip_index, _old_spin);
+  SpinLatticeStep<dimension, SpinType> inverse_step(_lattice, _flip_index, _old_spin);
 
   // Assign the inverse spin the creation_simulation time of this step and add one (The reverse step may only be done one after the original step)
   inverse_step._creation_simulation_time = _creation_simulation_time + 1;

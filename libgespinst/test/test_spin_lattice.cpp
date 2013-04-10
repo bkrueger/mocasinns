@@ -168,9 +168,9 @@ void TestSpinLattice::test_operator_equal()
   CPPUNIT_ASSERT(*testlattice_1d_real_copy == *testlattice_1d_real);
 
   // Propose steps and execute them and check that the lattices are not equal
-  Step<1, IsingSpin> step_1d = testlattice_1d->propose_step(0.5);
-  Step<2, IsingSpin> step_2d = testlattice_2d->propose_step(0.5);
-  Step<1, RealSpin> step_1d_real = testlattice_1d_real->propose_step(0.5);
+  SpinLatticeStep<1, IsingSpin> step_1d = testlattice_1d->propose_step(0.5);
+  SpinLatticeStep<2, IsingSpin> step_2d = testlattice_2d->propose_step(0.5);
+  SpinLatticeStep<1, RealSpin> step_1d_real = testlattice_1d_real->propose_step(0.5);
   step_1d.execute();
   step_2d.execute();
   step_1d_real.execute();
@@ -228,7 +228,7 @@ void TestSpinLattice::test_all_steps()
   IsingSpin spin_up(1);
   IsingSpin spin_down(-1);
 
-  std::vector<Step<1, IsingSpin> > possible_steps = testlattice_1d->all_steps();
+  std::vector<SpinLatticeStep<1, IsingSpin> > possible_steps = testlattice_1d->all_steps();
   CPPUNIT_ASSERT(possible_steps.size() == 5);
   CPPUNIT_ASSERT(possible_steps[0].get_lattice() == testlattice_1d);
   CPPUNIT_ASSERT(possible_steps[0].get_flip_index() == index_0);
@@ -304,53 +304,53 @@ void TestSpinLattice::test_propose_step()
   IsingSpin spin_up(1);
   IsingSpin spin_down(-1);
 
-  Step<1, IsingSpin> step_1d_0_1 = testlattice_1d->propose_step(0.1);
+  SpinLatticeStep<1, IsingSpin> step_1d_0_1 = testlattice_1d->propose_step(0.1);
   CPPUNIT_ASSERT(step_1d_0_1.get_lattice() == testlattice_1d);
   CPPUNIT_ASSERT(step_1d_0_1.get_flip_index() == index_0);
   CPPUNIT_ASSERT(step_1d_0_1.get_old_spin() == spin_up);
   CPPUNIT_ASSERT(step_1d_0_1.get_new_spin() == spin_down);
-  Step<1, IsingSpin> step_1d_0_3 = testlattice_1d->propose_step(0.3);
+  SpinLatticeStep<1, IsingSpin> step_1d_0_3 = testlattice_1d->propose_step(0.3);
   CPPUNIT_ASSERT(step_1d_0_3.get_lattice() == testlattice_1d);
   CPPUNIT_ASSERT(step_1d_0_3.get_flip_index() == index_1);
   CPPUNIT_ASSERT(step_1d_0_3.get_old_spin() == spin_up);
   CPPUNIT_ASSERT(step_1d_0_3.get_new_spin() == spin_down);
-  Step<1, IsingSpin> step_1d_0_5 = testlattice_1d->propose_step(0.5);
+  SpinLatticeStep<1, IsingSpin> step_1d_0_5 = testlattice_1d->propose_step(0.5);
   CPPUNIT_ASSERT(step_1d_0_5.get_lattice() == testlattice_1d);
   CPPUNIT_ASSERT(step_1d_0_5.get_flip_index() == index_2);
   CPPUNIT_ASSERT(step_1d_0_5.get_old_spin() == spin_down);
   CPPUNIT_ASSERT(step_1d_0_5.get_new_spin() == spin_up);
-  Step<1, IsingSpin> step_1d_0_7 = testlattice_1d->propose_step(0.7);
+  SpinLatticeStep<1, IsingSpin> step_1d_0_7 = testlattice_1d->propose_step(0.7);
   CPPUNIT_ASSERT(step_1d_0_7.get_lattice() == testlattice_1d);
   CPPUNIT_ASSERT(step_1d_0_7.get_flip_index() == index_3);
   CPPUNIT_ASSERT(step_1d_0_7.get_old_spin() == spin_down);
   CPPUNIT_ASSERT(step_1d_0_7.get_new_spin() == spin_up);
-  Step<1, IsingSpin> step_1d_0_9 = testlattice_1d->propose_step(0.9);
+  SpinLatticeStep<1, IsingSpin> step_1d_0_9 = testlattice_1d->propose_step(0.9);
   CPPUNIT_ASSERT(step_1d_0_9.get_lattice() == testlattice_1d);
   CPPUNIT_ASSERT(step_1d_0_9.get_flip_index() == index_4);
   CPPUNIT_ASSERT(step_1d_0_9.get_old_spin() == spin_up);
   CPPUNIT_ASSERT(step_1d_0_9.get_new_spin() == spin_down);
 
-  Step<1, RealSpin> step_1d_real_0_1 = testlattice_1d_real->propose_step(0.1);
+  SpinLatticeStep<1, RealSpin> step_1d_real_0_1 = testlattice_1d_real->propose_step(0.1);
   CPPUNIT_ASSERT(step_1d_real_0_1.get_lattice() == testlattice_1d_real);
   CPPUNIT_ASSERT(step_1d_real_0_1.get_flip_index() == index_0);
   CPPUNIT_ASSERT(step_1d_real_0_1.get_old_spin() == RealSpin(0.5));
   CPPUNIT_ASSERT(step_1d_real_0_1.get_new_spin() == RealSpin(-0.5));
-  Step<1, RealSpin> step_1d_real_0_3 = testlattice_1d_real->propose_step(0.3);
+  SpinLatticeStep<1, RealSpin> step_1d_real_0_3 = testlattice_1d_real->propose_step(0.3);
   CPPUNIT_ASSERT(step_1d_real_0_3.get_lattice() == testlattice_1d_real);
   CPPUNIT_ASSERT(step_1d_real_0_3.get_flip_index() == index_1);
   CPPUNIT_ASSERT(step_1d_real_0_3.get_old_spin() == RealSpin(0.1));
   CPPUNIT_ASSERT(step_1d_real_0_3.get_new_spin() == RealSpin(-0.1));
-  Step<1, RealSpin> step_1d_real_0_5 = testlattice_1d_real->propose_step(0.5);
+  SpinLatticeStep<1, RealSpin> step_1d_real_0_5 = testlattice_1d_real->propose_step(0.5);
   CPPUNIT_ASSERT(step_1d_real_0_5.get_lattice() == testlattice_1d_real);
   CPPUNIT_ASSERT(step_1d_real_0_5.get_flip_index() == index_2);
   CPPUNIT_ASSERT(step_1d_real_0_5.get_old_spin() == RealSpin(-0.1));
   CPPUNIT_ASSERT(step_1d_real_0_5.get_new_spin() == RealSpin(0.1));
-  Step<1, RealSpin> step_1d_real_0_7 = testlattice_1d_real->propose_step(0.7);
+  SpinLatticeStep<1, RealSpin> step_1d_real_0_7 = testlattice_1d_real->propose_step(0.7);
   CPPUNIT_ASSERT(step_1d_real_0_7.get_lattice() == testlattice_1d_real);
   CPPUNIT_ASSERT(step_1d_real_0_7.get_flip_index() == index_3);
   CPPUNIT_ASSERT(step_1d_real_0_7.get_old_spin() == RealSpin(-1.0));
   CPPUNIT_ASSERT(step_1d_real_0_7.get_new_spin() == RealSpin(1.0));
-  Step<1, RealSpin> step_1d_real_0_9 = testlattice_1d_real->propose_step(0.9);
+  SpinLatticeStep<1, RealSpin> step_1d_real_0_9 = testlattice_1d_real->propose_step(0.9);
   CPPUNIT_ASSERT(step_1d_real_0_9.get_lattice() == testlattice_1d_real);
   CPPUNIT_ASSERT(step_1d_real_0_9.get_flip_index() == index_4);
   CPPUNIT_ASSERT(step_1d_real_0_9.get_old_spin() == RealSpin(1.0));

@@ -1,5 +1,5 @@
-#ifndef GESPINST_SPIN_STEP_HPP
-#define GESPINST_SPIN_STEP_HPP
+#ifndef GESPINST_SPIN_LATTICE_STEP_HPP
+#define GESPINST_SPIN_LATTICE_STEP_HPP
 
 #include <vector>
 #include "boost/multi_array.hpp"
@@ -10,7 +10,7 @@ namespace Gespinst
 template<unsigned int T, class V> class SpinLattice;
 
 template<unsigned int dimension, class SpinType>
-class Step
+class SpinLatticeStep
 {
   typedef boost::multi_array<SpinType, dimension> lattice_array_type;
   typedef boost::array<typename lattice_array_type::index, dimension> index_type;
@@ -31,7 +31,7 @@ private:
 
 public:
   //! Creates a new step
-  Step(SpinLattice<dimension, SpinType>* lattice, index_type flip_index, SpinType new_spin);
+  SpinLatticeStep(SpinLattice<dimension, SpinType>* lattice, index_type flip_index, SpinType new_spin);
 
   //! Get-Accessor for the lattice
   SpinLattice<dimension, SpinType>* get_lattice() const { return _lattice; }
@@ -62,6 +62,6 @@ public:
 
 } // of namespace Ising
 
-#include "src/spin_step.cpp"
+#include "src/spin_lattice_step.cpp"
 
 #endif

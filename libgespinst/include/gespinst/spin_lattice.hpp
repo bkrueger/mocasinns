@@ -1,7 +1,7 @@
 #ifndef GESPINST_SPIN_LATTICE_HPP
 #define GESPINST_SPIN_LATTICE_HPP
 
-#include "spin_step.hpp"
+#include "spin_lattice_step.hpp"
 
 #include <vector>
 #include "boost/multi_array.hpp"
@@ -75,10 +75,10 @@ public:
   bool operator!=(const SpinLatticeBase<dimension, SpinType, Derived>& other) const;
 
   //! Create a vector with all present possible steps
-  std::vector<Step<dimension, SpinType> > all_steps();
+  std::vector<SpinLatticeStep<dimension, SpinType> > all_steps();
 
   //! Commit and execute a given step
-  void commit(Step<dimension, SpinType>& step_to_commit);
+  void commit(SpinLatticeStep<dimension, SpinType>& step_to_commit);
 
   //! Calculate the energy of this lattice
   double energy() const;
@@ -90,9 +90,9 @@ public:
   std::vector<SpinType> next_neighbours(index_type coordinates) const; 
 
   //! Propose a step given a random double number
-  Step<dimension, SpinType> propose_step(double random_double);
+  SpinLatticeStep<dimension, SpinType> propose_step(double random_double);
   //! Propose a step given a random number generator
-  template<class RandomNumberGenerator> Step<dimension, SpinType> propose_step(RandomNumberGenerator* rng);
+  template<class RandomNumberGenerator> SpinLatticeStep<dimension, SpinType> propose_step(RandomNumberGenerator* rng);
 
   //! Calculate the system size
   unsigned int system_size() const;

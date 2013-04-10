@@ -1,6 +1,6 @@
 #ifdef GESPINST_SPIN_LATTICE_HPP
 
-#include "../spin_step.hpp"
+#include "../spin_lattice_step.hpp"
 
 #include <cmath>
 
@@ -106,12 +106,12 @@ bool SpinLatticeBase<dimension, SpinType, Derived>::operator!=(const SpinLattice
 }
 
 /*! 
- * \details Creates a STL vector of Step objects representing all steps that can be done in the lattice. For each lattice site there are the flips from the present value of the spin to all other values of the spin.
+ * \details Creates a STL vector of SpinLatticeStep objects representing all steps that can be done in the lattice. For each lattice site there are the flips from the present value of the spin to all other values of the spin.
  */
 template<unsigned int dimension, class SpinType, class Derived>
-std::vector<Step<dimension, SpinType> > SpinLatticeBase<dimension, SpinType, Derived>::all_steps()
+std::vector<SpinLatticeStep<dimension, SpinType> > SpinLatticeBase<dimension, SpinType, Derived>::all_steps()
 {
-  std::vector<Step<dimension, SpinType> > result;
+  std::vector<SpinLatticeStep<dimension, SpinType> > result;
   // Go through all lattice sites and through every differing spin
   // Add the resulting step to the result vector
   for (unsigned int i = 0; i < spin_lattice.num_elements(); i++)
@@ -123,7 +123,7 @@ std::vector<Step<dimension, SpinType> > SpinLatticeBase<dimension, SpinType, Der
     {
       if (*new_spin != spin_lattice(step_index))
       {
-	result.push_back(Step<dimension, SpinType>(static_cast<Derived*>(this), step_index, *new_spin));
+	result.push_back(SpinLatticeStep<dimension, SpinType>(static_cast<Derived*>(this), step_index, *new_spin));
       }
     }
   }
@@ -136,7 +136,7 @@ std::vector<Step<dimension, SpinType> > SpinLatticeBase<dimension, SpinType, Der
  * \param step_to_commit A valid step that should update the spin lattice.
  */
 template<unsigned int dimension, class SpinType, class Derived>
-void SpinLatticeBase<dimension, SpinType, Derived>::commit(Step<dimension, SpinType>& step_to_commit)
+void SpinLatticeBase<dimension, SpinType, Derived>::commit(SpinLatticeStep<dimension, SpinType>& step_to_commit)
 {
   // ToDo: Check for the right simulation time
   
@@ -232,7 +232,7 @@ std::vector<SpinType> SpinLatticeBase<dimension, SpinType, Derived>::next_neighb
  * \param rng Random number generator so that rng() gives a random number between 0 and 1
  */
 template<unsigned int dimension, class SpinType, class Derived>
-Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose_step(double random_double)
+SpinLatticeStep<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose_step(double random_double)
 {
   // Use a random number for calculating a random int between 0 and the number of spins in the system
   double random_number_index = random_double*spin_lattice.num_elements();
@@ -247,7 +247,7 @@ Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose
   }
 
   // Create a step and return the step
-  return Step<dimension, SpinType>(static_cast<Derived*>(this), // Pointer to the lattice of the step
+  return SpinLatticeStep<dimension, SpinType>(static_cast<Derived*>(this), // Pointer to the lattice of the step
 				   lattice_multiindex, // Index of the place to flip
 				   spin_lattice(lattice_multiindex).random_differ(random_number_index - lattice_index)); // new random spin value differing from the old value
 }
@@ -257,7 +257,7 @@ Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose
  * \param rng Random number generator so that rng() gives a random number between 0 and 1
  */
 template<unsigned int dimension, class SpinType, class Derived> template<class RandomNumberGenerator>
-Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose_step(RandomNumberGenerator* rng)
+SpinLatticeStep<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose_step(RandomNumberGenerator* rng)
 {
   // Use a random number for calculating a random int between 0 and the number of spins in the system
   double random_number_index = rng->random_double()*spin_lattice.num_elements();
@@ -272,7 +272,7 @@ Step<dimension, SpinType> SpinLatticeBase<dimension, SpinType, Derived>::propose
   }
 
   // Create a step and return the step
-  return Step<dimension, SpinType>(static_cast<Derived*>(this), // Pointer to the lattice of the step
+  return SpinLatticeStep<dimension, SpinType>(static_cast<Derived*>(this), // Pointer to the lattice of the step
 				   lattice_multiindex, // Index of the place to flip
 				   spin_lattice(lattice_multiindex).random_differ(rng->random_double())); // new random spin value differing from the old value
 }

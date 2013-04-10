@@ -60,17 +60,17 @@ public:
   void set_parameters(const Parameters& value) { simulation_parameters = value; }
 
   //! Execute a Metropolis Monte-Carlo simulation with given parameters at given inverse temperature
-  template<class Observable, class TemperatureType = double>
-  std::vector<typename Observable::observable_type> do_parallel_metropolis_simulation(const TemperatureType& beta);
+  template<class Observator, class TemperatureType = double>
+  std::vector<typename Observator::observable_type> do_parallel_metropolis_simulation(const TemperatureType& beta);
   //! Execute a parallel Metropolis Monte-Carlo simulation with given parameters at the given range of inverse temperatures
-  template<class Observable, class InputIterator>
-  std::vector<std::vector<typename Observable::observable_type> > do_parallel_metropolis_simulation(InputIterator beta_begin, InputIterator beta_end);
+  template<class Observator, class InputIterator>
+  std::vector<std::vector<typename Observator::observable_type> > do_parallel_metropolis_simulation(InputIterator beta_begin, InputIterator beta_end);
 
   //! Execute a Metropolis Monte-Carlo simulation with given parameters at given inverse temperature with an accumulator for storing the measurements results
-  template<class Observable, class Accumulator, class TemperatureType = double>
+  template<class Observator, class Accumulator, class TemperatureType = double>
   void do_parallel_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator);
   //! Execute a Metropolis Monte-Carlo simulation with given parameters at given range of invere temperatures with an range of accumulators for storing the measurements results
-  template<class Observable, class AccumulatorIterator, class InverseTemperatureIterator>
+  template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
   void do_parallel_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end);
 
   //! Load the data of the Metropolis simulation from a serialization stream

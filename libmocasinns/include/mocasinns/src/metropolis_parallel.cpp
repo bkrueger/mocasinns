@@ -16,28 +16,28 @@ namespace Mocasinns
 {
 
 /*!
-  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed.
   \returns Vector containing the single measurements performed
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class TemperatureType>
-std::vector<typename Observable::observable_type> MetropolisParallel<ConfigurationType, Step, RandomNumberGenerator>::do_parallel_metropolis_simulation(const TemperatureType& beta)
+template<class Observator, class TemperatureType>
+std::vector<typename Observator::observable_type> MetropolisParallel<ConfigurationType, Step, RandomNumberGenerator>::do_parallel_metropolis_simulation(const TemperatureType& beta)
 {
   // Check the concept of the observable
-  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observable::observable_type>));
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
   // Call the accumulator function using the VectorAccumulator
-  Details::Metropolis::VectorAccumulator<typename Observable::observable_type> measurements_accumulator;
-  do_parallel_metropolis_simulation<Observable>(beta, measurements_accumulator);
+  Details::Metropolis::VectorAccumulator<typename Observator::observable_type> measurements_accumulator;
+  do_parallel_metropolis_simulation<Observator>(beta, measurements_accumulator);
 
   // Return the plain data
   return measurements_accumulator.internal_vector;
 }
 
 /*!  
-  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam InputIterator Type of the iterator that iterates the different temperatures that will be considered
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta_begin Iterator pointing to the first inverse temperature that is calculated
@@ -45,13 +45,13 @@ std::vector<typename Observable::observable_type> MetropolisParallel<Configurati
   \returns Vector containing the vectors of measurments performed for each temperature. (First index: inverse temperature, second index: measurment number)
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class InputIterator>
-std::vector<std::vector<typename Observable::observable_type> > MetropolisParallel<ConfigurationType, Step, RandomNumberGenerator>::do_parallel_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
+template<class Observator, class InputIterator>
+std::vector<std::vector<typename Observator::observable_type> > MetropolisParallel<ConfigurationType, Step, RandomNumberGenerator>::do_parallel_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
 {
   // Check the concept of the observable
-  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observable::observable_type>));
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
-  std::vector<std::vector<typename Observable::observable_type> > results;
+  std::vector<std::vector<typename Observator::observable_type> > results;
   for (InputIterator beta = first_beta; beta != last_beta; ++beta)
   {
     results.push_back(do_parallel_metropolis_simulation(*beta));
@@ -60,18 +60,18 @@ std::vector<std::vector<typename Observable::observable_type> > MetropolisParall
 }  
 
 /*!
- \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+ \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
  \tparam Accumulator Class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
  \param beta Inverse temperature at which the simulation is performed
  \param measurement_accumulator Reference to the accumulator that stores the simulation results
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class Accumulator, class TemperatureType>
+template<class Observator, class Accumulator, class TemperatureType>
 void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parallel_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
   // Check the concept of the observable
-  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observable::observable_type>));
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
   // Perform a parallel for-loop for the different runs
   // The signal handlers and the simulation parameters need not to be shared, because class members are allways shared
@@ -104,7 +104,7 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
  #pragma omp critical
       {
 	signal_handler_measurement(this);
-	measurement_accumulator(Observable::observe(run_simulation->get_config_space()));
+	measurement_accumulator(Observator::observe(run_simulation->get_config_space()));
       }
     }
     
@@ -122,7 +122,7 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
 }
 
 /*!
- \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+ \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
  \tparam AccumulatorIterator Iterator of a container of a class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
  \tparam InverseTemperatureIterator  Iterator of a container of a type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
  \param beta_begin Iterator pointing to the first inverse temperature that is calculated
@@ -131,11 +131,11 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
  \param measurement_accumulator_end Iterator pointing one position after the last accumulator that calculates the data for the last inverse temperature
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class AccumulatorIterator, class InverseTemperatureIterator>
+template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
 void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parallel_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
 {  
   // Check the concept of the observable
-  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observable::observable_type>));
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
   InverseTemperatureIterator beta_iterator = beta_begin;
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;

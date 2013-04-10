@@ -1,7 +1,7 @@
 LIBFILES=../lib/libising.a
 GOPT=-ggdb
 CC=g++
-CFLAGS=$(GOPT) -Wall -Wextra -pedantic -I ../include
+CFLAGS=$(GOPT) -std=c++0x -Wall -Wextra -pedantic -I ../include
 
 TEST_OBJECTS_MAIN = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 TEST_OBJECTS_SPINS = $(patsubst %.cpp,%.o,$(wildcard test_spins/*.cpp))

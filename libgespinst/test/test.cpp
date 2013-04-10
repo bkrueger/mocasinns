@@ -7,6 +7,8 @@
 #include "test_spins/test_potts_spin.hpp"
 #include "test_spins/test_real_spin.hpp"
 #include "test_spin_lattice.hpp"
+#include "test_spin_network.hpp"
+#include "test_spin_network_step.hpp"
 #include "test_spin_step.hpp"
 
 int main()
@@ -17,6 +19,8 @@ int main()
   runner.addTest(TestPottsSpin::suite());
   runner.addTest(TestRealSpin::suite());
   runner.addTest(TestSpinLattice::suite());
+  runner.addTest(TestSpinNetwork::suite());
+  runner.addTest(TestSpinNetworkStep::suite());
   runner.addTest(TestStep::suite());
 
   CppUnit::BriefTestProgressListener listener; 

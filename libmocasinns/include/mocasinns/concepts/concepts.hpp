@@ -11,6 +11,7 @@
 #include "energy_concept.hpp"
 #include "histo_concept.hpp"
 #include "observable_concept.hpp"
+#include "observator_concept.hpp"
 #include "random_number_generator_concept.hpp"
 
 #endif

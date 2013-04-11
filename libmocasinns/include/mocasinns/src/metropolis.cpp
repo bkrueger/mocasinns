@@ -36,6 +36,8 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observator, class TemperatureType>
 std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
@@ -59,6 +61,8 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observator, class InputIterator>
 std::vector<std::vector<typename Observator::observable_type> > Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
@@ -81,6 +85,8 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observator, class Accumulator, class TemperatureType>
 void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
@@ -110,6 +116,8 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
 void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
 {  
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
@@ -143,6 +151,8 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observator, class TemperatureType>
 std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 
@@ -204,6 +214,8 @@ template<class ConfigurationType, class Step, class RandomNumberGenerator>
 template<class Observator, class TemperatureType>
 typename Observator::observable_type Metropolis<ConfigurationType, Step, RandomNumberGenerator>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
 

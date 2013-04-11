@@ -10,6 +10,7 @@
 
 #ifdef MOCASINNS_METROPOLIS_HPP
 
+#include <iterator>
 #include <cmath>
 
 // Includes for boost accumulators
@@ -89,6 +90,8 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+  // Check the concept of the accumulator
+  BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<Accumulator, typename Observator::observable_type>));
 
  // Perform the relaxation steps
   do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
@@ -120,6 +123,8 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+  // Check the concept of the accumulator
+  BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<typename std::iterator_traits<AccumulatorIterator>::value_type, typename Observator::observable_type>));
 
   InverseTemperatureIterator beta_iterator = beta_begin;
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;

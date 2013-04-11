@@ -78,6 +78,8 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+  // Check the concept of the accumulator
+  BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<Accumulator, typename Observator::observable_type>));
 
   // Perform a parallel for-loop for the different runs
   // The signal handlers and the simulation parameters need not to be shared, because class members are allways shared
@@ -143,7 +145,9 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
   // Check the concept of the observable
-  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));  
+  // Check the concept of the accumulator
+  BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<typename std::iterator_traits<AccumulatorIterator>::value_type, typename Observator::observable_type>));
 
   InverseTemperatureIterator beta_iterator = beta_begin;
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;

@@ -7,8 +7,8 @@
 #include <cppunit/Test.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <spinlattice.hpp>
-#include <spin_ising.hpp>
+#include <gespinst/spin_lattice.hpp>
+#include <gespinst/spins/ising_spin.hpp>
 
 #include <mocasinns/entropic_sampling.hpp>
 #include <mocasinns/histograms/histocrete.hpp>
@@ -19,12 +19,12 @@ using namespace Mocasinns;
 class TestEntropicSampling : CppUnit::TestFixture
 {
 public:
-  typedef Ising::SpinLattice<1, Ising::SpinIsing> IsingConfiguration1d;
-  typedef Ising::Step<1, Ising::SpinIsing> IsingStep1d;
+  typedef Gespinst::SpinLattice<1, Gespinst::IsingSpin> IsingConfiguration1d;
+  typedef Gespinst::SpinLatticeStep<1, Gespinst::IsingSpin> IsingStep1d;
   typedef EntropicSampling<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation1d;
   
-  typedef Ising::SpinLattice<2, Ising::SpinIsing> IsingConfiguration2d;
-  typedef Ising::Step<2, Ising::SpinIsing> IsingStep2d;
+  typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> IsingConfiguration2d;
+  typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> IsingStep2d;
   typedef EntropicSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation2d;
 
 private:

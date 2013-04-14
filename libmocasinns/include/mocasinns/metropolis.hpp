@@ -54,7 +54,7 @@ public:
     static observable_type observe(ConfigurationType* config) { return config->energy(); }
   };
   //! Typedef for the default observable
-  typedef typename Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::ObserveEnergy DefaultObservable;
+  typedef typename Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::ObserveEnergy DefaultObservator;
 
   //! Boost signal handler invoked after every measurement
   boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
@@ -102,25 +102,25 @@ public:
   }
 
   //! Execute a Metropolis Monte-Carlo simulation at given inverse temperature
-  template<class Observable = DefaultObservable, class TemperatureType = double>
-  std::vector<typename Observable::observable_type> do_metropolis_simulation(const TemperatureType& beta);
+  template<class Observator = DefaultObservator, class TemperatureType = double>
+  std::vector<typename Observator::observable_type> do_metropolis_simulation(const TemperatureType& beta);
   //! Execute a Metropolis Monte-Carlo simulation at the given range of inverse temperatures
-  template<class Observable = DefaultObservable, class InputIterator>
-  std::vector<std::vector<typename Observable::observable_type> > do_metropolis_simulation(InputIterator beta_begin, InputIterator beta_end);
+  template<class Observator = DefaultObservator, class InputIterator>
+  std::vector<std::vector<typename Observator::observable_type> > do_metropolis_simulation(InputIterator beta_begin, InputIterator beta_end);
 
   //! Execute a Metropolis Monte-Carlo simulation at given inverse temperature with an accumulator for storing the measurements results
-  template<class Observable = DefaultObservable, class Accumulator, class TemperatureType = double>
+  template<class Observator = DefaultObservator, class Accumulator, class TemperatureType = double>
   void do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator);
   //! Execute a Metropolis Monte-Carlo simulation at given range of invere temperatures with an range of accumulators for storing the measurements results
-  template<class Observable = DefaultObservable, class AccumulatorIterator, class InverseTemperatureIterator>
+  template<class Observator = DefaultObservator, class AccumulatorIterator, class InverseTemperatureIterator>
   void do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end);
 
   //! Measure the autocorrelation function of the system with respect to an observable
-  template<class Observable = DefaultObservable, class TemperatureType = double>
-  std::vector<typename Observable::observable_type> autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor = 5);
+  template<class Observator = DefaultObservator, class TemperatureType = double>
+  std::vector<typename Observator::observable_type> autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor = 5);
   //! Calculate the integrated autocorrelation time of the system with respect to an observable
-  template<class Observable = DefaultObservable, class TemperatureType = double>
-  typename Observable::observable_type integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor = 5);
+  template<class Observator = DefaultObservator, class TemperatureType = double>
+  typename Observator::observable_type integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor = 5);
 
   //! Load the data of the Metropolis simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream);

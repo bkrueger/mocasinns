@@ -10,6 +10,7 @@
 
 #ifdef MOCASINNS_METROPOLIS_HPP
 
+#include <iterator>
 #include <cmath>
 
 // Includes for boost accumulators
@@ -26,26 +27,31 @@ namespace ba = boost::accumulators;
 namespace Mocasinns
 {
 /*!
-  \fn std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
-  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \fn std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed.
   \returns Vector containing the single measurements performed
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class TemperatureType>
-std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
+template<class Observator, class TemperatureType>
+std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
+  // Check the concept of the observable
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+
   // Call the accumulator function using the VectorAccumulator
-  Details::Metropolis::VectorAccumulator<typename Observable::observable_type> measurements_accumulator;
-  do_metropolis_simulation<Observable>(beta, measurements_accumulator);
+  Details::Metropolis::VectorAccumulator<typename Observator::observable_type> measurements_accumulator;
+  do_metropolis_simulation<Observator>(beta, measurements_accumulator);
 
   // Return the plain data
   return measurements_accumulator.internal_vector;
 }
 
 /*!  
-  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam InputIterator Type of the iterator that iterates the different temperatures that will be considered
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta_begin Iterator pointing to the first inverse temperature that is calculated
@@ -53,10 +59,15 @@ std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, 
   \returns Vector containing the vectors of measurments performed for each temperature. (First index: inverse temperature, second index: measurment number)
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class InputIterator>
-std::vector<std::vector<typename Observable::observable_type> > Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
+template<class Observator, class InputIterator>
+std::vector<std::vector<typename Observator::observable_type> > Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
 {
-  std::vector<std::vector<typename Observable::observable_type> > results;
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
+  // Check the concept of the observable
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+
+  std::vector<std::vector<typename Observator::observable_type> > results;
   for (InputIterator beta = first_beta; beta != last_beta; ++beta)
   {
     results.push_back(do_metropolis_simulation(*beta));
@@ -65,16 +76,23 @@ std::vector<std::vector<typename Observable::observable_type> > Metropolis<Confi
 }  
 
 /*!
- \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+ \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
  \tparam Accumulator Class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
  \param beta Inverse temperature at which the simulation is performed
  \param measurement_accumulator Reference to the accumulator that stores the simulation results
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class Accumulator, class TemperatureType>
+template<class Observator, class Accumulator, class TemperatureType>
 void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
+  // Check the concept of the observable
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+  // Check the concept of the accumulator
+  BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<Accumulator, typename Observator::observable_type>));
+
  // Perform the relaxation steps
   do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
   
@@ -83,13 +101,13 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
   {
     do_metropolis_steps(simulation_parameters.steps_between_measurement, beta);
     signal_handler_measurement(this);
-    measurement_accumulator(Observable::observe(this->configuration_space));
+    measurement_accumulator(Observator::observe(this->configuration_space));
     if (this->check_for_posix_signal()) return;
   }
 }
 
 /*!
- \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+ \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
  \tparam AccumulatorIterator Iterator of a container of a class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
  \tparam InverseTemperatureIterator  Iterator of a container of a type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
  \param beta_begin Iterator pointing to the first inverse temperature that is calculated
@@ -98,9 +116,16 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
  \param measurement_accumulator_end Iterator pointing one position after the last accumulator that calculates the data for the last inverse temperature
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class AccumulatorIterator, class InverseTemperatureIterator>
+template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
 void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
 {  
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
+  // Check the concept of the observable
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+  // Check the concept of the accumulator
+  BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<typename std::iterator_traits<AccumulatorIterator>::value_type, typename Observator::observable_type>));
+
   InverseTemperatureIterator beta_iterator = beta_begin;
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;
   for (; beta_iterator != beta_end; ++beta_iterator, ++measurement_accumulator_iterator)
@@ -121,43 +146,48 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
   \f]
   where \f$ N \f$ is the parameters simulation_time_factor and s is the parameter maximal_time (the time indices are allways measured in units of the system size). Before taking the measurements the number of relaxation steps set in the parameters are taken.
 
-  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed
   \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
   \param simulation_time_factor Run time of the simulation in units of the maximal time (also gives the number of measurements taken for averaging the value of the autocorrelation function at each time). The default value is 5.
 */									
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class TemperatureType>
-std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
+template<class Observator, class TemperatureType>
+std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
+  // Check the concept of the observable
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+
   // Do the relaxation steps
   do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
 
   // Define the vector with the results
-  std::vector<typename Observable::observable_type> results;
+  std::vector<typename Observator::observable_type> results;
 
   // Define the vector with the measurments of the observable and take the measurements
-  std::vector<typename Observable::observable_type> observable_measurements;
+  std::vector<typename Observator::observable_type> observable_measurements;
   for (unsigned int i = 0; i <= maximal_time*simulation_time_factor; ++i)
   {
     do_metropolis_steps(this->get_config_space()->system_size(), beta);
-    observable_measurements.push_back(Observable::observe(this->get_config_space()));
+    observable_measurements.push_back(Observator::observe(this->get_config_space()));
   }
 
   // Define an accumulator and calculate the mean value of the observable
-  ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_measured_mean(observable_measurements[0]);
+  ba::accumulator_set<typename Observator::observable_type, ba::stats<ba::tag::mean> > acc_measured_mean(observable_measurements[0]);
   for (unsigned int i = 0; i <= maximal_time*simulation_time_factor; ++i)
   {
     acc_measured_mean(observable_measurements[i]);
   }
-  typename Observable::observable_type measured_mean = ba::mean(acc_measured_mean);
+  typename Observator::observable_type measured_mean = ba::mean(acc_measured_mean);
 
   // Calculate the autocorrelation function using an accumulator
   for (unsigned int time = 0; time <= maximal_time; ++time)
   {
     // Calculate the mean autocorrelation function for time
-    ba::accumulator_set<typename Observable::observable_type, ba::stats<ba::tag::mean> > acc_autocorrelation_function_time(observable_measurements[0]);
+    ba::accumulator_set<typename Observator::observable_type, ba::stats<ba::tag::mean> > acc_autocorrelation_function_time(observable_measurements[0]);
     for (unsigned int sweep = 0; sweep < simulation_time_factor; ++sweep)
     {
       unsigned int start_time = sweep*maximal_time;
@@ -179,21 +209,26 @@ std::vector<typename Observable::observable_type> Metropolis<ConfigurationType, 
   \f]
   where \f$ N \f$ denotes the maximal considered time.
 
-  \tparam Observable Class with static function Observable::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed
   \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
   \param simulation_time_factor Run time of the simulation in units of the maximal time (also gives the number of measurements taken for averaging the value of the autocorrelation function at each time). The default value is 5.
  */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>
-template<class Observable, class TemperatureType>
-typename Observable::observable_type Metropolis<ConfigurationType, Step, RandomNumberGenerator>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
+template<class Observator, class TemperatureType>
+typename Observator::observable_type Metropolis<ConfigurationType, Step, RandomNumberGenerator>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
 {
+  // Check the concept of the observator
+  BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
+  // Check the concept of the observable
+  BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
+
   // Calculate the autocorrelation function
-  std::vector<typename Observable::observable_type> vec_autocorrelation_function = autocorrelation_function<Observable>(beta, maximal_time, considered_time_factor);
+  std::vector<typename Observator::observable_type> vec_autocorrelation_function = autocorrelation_function<Observator>(beta, maximal_time, considered_time_factor);
 
   // Calculate the integrated autocorrelation time
-  typename Observable::observable_type result = vec_autocorrelation_function[0]/vec_autocorrelation_function[0]; // Use this to initialise a one in each component even if using an VectorObservable or ArrayObservable
+  typename Observator::observable_type result = vec_autocorrelation_function[0]/vec_autocorrelation_function[0]; // Use this to initialise a one in each component even if using an VectorObservable or ArrayObservable
   for (unsigned int t = 1; t < maximal_time; ++t)
   {
     result += 2.0*(1.0 - static_cast<double>(t)/static_cast<double>(maximal_time))*(vec_autocorrelation_function[t]/vec_autocorrelation_function[0]);

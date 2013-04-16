@@ -57,7 +57,7 @@ namespace Mocasinns
     //! Typedef for a Wang-Landau simulation (used to estimate the weights)
     typedef WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator> WangLandauSimulation;
     //! Typedef for the parameters of a Wang-Landau simulation (used to estimate the weights)
-    typedef typename WangLandauSimulation::template Parameters<EnergyType> WangLandauParameters;
+    typedef typename WangLandauSimulation::Parameters WangLandauParameters;
 
     //! Boost signal handler invoked after every iteration
     boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_iteration;

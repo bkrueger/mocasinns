@@ -13,9 +13,7 @@ namespace Mocasinns
 {
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-template <class ParameterEnergyType>
-WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
-::Parameters<ParameterEnergyType>::Parameters() :
+WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::Parameters() :
   binning_reference(0), 
   binning_width(1), 
   energy_cutoff_use(false), 
@@ -28,9 +26,21 @@ WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator
   prototype_histo()
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-template <class ParameterEnergyType>
-bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
-::Parameters<ParameterEnergyType>::operator==(const Parameters<EnergyType>& rhs) const
+template <class OtherParametersType>
+WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::Parameters(const OtherParametersType& other) :
+  binning_reference(other.binning_reference), 
+  binning_width(other.binning_width), 
+  energy_cutoff_use(other.energy_cutoff_use), 
+  energy_cutoff(other.energy_cutoff), 
+  flatness(other.flatness),
+  modification_factor_initial(other.modification_factor_initial),
+  modification_factor_final(other.modification_factor_final),
+  modification_factor_multiplier(other.modification_factor_multiplier),
+  sweep_steps(other.sweep_steps),
+  prototype_histo(other.prototype_histo)
+{}
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::operator==(const Parameters& rhs) const
 {
   return ((binning_reference == rhs.binning_reference) &&
 	  (binning_width == rhs.binning_width) &&
@@ -42,9 +52,7 @@ bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 	  (sweep_steps == rhs.sweep_steps));
 }
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-template <class ParameterEnergyType>
-bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
-::Parameters<ParameterEnergyType>::operator!=(const Parameters<EnergyType>& rhs) const
+bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::operator!=(const Parameters& rhs) const
 {
   return !operator==(rhs);
 }
@@ -70,19 +78,19 @@ template <class ConfigurationType, class StepType, class EnergyType, template <c
 WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::WangLandau()
   : Simulation<ConfigurationType, RandomNumberGenerator>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
 {
-  simulation_parameters = Parameters<EnergyType>();
+  simulation_parameters = Parameters();
   initialise_with_parameters();
 }
   
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::WangLandau(const Parameters<EnergyType>& params) 
+WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::WangLandau(const Parameters& params) 
   : Simulation<ConfigurationType, RandomNumberGenerator>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
 {
   simulation_parameters = params;
   initialise_with_parameters();
 }
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::WangLandau(const Parameters<EnergyType>& params, ConfigurationType* initial_configuration) 
+WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::WangLandau(const Parameters& params, ConfigurationType* initial_configuration) 
   : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), sweep_counter(0)
 {
   simulation_parameters = params;

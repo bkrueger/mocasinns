@@ -40,7 +40,7 @@ public:
   typedef uint64_t IncidenceCounterYValueType;
 
   // Forward declaration of the parameters for the WangLandau-Simulation
-  template <class ParameterEnergyType = EnergyType> struct Parameters;
+  struct Parameters;
   // Forward declaration of struct used in signals to write the simulation status into std::cout
   struct SimulationStatus;
   // Forward declaration of struct used in signals to dump the whole simulation into the specified file
@@ -54,14 +54,14 @@ public:
   //! Initialise a WangLanday-MC simulation with default parameters, default configuration space and default RandomNumberGenerator
   WangLandau();
   //! Initialise a WangLandau-MC simulation with default configuration space and default RandomNumberGenerator
-  WangLandau(const Parameters<EnergyType>& params);
+  WangLandau(const Parameters& params);
   //! Initialise a WangLandau-MC simulation with given configuration space and default RandomNumberGenerator
-  WangLandau(const Parameters<EnergyType>& params, ConfigurationType* initial_configuration);
+  WangLandau(const Parameters& params, ConfigurationType* initial_configuration);
 
   //! Get-Accessor for the parameters of the simulation
-  const Parameters<EnergyType>& get_simulation_parameters() const { return simulation_parameters; }
+  const Parameters& get_simulation_parameters() const { return simulation_parameters; }
   //! Set-Accessor for the parameters of the simulation
-  void set_simulation_parameters(const Parameters<EnergyType>& value) { simulation_parameters = value; initialise_with_parameters(); }
+  void set_simulation_parameters(const Parameters& value) { simulation_parameters = value; initialise_with_parameters(); }
   //! Get-Accessor for the current modification factor
   double get_modification_factor_current() const { return modification_factor_current; }
   //! Set-Accessor for the current modification factor
@@ -102,7 +102,7 @@ public:
 
 private:
   //! Parameters of the simulation
-  Parameters<EnergyType> simulation_parameters;
+  Parameters simulation_parameters;
 
   //! Current value of the modification factor
   double modification_factor_current;
@@ -134,14 +134,13 @@ private:
 
 //! Struct for dealing with the parameters of a Wang-Landau-simulation
 template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
-template<class ParameterEnergyType>
 struct WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters
 {
 public:
   //! Energy value that is used as a reference point for the binning
-  ParameterEnergyType binning_reference;
+  EnergyType binning_reference;
   //! Energy value range that is comprehended in one bin
-  ParameterEnergyType binning_width;
+  EnergyType binning_width;
   
   //! Flag whether to use a maximal energy cutoff, default value is false
   bool energy_cutoff_use;
@@ -166,11 +165,14 @@ public:
     
   //! Constructor to set default values
   Parameters();
+  //! Constructor to copy parameters from other parameters with convertible energy type
+  template <class OtherParametersType>
+  explicit Parameters(const OtherParametersType& other);
     
   //! Test for equality
-  bool operator==(const Parameters<EnergyType>& rhs) const;
+  bool operator==(const Parameters& rhs) const;
   //! Test for inequality
-  bool operator!=(const Parameters<EnergyType>& rhs) const;
+  bool operator!=(const Parameters& rhs) const;
   
 private:
   //! Member variable for boost serialization

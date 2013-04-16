@@ -17,6 +17,14 @@ namespace Mocasinns
 namespace Histograms
 {
 
+  template<class x_value_type, class y_value_type, class Derived>
+  template<class other_x_value_type, class OtherDerived>
+  HistoBase<x_value_type, y_value_type, Derived>::HistoBase(const HistoBase<other_x_value_type, y_value_type, OtherDerived>& other)
+  {
+    for (typename HistoBase<other_x_value_type, y_value_type, OtherDerived>::const_iterator bin = other.begin(); bin != other.end(); ++bin)
+      values.insert(std::pair<x_value_type, y_value_type>(x_value_type(bin->first), bin->second));
+  }
+
 template<class x_value_type, class y_value_type, class Derived>
 template<class ArbitraryDerived>
 bool HistoBase<x_value_type,y_value_type,Derived>::operator==(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs) const

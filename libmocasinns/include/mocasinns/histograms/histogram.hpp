@@ -72,6 +72,9 @@ public:
   Histogram(x_value_type binning_width, x_value_type binning_reference) : binning(binning_width, binning_reference) {}
   //! Copy constructor
   Histogram(const Base& other) : Base(other), binning(1.0, 0.0) {}
+  //! Copy constructor for different x-value types
+  template <class other_x_value_type>
+  explicit Histogram(const HistoBase<other_x_value_type, y_value_type, Histogram<other_x_value_type, y_value_type, BinningFunctor> >& other) : Base(other) {}
 
   //! Get-accessor for the binning functor
   BinningFunctor get_binning() const { return binning; }
@@ -155,6 +158,9 @@ public:
   HistogramNumber(x_value_type binning_width, x_value_type binning_reference) : Base(binning_width, binning_reference) {}
   //! Copy constructor
   HistogramNumber(const Base& other) : Base(other) {}  
+  //! Copy constructor for different x-value types
+  template <class other_x_value_type>
+  explicit HistogramNumber(const HistoBase<other_x_value_type, y_value_type, HistogramNumber<other_x_value_type, y_value_type> >& other) : Base(other) {}
 };
 
 /*!
@@ -183,6 +189,9 @@ public:
   HistogramVector(x_value_type binning_width, x_value_type binning_reference) : Base(binning_width, binning_reference) {}
   //! Copy constructor
   HistogramVector(const Base& other) : Base(other) {}  
+  //! Copy constructor for different x-value types
+  template <class other_x_value_type>
+  explicit HistogramVector(const HistoBase<other_x_value_type, y_value_type, HistogramVector<other_x_value_type, y_value_type> >& other) : Base(other) {}
 };
 
 } // of namespace Histogram

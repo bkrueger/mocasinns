@@ -17,9 +17,10 @@ EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGen
 ::Parameters::Parameters() :
   binning_reference(0), 
   binning_width(1), 
-  energy_cutoff_use(false), 
-  energy_cutoff_upper(0), 
   energy_cutoff_lower(0),
+  energy_cutoff_upper(0), 
+  use_energy_cutoff_lower(false),
+  use_energy_cutoff_upper(false),
   flatness(0.95),
   sweep_steps(1000),
   prototype_histo()
@@ -30,9 +31,10 @@ bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 {
   return ((binning_reference == rhs.binning_reference) &&
 	  (binning_width == rhs.binning_width) &&
-	  (energy_cutoff_use == rhs.energy_cutoff_use) &&
 	  (energy_cutoff_lower == rhs.energy_cutoff_lower) &&
 	  (energy_cutoff_upper == rhs.energy_cutoff_upper) &&
+	  (use_energy_cutoff_lower == rhs.use_energy_cutoff_lower) &&
+	  (use_energy_cutoff_upper == rhs.use_energy_cutoff_upper) &&
 	  (flatness == rhs.flatness) &&
 	  (sweep_steps == rhs.sweep_steps));
 }
@@ -63,9 +65,8 @@ double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNu
   EnergyType total_energy_after_step = step_parameters.total_energy + step_parameters.delta_E;
 
   // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
-  if (simulation_parameters.energy_cutoff_use && 
-      (total_energy_after_step > simulation_parameters.energy_cutoff_upper || 
-       total_energy_after_step < simulation_parameters.energy_cutoff_lower))
+  if ((simulation_parameters.use_energy_cutoff_upper && total_energy_after_step > simulation_parameters.energy_cutoff_upper) || 
+      (simulation_parameters.use_energy_cutoff_lower && total_energy_after_step < simulation_parameters.energy_cutoff_lower))
     return 0.0;
 
   // Calculate and return the acceptance probability

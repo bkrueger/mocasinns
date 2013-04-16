@@ -123,12 +123,14 @@ namespace Mocasinns
     //! Energy value range that is comprehended in one bin
     EnergyType binning_width;
     
-    //! Flag whether to use a maximal energy cutoff, default value is false
-    bool energy_cutoff_use;
-    //! Value of the maximal energy cutoff
-    EnergyType energy_cutoff_upper;
     //! Value of the minimal energy cutoff
     EnergyType energy_cutoff_lower;
+    //! Value of the maximal energy cutoff
+    EnergyType energy_cutoff_upper;
+    //! Flag indicating whether to use the minimal energy cutoff, default value is false
+    bool use_energy_cutoff_lower;
+    //! Flag indicating whether to use the maximal energy cutoff, default value is false
+    bool use_energy_cutoff_upper;
     
     //! Flatness of the incidence counter histogram that should be reached
     double flatness;
@@ -156,9 +158,10 @@ namespace Mocasinns
       // serialize base class information
       ar & binning_reference;
       ar & binning_width;
-      ar & energy_cutoff_use;
       ar & energy_cutoff_lower;
       ar & energy_cutoff_upper;
+      ar & use_energy_cutoff_lower;
+      ar & use_energy_cutoff_upper;
       ar & flatness;
       ar & sweep_steps;
       ar & prototype_histo;

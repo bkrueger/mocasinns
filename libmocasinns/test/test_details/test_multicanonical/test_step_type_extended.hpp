@@ -61,6 +61,7 @@ public:
   void test_constructor();
   
   void test_delta_E();
+  void test_delta_E_automatically();
   void test_execute();
 };
 

@@ -1,5 +1,7 @@
 #include "test_step_type_extended.hpp"
 
+#include <mocasinns/random/boost_random.hpp>
+
 CppUnit::Test* TestStepTypeExtended::suite()
 {
   CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestDetails/TestMulticanonical/TestStepTypeExtended");
@@ -7,6 +9,7 @@ CppUnit::Test* TestStepTypeExtended::suite()
   suite_of_tests->addTest( new CppUnit::TestCaller<TestStepTypeExtended>("TestDetails/TestMulticanonical/TestStepTypeExtended: test_constructor", &TestStepTypeExtended::test_constructor) );
 
   suite_of_tests->addTest( new CppUnit::TestCaller<TestStepTypeExtended>("TestDetails/TestMulticanonical/TestStepTypeExtended: test_delta_E", &TestStepTypeExtended::test_delta_E) );  
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestStepTypeExtended>("TestDetails/TestMulticanonical/TestStepTypeExtended: test_delta_E_automatically", &TestStepTypeExtended::test_delta_E_automatically) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestStepTypeExtended>("TestDetails/TestMulticanonical/TestStepTypeExtended: test_execute", &TestStepTypeExtended::test_execute) ); 
 
   return suite_of_tests;
@@ -71,10 +74,10 @@ void TestStepTypeExtended::setUp()
   test_extended_config_4 = new ExtendedConfigType(test_config_4, test_reference_4);
 
   // Create some normal steps
-  test_step_1 = new StepType(test_config_1, index_1, Gespinst::IsingSpin(1));
-  test_step_2 = new StepType(test_config_2, index_1, Gespinst::IsingSpin(-1));
-  test_step_3 = new StepType(test_config_3, index_1, Gespinst::IsingSpin(-1));
-  test_step_4 = new StepType(test_config_4, index_3, Gespinst::IsingSpin(1));
+  test_step_1 = new StepType(test_config_1, index_1, Gespinst::IsingSpin(1)); // Leaving ground state
+  test_step_2 = new StepType(test_config_2, index_1, Gespinst::IsingSpin(-1)); // Not leaving ground state
+  test_step_3 = new StepType(test_config_3, index_1, Gespinst::IsingSpin(-1)); // Beeing not at ground state and not going to ground state
+  test_step_4 = new StepType(test_config_4, index_3, Gespinst::IsingSpin(1)); // Going to the ground state
 
   // Create the extended steps
   test_extended_step_1 = new ExtendedStepType(*test_step_1, test_extended_config_1);
@@ -117,30 +120,94 @@ void TestStepTypeExtended::test_constructor()
 
 void TestStepTypeExtended::test_delta_E()
 {
+  // Step leaving groundstate
   EnergyTypeExtended<int> delta_E_1(-4, -1);
   CPPUNIT_ASSERT_EQUAL(delta_E_1.get_original_energy(),
 		       test_extended_step_1->delta_E().get_original_energy());
   CPPUNIT_ASSERT_EQUAL(delta_E_1.get_in_ground_state(),
 		       test_extended_step_1->delta_E().get_in_ground_state());
   CPPUNIT_ASSERT(test_extended_step_1->delta_E() == delta_E_1);
+  // Step not leaving groundstate
   EnergyTypeExtended<int> delta_E_2(0, 0);
   CPPUNIT_ASSERT_EQUAL(delta_E_2.get_original_energy(),
 		       test_extended_step_2->delta_E().get_original_energy());
   CPPUNIT_ASSERT_EQUAL(delta_E_2.get_in_ground_state(),
 		       test_extended_step_2->delta_E().get_in_ground_state());
   CPPUNIT_ASSERT(test_extended_step_2->delta_E() == delta_E_2);
+  // Step doing nothing with ground state
   EnergyTypeExtended<int> delta_E_3(0, 0);
   CPPUNIT_ASSERT_EQUAL(delta_E_3.get_original_energy(),
 		       test_extended_step_3->delta_E().get_original_energy());
   CPPUNIT_ASSERT_EQUAL(delta_E_3.get_in_ground_state(),
 		       test_extended_step_3->delta_E().get_in_ground_state());
   CPPUNIT_ASSERT(test_extended_step_3->delta_E() == delta_E_3);
+  // Step entering the ground state
   EnergyTypeExtended<int> delta_E_4(0, 1);
   CPPUNIT_ASSERT_EQUAL(delta_E_4.get_original_energy(),
 		       test_extended_step_4->delta_E().get_original_energy());
   CPPUNIT_ASSERT_EQUAL(delta_E_4.get_in_ground_state(),
 		       test_extended_step_4->delta_E().get_in_ground_state());
   CPPUNIT_ASSERT(test_extended_step_4->delta_E() == delta_E_4);
+}
+void TestStepTypeExtended::test_delta_E_automatically()
+{
+  Mocasinns::Random::Boost_MT19937 rng;
+
+  // Do automatic tests with test_extended_config_1
+  EnergyTypeExtended<int> energy_1 = test_extended_config_1->energy();
+  for (unsigned int i = 0; i < 1000; i++)
+  {
+    // Propose a random step
+    ExtendedStepType step = test_extended_config_1->propose_step(&rng);
+    EnergyTypeExtended<int> energy_difference = step.delta_E();
+    step.execute();
+
+    // Test that the energies match
+    CPPUNIT_ASSERT(energy_1 + energy_difference == test_extended_config_1->energy());
+    energy_1 += energy_difference;
+  }
+
+  // Do automatic tests with test_extended_config_2
+  EnergyTypeExtended<int> energy_2 = test_extended_config_2->energy();
+  for (unsigned int i = 0; i < 1000; i++)
+  {
+    // Propose a random step
+    ExtendedStepType step = test_extended_config_2->propose_step(&rng);
+    EnergyTypeExtended<int> energy_difference = step.delta_E();
+    step.execute();
+
+    // Test that the energies match
+    CPPUNIT_ASSERT(energy_2 + energy_difference == test_extended_config_2->energy());
+    energy_2 += energy_difference;
+  }
+
+  // Do automatic tests with test_extended_config_3
+  EnergyTypeExtended<int> energy_3 = test_extended_config_3->energy();
+  for (unsigned int i = 0; i < 1000; i++)
+  {
+    // Propose a random step
+    ExtendedStepType step = test_extended_config_3->propose_step(&rng);
+    EnergyTypeExtended<int> energy_difference = step.delta_E();
+    step.execute();
+
+    // Test that the energies match
+    CPPUNIT_ASSERT(energy_3 + energy_difference == test_extended_config_3->energy());
+    energy_3 += energy_difference;
+  }
+
+  // Do automatic tests with test_extended_config_4
+  EnergyTypeExtended<int> energy_4 = test_extended_config_4->energy();
+  for (unsigned int i = 0; i < 1000; i++)
+  {
+    // Propose a random step
+    ExtendedStepType step = test_extended_config_4->propose_step(&rng);
+    EnergyTypeExtended<int> energy_difference = step.delta_E();
+    step.execute();
+
+    // Test that the energies match
+    CPPUNIT_ASSERT(energy_4 + energy_difference == test_extended_config_4->energy());
+    energy_4 += energy_difference;
+  }
 }
 void TestStepTypeExtended::test_execute()
 {

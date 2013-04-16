@@ -12,15 +12,15 @@
 #include "entropic_sampling.hpp"
 #include "optimal_ensemble_sampling.hpp"
 
-#include "details/multicanonical/extended_energy_type.hpp"
-#include "details/multicanonical/extended_configuration_type.hpp"
-#include "details/multicanonical/extended_step_type.hpp"
+#include "details/multicanonical/energy_type_extended.hpp"
+#include "details/multicanonical/configuration_type_extended.hpp"
+#include "details/multicanonical/step_type_extended.hpp"
 
 namespace Mocasinns
 {
   
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
-	    template<class,class,class,template<class,class>,class> AlgorithmType>
+	    template<class,class,class,template<class,class> class,class> class AlgorithmType>
   class MulticanonicalCounting
     : public AlgorithmType<Details::Multicanonical::ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>,
 			   Details::Multicanonical::StepTypeExtended<ConfigurationType, StepType, EnergyType>,
@@ -34,18 +34,25 @@ namespace Mocasinns
     typedef Details::Multicanonical::StepTypeExtended<ConfigurationType, StepType, EnergyType> ExtendedStepType;
     // Typedef for the base class
     typedef AlgorithmType<ExtendedConfigurationType, ExtendedStepType, ExtendedEnergyType, HistoType, RandomNumberGenerator> Base;
+    // Typedef for the extended parameters
+    typedef typename Base::Parameters ParametersExtendedType;
     // Typedef for the original algorithm
     typedef AlgorithmType<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator> OriginalAlgorithmType;
+    // Typedef for the original parameters
+    typedef typename OriginalAlgorithmType::Parameters ParametersOriginalType;
 
     //! Initialise a multicanonical counting simulation with default initial configuration and default reference configuration
     MulticanonicalCounting(const ParametersOriginalType& params) 
-      : Base(params) {}
+      : Base(typename Base::Parameters(params)) {}
     //! Initialise a multicanonical counting simulation with given initial configuration space that will be also used as a reference configuration
     MulticanonicalCounting(const ParametersOriginalType& params, ConfigurationType* initial_configuration)
-      : Base(params, new ExtendedConfigurationType(initial_configuration)) {}
+      : Base(typename Base::Parameters(params), new ExtendedConfigurationType(initial_configuration)) {}
     //! Initialise a multicanonical counting simulation with given initial configuration and given reference configuration
     MulticanonicalCounting(const ParametersOriginalType& params, ConfigurationType* initial_configuration, ConfigurationType* reference_configuration)
-      : Base(params, new ExtendedConfigurationType(initial_configuration, reference_configuration)) {}
+      : Base(typename Base::Parameters(params), new ExtendedConfigurationType(initial_configuration, reference_configuration)) {}
+
+    //! Get the number of states based on the density of states that was precalculated using the member functions of the original algorithm
+    double number_of_states() const;
 
   private:
     // Configuration that will be used as a comparison for the reference bin

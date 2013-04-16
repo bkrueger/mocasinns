@@ -1,6 +1,13 @@
 #ifndef MOCASINNS_DETAILS_MULTICANONICAL_ENERGY_TYPE_EXTENDED_HPP
 #define MOCASINNS_DETAILS_MULTICANONICAL_ENERGY_TYPE_EXTENDED_HPP
 
+// Header for stream operations
+#include <ostream>
+
+// Header for the serialization of the class
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 namespace Mocasinns
 {
   namespace Details
@@ -21,16 +28,25 @@ namespace Mocasinns
 	//! Member specifying whether we are in ground state (1) or not (0)
 	int in_ground_state;
 
+	//! Member variable for boost serialization
+	friend class boost::serialization::access;
+	//! Method to serialize this class (omitted version name to avoid unused parameter warnings)
+	template<class Archive> void serialize(Archive &ar, const unsigned int)
+	{
+	  ar & original_energy;
+	  ar & in_ground_state;
+	}
+
       public:
 	//! Constructor specifying the original energy and whether we are in ground state
-	EnergyTypeExtended(EnergyType orig_energy, int in_gs);
+	EnergyTypeExtended(EnergyType orig_energy = EnergyType(), int in_gs = 0);
 	//! Copy-Constructor
 	EnergyTypeExtended(const EnergyTypeExtended& other);
 	
 	//! Get-Accessor for the original energy
-	const EnergyType& get_original_energy() { return original_energy; }
+	const EnergyType& get_original_energy() const { return original_energy; }
 	//! Get-Accessor for the int specifying we are in ground state
-	int get_in_ground_state() { return in_ground_state; }
+	int get_in_ground_state() const { return in_ground_state; }
 	
 	//! Assignment operator
 	EnergyTypeExtended<EnergyType>& operator=(const EnergyTypeExtended& rhs);
@@ -40,6 +56,12 @@ namespace Mocasinns
 	bool operator!=(const EnergyTypeExtended& rhs) const;
 	//! Operator for comparing two extended energy types
 	bool operator<(const EnergyTypeExtended& rhs) const;
+	//! Operator for comparing two extended energy types
+	bool operator>(const EnergyTypeExtended& rhs) const;
+	//! Operator for comparing two extended energy types
+	bool operator<=(const EnergyTypeExtended& rhs) const;
+	//! Operator for comparing two extended energy types
+	bool operator>=(const EnergyTypeExtended& rhs) const;
 	
 	//! Operator for adding another EnergyTypeExtended to this one
 	void operator+=(const EnergyTypeExtended& rhs);
@@ -54,6 +76,13 @@ namespace Mocasinns
       template <class EnergyType>
       EnergyTypeExtended<EnergyType> operator-(const EnergyTypeExtended<EnergyType>& lhs, const EnergyTypeExtended<EnergyType>& rhs);
       
+      //! Output of the extended energy
+      template <class EnergyType>
+      std::ostream& operator<<(std::ostream& lhs, const EnergyTypeExtended<EnergyType>& rhs)
+      {
+	lhs << rhs.get_original_energy() << " " << rhs.get_in_ground_state();
+	return lhs;
+      }
     }
   }
 }

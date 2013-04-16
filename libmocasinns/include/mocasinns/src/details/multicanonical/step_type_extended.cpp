@@ -8,7 +8,7 @@ namespace Mocasinns
     {      
       template <class ConfigurationType, class StepType, class EnergyType>
       StepTypeExtended<ConfigurationType, StepType, EnergyType>::StepTypeExtended(const StepType& original_step, ConfigurationTypeExtended<ConfigurationType,StepType,EnergyType>* proposing_configuration_space) 
-	: work_step(original_step), extended_configuration_space(proposing_configuration_space), was_executed(false), was_executed_testwise(false), groundstate_delta_E_calculated(false)
+	: work_step(original_step), extended_configuration_space(proposing_configuration_space), was_executed(false), was_executed_testwise(false), delta_E_calculated(false)
       { }
       
       template <class ConfigurationType, class StepType, class EnergyType>
@@ -22,78 +22,85 @@ namespace Mocasinns
       template <class ConfigurationType, class StepType, class EnergyType>
       EnergyTypeExtended<EnergyType> StepTypeExtended<ConfigurationType, StepType, EnergyType>::delta_E()
       {
-	// Calculate the original energy difference
-	EnergyType original_delta_E = work_step.delta_E();
-	
-	// If the energy difference was calculated, just return the value
-	// Do not do test step anymore
-	if (groundstate_delta_E_calculated)
-	{
+	// If the energy difference was calculated allready, return it
+	if (delta_E_calculated)
 	  return EnergyTypeExtended<EnergyType>(original_delta_E, groundstate_delta_E);
-	}
-	else
+
+	// Otherwise calculate the energy difference
+	delta_E_calculated = true;
+
+	// Calculate the original energy difference
+	original_delta_E = work_step.delta_E();
+		
+	// Make a case by case study whether the system is in reference state or not before and after the flip
+	if (!extended_configuration_space->get_is_reference_configuration())
 	{
-	  // Make a case by case study whether the system is in reference state or not
-	  if (!extended_configuration_space->get_is_reference_configuration())
+	  if (extended_configuration_space->energy().get_original_energy() + original_delta_E != extended_configuration_space->get_reference_configuration_energy())
 	  {
-	    if (extended_configuration_space->energy().get_original_energy() + original_delta_E != extended_configuration_space->get_reference_configuration_energy())
+	    groundstate_delta_E = 0;
+	    return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
+	  }
+	  else
+	  {
+	    execute_testwise();
+	    
+	    if (*(extended_configuration_space->get_reference_configuration()) ==
+		*(extended_configuration_space->get_original_configuration()))	
+	    {
+	      groundstate_delta_E = 1;
+	      return EnergyTypeExtended<EnergyType>(original_delta_E, 1);
+	    }
+	    else
+	    {
+	      groundstate_delta_E = 0;
+	      return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
+	    }
+	  }
+	}
+	else // extended_configuration_space->get_is_reference_configuration
+	{
+	  if (extended_configuration_space->energy().get_original_energy() + original_delta_E != extended_configuration_space->get_reference_configuration_energy())
+	  {
+	    groundstate_delta_E = -1;
+	    return EnergyTypeExtended<EnergyType>(original_delta_E, -1);
+	  }
+	  else
+	  {
+	    execute_testwise();
+	      
+	    if (extended_configuration_space->get_is_reference_configuration())
 	    {
 	      groundstate_delta_E = 0;
 	      return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
 	    }
 	    else
 	    {
-	      work_step.execute();
-	      was_executed_testwise = true;
-	      
-	      if (*(extended_configuration_space->get_reference_configuration()) ==
-		  *(extended_configuration_space->get_original_configuration()))	
-	      {
-		groundstate_delta_E = 1;
-		return EnergyTypeExtended<EnergyType>(original_delta_E, 1);
-	      }
-	      else
-	      {
-		groundstate_delta_E = 0;
-		return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
-	      }
-	    }
-	  }
-	  else // extended_configuration_space->get_is_reference_configuration
-	  {
-	    if (extended_configuration_space->energy().get_original_energy() + original_delta_E != extended_configuration_space->get_reference_configuration_energy())
-	    {
 	      groundstate_delta_E = -1;
 	      return EnergyTypeExtended<EnergyType>(original_delta_E, -1);
 	    }
-	    else
-	    {
-	      work_step.execute();
-	      was_executed_testwise = true;
-	      
-	      if (extended_configuration_space->get_is_reference_configuration())
-	      {
-		groundstate_delta_E = 0;
-		return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
-	      }
-	      else
-	      {
-		groundstate_delta_E = -1;
-		return EnergyTypeExtended<EnergyType>(original_delta_E, -1);
-	      }
-	    }
 	  }
-	  groundstate_delta_E_calculated = true;
-	} // of (!groundstate_delta_E_calculated)
+	}
       }
       
       template <class ConfigurationType, class StepType, class EnergyType>
       void StepTypeExtended<ConfigurationType, StepType, EnergyType>::execute()
       {
+	// Set the flag indicating that the step was executed
 	was_executed = true;
-	if (!was_executed_testwise)
+	// If the flip was executed before, just update the energy. Otherwise commit the step regularily
+	if (was_executed_testwise)
+	  extended_configuration_space->update_energy(original_delta_E, groundstate_delta_E);
+	else
 	  extended_configuration_space->commit(*this);
       }
+
+      template <class ConfigurationType, class StepType, class EnergyType>
+      void StepTypeExtended<ConfigurationType, StepType, EnergyType>::execute_testwise()
+      {
+	was_executed_testwise = true;
+	extended_configuration_space->commit_testwise(*this);
+      }
+
       
     }
   }

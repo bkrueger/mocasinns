@@ -5,7 +5,7 @@ CFLAGS = -g -pg $(OPT) -Wall -Wextra -pedantic -std=c++0x -fopenmp
 INCLUDE = -I../include -I../../libgespinst/include -I../../librandom/include
 
 TEST_LIBS = -lboost_serialization -lboost_signals -lboost_program_options -lcppunit -ldl
-TEST_OBJECTS_MAIN = test_private.o
+TEST_OBJECTS_MAIN = test_private.o test_multicanonical_counting.o
 TEST_OBJECTS_DETAILS_MULTICANONICAL = $(patsubst %.cpp,%.o,$(wildcard test_details/test_multicanonical/*.cpp))
 TEST_OBJECTS = $(TEST_OBJECTS_MAIN) $(TEST_OBJECTS_DETAILS_MULTICANONICAL)
 
@@ -18,4 +18,4 @@ test_private: $(TEST_OBJECTS)
 	$(CXX) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -f $(TEST_OBJECTS) *.o test
+	rm -f $(TEST_OBJECTS) *.o test_private

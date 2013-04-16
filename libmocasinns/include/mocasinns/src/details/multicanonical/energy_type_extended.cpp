@@ -6,7 +6,6 @@ namespace Mocasinns
   {
     namespace Multicanonical
     {
-
       template <class EnergyType>
       EnergyTypeExtended<EnergyType>::EnergyTypeExtended(EnergyType orig_energy, int in_gs) : original_energy(orig_energy), in_ground_state(in_gs)
       { }
@@ -23,6 +22,8 @@ namespace Mocasinns
 	  original_energy = rhs.original_energy;
 	  in_ground_state = rhs.in_ground_state;
 	}
+
+	return *this;
       }
       
       template <class EnergyType>
@@ -35,6 +36,7 @@ namespace Mocasinns
       {
 	return !operator==(rhs);
       }
+
       template <class EnergyType>
       bool EnergyTypeExtended<EnergyType>::operator<(const EnergyTypeExtended& rhs) const
       {
@@ -45,6 +47,27 @@ namespace Mocasinns
 	// If the original energies match, check the in_ground_state integer
 	if (in_ground_state < rhs.in_ground_state) return true;
 	else return false;
+      }
+      template <class EnergyType>
+      bool EnergyTypeExtended<EnergyType>::operator>(const EnergyTypeExtended& rhs) const
+      {
+	// Test first the original energys
+	if (original_energy > rhs.original_energy) return true;
+	if (original_energy < rhs.original_energy) return false;
+	
+	// If the original energies match, check the in_ground_state integer
+	if (in_ground_state > rhs.in_ground_state) return true;
+	else return false;
+      }
+      template <class EnergyType>
+      bool EnergyTypeExtended<EnergyType>::operator<=(const EnergyTypeExtended& rhs) const
+      {
+	return !(operator>(rhs));
+      }
+      template <class EnergyType>
+      bool EnergyTypeExtended<EnergyType>::operator>=(const EnergyTypeExtended& rhs) const
+      {
+	return !(operator<(rhs));
       }
       
       template <class EnergyType>

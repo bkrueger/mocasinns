@@ -32,8 +32,8 @@ private:
   IsingConfiguration2d* test_ising_config_2d;
   IsingSimulation2d* test_ising_simulation_2d;
 
-  IsingSimulation1d::Parameters<int> parameters_1d;
-  IsingSimulation2d::Parameters<int> parameters_2d;
+  IsingSimulation1d::Parameters parameters_1d;
+  IsingSimulation2d::Parameters parameters_2d;
 
 public:
   static CppUnit::Test* suite();

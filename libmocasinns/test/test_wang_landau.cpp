@@ -89,7 +89,7 @@ void TestWangLandau::test_do_wang_landau_simulation()
 void TestWangLandau::test_serialize()
 {
   // Test the serialization of parameters
-  IsingSimulation1d::Parameters<int> parameters_test;
+  IsingSimulation1d::Parameters parameters_test;
   parameters_test.modification_factor_initial = 2.0;
   parameters_test.modification_factor_final = 1e-6;
   std::ofstream ofs("serialize_parameters.dat");
@@ -97,7 +97,7 @@ void TestWangLandau::test_serialize()
     boost::archive::text_oarchive oa(ofs);
     oa << parameters_test;
   }
-  IsingSimulation1d::Parameters<int> parameters_loaded;
+  IsingSimulation1d::Parameters parameters_loaded;
   std::ifstream ifs("serialize_parameters.dat");
   {
     boost::archive::text_iarchive ia(ifs);

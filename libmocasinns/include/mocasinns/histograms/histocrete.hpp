@@ -60,6 +60,9 @@ public:
   Histocrete() { }
   //! Copy constructor
   Histocrete(const Base& other) : Base(other) {}
+  //! Copy constructor for different x-value types
+  template <class other_x_value_type>
+  explicit Histocrete(const HistoBase<other_x_value_type, y_value_type, Histocrete<other_x_value_type, y_value_type> >& other) : Base(other) {}
 
   // Operators
   //! Increment the y-value of the given Histocrete bin by one

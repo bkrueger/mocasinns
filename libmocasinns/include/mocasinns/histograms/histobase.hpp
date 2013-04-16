@@ -77,6 +77,9 @@ public:
 
   //! Standard constructor, initialises a HistoBase without values
   HistoBase() { }
+  //! Copy constructor for different x-value types
+  template <class other_x_value_type, class OtherDerived>
+  explicit HistoBase(const HistoBase<other_x_value_type, y_value_type, OtherDerived>& other);
 
   //! Operator for testing equality
   template <class ArbitraryDerived>

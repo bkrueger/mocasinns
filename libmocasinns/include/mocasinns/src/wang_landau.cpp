@@ -116,7 +116,7 @@ double WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGe
     return 0.0;
 
   // Calculate and return the acceptance probability
-  return exp(density_of_states[step_parameters.total_energy] - density_of_states[step_parameters.total_energy + step_parameters.delta_E]);
+  return exp(log_density_of_states[step_parameters.total_energy] - log_density_of_states[step_parameters.total_energy + step_parameters.delta_E]);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -125,7 +125,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
   // Increment the total energy
   step_parameters.total_energy += step_parameters.delta_E;
   // Update the histograms
-  density_of_states[step_parameters.total_energy] += modification_factor_current;
+  log_density_of_states[step_parameters.total_energy] += modification_factor_current;
   incidence_counter[step_parameters.total_energy]++;
 }
 
@@ -133,7 +133,7 @@ template <class ConfigurationType, class StepType, class EnergyType, template <c
 void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Update the histograms
-  density_of_states[step_parameters.total_energy] += modification_factor_current;
+  log_density_of_states[step_parameters.total_energy] += modification_factor_current;
   incidence_counter[step_parameters.total_energy]++;
 }
 
@@ -180,7 +180,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     // Reset the incidence counter
     incidence_counter.set_all_y_values(0);
     // Renormalize the density of states
-    density_of_states.shift_bin_zero(density_of_states.min_x_value());
+    log_density_of_states.shift_bin_zero(log_density_of_states.min_x_value());
     // Decrease the modification factor
     modification_factor_current *= simulation_parameters.modification_factor_multiplier;
   }
@@ -193,7 +193,7 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
   modification_factor_current = simulation_parameters.modification_factor_initial;
 
   // Set the binnings of the density of states and the incidence counter
-  density_of_states.initialise_empty(simulation_parameters.prototype_histo);
+  log_density_of_states.initialise_empty(simulation_parameters.prototype_histo);
   incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
 }
 

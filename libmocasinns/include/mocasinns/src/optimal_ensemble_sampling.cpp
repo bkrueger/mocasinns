@@ -100,11 +100,11 @@ namespace Mocasinns
     // Perform the WangLandau simulation
     wl_simulation.do_wang_landau_simulation();
     // Extract the density of states
-    HistoType<EnergyType, double> density_of_states = wl_simulation.get_density_of_states();
+    HistoType<EnergyType, double> log_density_of_states = wl_simulation.get_log_density_of_states();
 
     // Set the weights to the logarithm of the inverse density of states
-    for (typename HistoType<EnergyType, double>::const_iterator dos = density_of_states.begin();
-	 dos != density_of_states.end(); ++dos)
+    for (typename HistoType<EnergyType, double>::const_iterator dos = log_density_of_states.begin();
+	 dos != log_density_of_states.end(); ++dos)
     {
       weights[dos->first] = - dos->second;
     }
@@ -274,7 +274,7 @@ namespace Mocasinns
     }
       
     // Calculate and return the density of states
-    return calculate_density_of_states();
+    return calculate_log_density_of_states();
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -305,10 +305,10 @@ namespace Mocasinns
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::calculate_density_of_states() const
+  HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::calculate_log_density_of_states() const
   {
-    HistoType<EnergyType, double> density_of_states;
-    density_of_states.initialise_empty(weights);
+    HistoType<EnergyType, double> log_density_of_states;
+    log_density_of_states.initialise_empty(weights);
     for (typename HistoType<EnergyType, double>::const_iterator energy_weight = weights.begin();
 	 energy_weight != weights.end(); ++energy_weight)
     {
@@ -316,12 +316,12 @@ namespace Mocasinns
       double weight = energy_weight->second;
       double positive_incidence = incidence_counter_positive.find(energy)->second;
       double negative_incidence = incidence_counter_negative.find(energy)->second;
-      density_of_states[energy] = log(static_cast<double>(positive_incidence + negative_incidence)) - weight;
+      log_density_of_states[energy] = log(static_cast<double>(positive_incidence + negative_incidence)) - weight;
     }
 
-    density_of_states.shift_bin_zero(density_of_states.min_y_value());
+    log_density_of_states.shift_bin_zero(log_density_of_states.min_y_value());
 
-    return density_of_states;
+    return log_density_of_states;
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

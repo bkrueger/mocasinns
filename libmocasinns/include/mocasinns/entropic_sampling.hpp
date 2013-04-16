@@ -57,9 +57,9 @@ namespace Mocasinns
     //! Set-Accessor for the parameters of the simulation
     void set_simulation_parameters(const Parameters& value) { simulation_parameters = value; }
     //! Get-Accessor for the estimation of the density of states
-    const HistoType<EnergyType, double>& get_density_of_states() const { return density_of_states; }
+    const HistoType<EnergyType, double>& get_log_density_of_states() const { return log_density_of_states; }
     //! Set-Accessor for the estimation of the density of states
-    void set_density_of_states(const HistoType<EnergyType, double>& value) { density_of_states = value; }
+    void set_log_density_of_states(const HistoType<EnergyType, double>& value) { log_density_of_states = value; }
     //! Get-Accessor for the incidence counter
     const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
     //! Set-Accessor for the incidence counter
@@ -93,7 +93,7 @@ namespace Mocasinns
     Parameters simulation_parameters;
     
     //! Histogram for the estimation of the density of states
-    HistoType<EnergyType, double> density_of_states;
+    HistoType<EnergyType, double> log_density_of_states;
     //! Histogram for the incidence counter
     HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
 
@@ -108,7 +108,7 @@ namespace Mocasinns
       // serialize base class information
       ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator> >(*this);
       ar & simulation_parameters;
-      ar & density_of_states;
+      ar & log_density_of_states;
       ar & incidence_counter;
     }
   };

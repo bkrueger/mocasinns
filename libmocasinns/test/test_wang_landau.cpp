@@ -64,7 +64,7 @@ void TestWangLandau::test_do_wang_landau_simulation()
   test_ising_simulation_1d->do_wang_landau_simulation();
 
   // Test the density of states histocrete
-  Histograms::Histocrete<int, double> entropy_estimation_1d = test_ising_simulation_1d->get_density_of_states();
+  Histograms::Histocrete<int, double> entropy_estimation_1d = test_ising_simulation_1d->get_log_density_of_states();
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[-16], 0.01);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[-12], 0.1);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[-8], 0.1);
@@ -79,7 +79,7 @@ void TestWangLandau::test_do_wang_landau_simulation()
   test_ising_simulation_2d->do_wang_landau_simulation();
 
   // Test the density of states histocrete
-  Histograms::Histocrete<int, double> entropy_estimation_2d = test_ising_simulation_2d->get_density_of_states();
+  Histograms::Histocrete<int, double> entropy_estimation_2d = test_ising_simulation_2d->get_log_density_of_states();
   Histograms::Histocrete<int, double>::const_iterator ground_state = entropy_estimation_2d.begin();
   Histograms::Histocrete<int, double>::const_iterator first_excited = entropy_estimation_2d.begin();
   first_excited++;
@@ -113,8 +113,8 @@ void TestWangLandau::test_serialize()
   // Test Equality
   CPPUNIT_ASSERT(*test_ising_simulation_1d_loaded->get_config_space() ==
 		 *test_ising_simulation_1d->get_config_space());
-  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_density_of_states() ==
-		 test_ising_simulation_1d->get_density_of_states());
+  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_log_density_of_states() ==
+		 test_ising_simulation_1d->get_log_density_of_states());
   CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_incidence_counter() ==
 		 test_ising_simulation_1d->get_incidence_counter());
   CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_simulation_parameters() ==
@@ -132,8 +132,8 @@ void TestWangLandau::test_serialize()
   // Test Equality
   CPPUNIT_ASSERT(*test_ising_simulation_1d_loaded->get_config_space() ==
 		 *test_ising_simulation_1d->get_config_space());
-  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_density_of_states() ==
-		 test_ising_simulation_1d->get_density_of_states());
+  CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_log_density_of_states() ==
+		 test_ising_simulation_1d->get_log_density_of_states());
   CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_incidence_counter() ==
 		 test_ising_simulation_1d->get_incidence_counter());
   CPPUNIT_ASSERT(test_ising_simulation_1d_loaded->get_simulation_parameters() ==

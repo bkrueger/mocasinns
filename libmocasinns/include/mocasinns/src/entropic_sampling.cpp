@@ -70,7 +70,7 @@ double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNu
     return 0.0;
 
   // Calculate and return the acceptance probability
-  return exp(density_of_states[step_parameters.total_energy] - density_of_states[total_energy_after_step]);
+  return exp(log_density_of_states[step_parameters.total_energy] - log_density_of_states[total_energy_after_step]);
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -113,7 +113,7 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
     // Update the density of states
     for (typename HistoType<EnergyType,IncidenceCounterYValueType>::const_iterator it = incidence_counter.begin(); it != incidence_counter.end(); ++it)
     {
-      if (it->second != 0) density_of_states[it->first] += log(it->second);
+      if (it->second != 0) log_density_of_states[it->first] += log(it->second);
     }
 
     // Calculate the flatness
@@ -127,7 +127,7 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
     // Reset the incidence counter
     incidence_counter.set_all_y_values(0);
     // Renormalize the density of states
-    density_of_states.shift_bin_zero(density_of_states.min_x_value());
+    log_density_of_states.shift_bin_zero(log_density_of_states.min_x_value());
   }
 }
 
@@ -135,7 +135,7 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 // void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::initialise_with_parameters()
 // {
 //   // Set the binnings of the density of states and the incidence counter
-//   density_of_states.initialise_empty(simulation_parameters.prototype_histo);
+//   log_density_of_states.initialise_empty(simulation_parameters.prototype_histo);
 //   incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
 // }
 

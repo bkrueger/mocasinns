@@ -94,7 +94,7 @@ namespace Mocasinns
     //! Handle a rejected step
     void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
 
-    //! Do a certain number of steps updating the density_of_states and the incidence_counter
+    //! Do a certain number of steps updating the log_density_of_states and the incidence_counter
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);
 
     //! Do an optimal ensemble sampling simulation
@@ -126,7 +126,7 @@ namespace Mocasinns
     WalkerLabel walker_label;
 
     //! Calculate the density of states from the current total incidence counter and the total weights
-    HistoType<EnergyType, double> calculate_density_of_states() const;
+    HistoType<EnergyType, double> calculate_log_density_of_states() const;
     //! Initialise the histograms with the parameters
     void initialize_with_parameters();
 

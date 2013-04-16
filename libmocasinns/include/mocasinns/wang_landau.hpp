@@ -67,9 +67,9 @@ public:
   //! Set-Accessor for the current modification factor
   void set_modification_factor_current(double value) { modification_factor_current = value; }
   //! Get-Accessor for the estimation of the density of states
-  const HistoType<EnergyType, double>& get_density_of_states() const { return density_of_states; }
+  const HistoType<EnergyType, double>& get_log_density_of_states() const { return log_density_of_states; }
   //! Set-Accessor for the estimation of the density of states
-  void set_density_of_states(const HistoType<EnergyType, double>& value) { density_of_states = value; }
+  void set_log_density_of_states(const HistoType<EnergyType, double>& value) { log_density_of_states = value; }
   //! Get-Accessor for the incidence counter
   const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
   //! Set-Accessor for the incidence counter
@@ -84,7 +84,7 @@ public:
   //! Handle a rejected step
   void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
 
-  //! Do a certain number of wang-landau steps updating the density_of_states and the incidence_counter at the current modification factor
+  //! Do a certain number of wang-landau steps updating the log_density_of_states and the incidence_counter at the current modification factor
   void do_wang_landau_steps(const uint32_t& number);
   //! Do wang-landau steps until the incidence counter is flat
   void do_wang_landau_steps();
@@ -108,7 +108,7 @@ private:
   double modification_factor_current;
 
   //! Histogram for the estimation of the density of states
-  HistoType<EnergyType, double> density_of_states;
+  HistoType<EnergyType, double> log_density_of_states;
   //! Histogram for the incidence counter
   HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
 
@@ -127,7 +127,7 @@ private:
     ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator> >(*this);
     ar & simulation_parameters;
     ar & modification_factor_current;
-    ar & density_of_states;
+    ar & log_density_of_states;
     ar & incidence_counter;
   }
 };

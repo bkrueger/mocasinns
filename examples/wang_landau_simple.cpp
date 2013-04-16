@@ -33,7 +33,7 @@ int main()
   sim.do_wang_landau_simulation();
 
   // Extract the density of states
-  Mocasinns::Histograms::Histocrete<int, double> dos_log = sim.get_density_of_states();
+  Mocasinns::Histograms::Histocrete<int, double> dos_log = sim.get_log_density_of_states();
   std::cout << "E\tg(E)" << std::endl;
   for (Mocasinns::Histograms::Histocrete<int, double>::const_iterator it = dos_log.begin(); it != dos_log.end(); ++it)
   {

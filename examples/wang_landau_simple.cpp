@@ -20,7 +20,7 @@ int main()
   ConfigurationType lattice(size);
 
   // Set the parameters of the simulation
-  Simulation::Parameters<int> simulation_parameters;
+  Simulation::Parameters simulation_parameters;
   simulation_parameters.modification_factor_final = 1e-6;
   simulation_parameters.modification_factor_multiplier = 0.9;
   simulation_parameters.flatness = 0.8;

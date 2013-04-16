@@ -154,6 +154,15 @@ namespace Mocasinns
     //! Number of iterations
     unsigned int iterations;
 
+    //! Value of the minimal energy cutoff
+    EnergyType energy_cutoff_lower;
+    //! Value of the maximal energy cutoff
+    EnergyType energy_cutoff_upper;
+    //! Flag indicating whether to use the minimal energy cutoff, default value is false
+    bool use_energy_cutoff_lower;
+    //! Flag indicating whether to use the maximal energy cutoff, default value is false
+    bool use_energy_cutoff_upper;
+
     //! Smallest possible energy of the system, used to change the sign of the walker
     EnergyType minimal_energy;
     //! Largest possible energy of the system, used to change the sign of the walker
@@ -165,6 +174,10 @@ namespace Mocasinns
     //! Constructor setting the default values
     Parameters() : initial_steps_per_iteration(1000),
 		   iterations(10),
+		   energy_cutoff_lower(0),
+		   energy_cutoff_upper(0),
+		   use_energy_cutoff_lower(false),
+		   use_energy_cutoff_upper(false),
 		   minimal_energy(0),
 		   maximal_energy(100),
 		   prototype_histo() {}

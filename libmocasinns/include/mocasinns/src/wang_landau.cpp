@@ -16,8 +16,10 @@ template <class ConfigurationType, class StepType, class EnergyType, template <c
 WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::Parameters() :
   binning_reference(0), 
   binning_width(1), 
-  energy_cutoff_use(false), 
-  energy_cutoff(0), 
+  energy_cutoff_lower(0),
+  energy_cutoff_upper(0),
+  use_energy_cutoff_lower(false),
+  use_energy_cutoff_upper(false),
   flatness(0.8),
   modification_factor_initial(1.0),
   modification_factor_final(1e-7),
@@ -30,8 +32,10 @@ template <class OtherParametersType>
 WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::Parameters(const OtherParametersType& other) :
   binning_reference(other.binning_reference), 
   binning_width(other.binning_width), 
-  energy_cutoff_use(other.energy_cutoff_use), 
-  energy_cutoff(other.energy_cutoff), 
+  energy_cutoff_lower(other.energy_cutoff_lower),
+  energy_cutoff_upper(other.energy_cutoff_upper),
+  use_energy_cutoff_lower(other.use_energy_cutoff_lower),
+  use_energy_cutoff_upper(other.use_energy_cutoff_upper),
   flatness(other.flatness),
   modification_factor_initial(other.modification_factor_initial),
   modification_factor_final(other.modification_factor_final),
@@ -44,7 +48,10 @@ bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 {
   return ((binning_reference == rhs.binning_reference) &&
 	  (binning_width == rhs.binning_width) &&
-	  (energy_cutoff_use == rhs.energy_cutoff_use) &&
+	  (energy_cutoff_lower == rhs.energy_cutoff_lower) && 
+	  (energy_cutoff_upper == rhs.energy_cutoff_upper) &
+	  (use_energy_cutoff_lower == rhs.use_energy_cutoff_lower) && 
+	  (use_energy_cutoff_upper == rhs.use_energy_cutoff_upper) &&
 	  (flatness == rhs.flatness) &&
 	  (modification_factor_initial == rhs.modification_factor_initial) &&
 	  (modification_factor_final == rhs.modification_factor_final) &&
@@ -104,7 +111,8 @@ double WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGe
   step_parameters.delta_E = step_to_execute.delta_E();
 
   // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
-  if (simulation_parameters.energy_cutoff_use && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff)
+  if ((simulation_parameters.use_energy_cutoff_lower && step_parameters.total_energy + step_parameters.delta_E < simulation_parameters.energy_cutoff_lower) ||
+      (simulation_parameters.use_energy_cutoff_upper && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff_upper))
     return 0.0;
 
   // Calculate and return the acceptance probability

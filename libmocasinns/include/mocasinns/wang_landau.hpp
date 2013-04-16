@@ -142,10 +142,14 @@ public:
   //! Energy value range that is comprehended in one bin
   EnergyType binning_width;
   
-  //! Flag whether to use a maximal energy cutoff, default value is false
-  bool energy_cutoff_use;
+  //! Value of the minimal energy cutoff
+  EnergyType energy_cutoff_lower;
   //! Value of the maximal energy cutoff
-  EnergyType energy_cutoff;
+  EnergyType energy_cutoff_upper;
+  //! Flag indicating whether to use the minimal energy cutoff, default value is false
+  bool use_energy_cutoff_lower;
+  //! Flag indicating whether to use the maximal energy cutoff, default value is false
+  bool use_energy_cutoff_upper;
   
   //! Flatness below that the modification factor is changed.
   double flatness;
@@ -183,8 +187,10 @@ private:
     // serialize base class information
     ar & binning_reference;
     ar & binning_width;
-    ar & energy_cutoff_use;
-    ar & energy_cutoff;
+    ar & energy_cutoff_lower;
+    ar & energy_cutoff_upper;
+    ar & use_energy_cutoff_lower;
+    ar & use_energy_cutoff_upper;
     ar & flatness;
     ar & modification_factor_initial;
     ar & modification_factor_final;

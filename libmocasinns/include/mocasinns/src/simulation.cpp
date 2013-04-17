@@ -9,6 +9,9 @@
 
 #ifdef MOCASINNS_SIMULATION_HPP
 
+#include "../details/optional_concept_checks/step_type_has_is_executable.hpp"
+#include "../details/optional_concept_checks/step_type_has_selection_probability_factor.hpp"
+
 namespace Mocasinns
 {
 
@@ -94,18 +97,30 @@ template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
 void Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
 {
+  // Call the generic get steps function
+  do_generic_steps<Derived, StepType, AcceptanceProbabilityParameterType, 
+		   Details::OptionalConceptChecks::StepTypeHasIsExecutable<StepType>::value, Details::OptionalConceptChecks::StepTypeHasSelectionProbabilityFactor<StepType>::value>
+    (step_number, acceptance_probability_parameter);
+}
+
+template <class ConfigurationType, class RandomNumberGenerator>
+template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
+void Simulation<ConfigurationType, RandomNumberGenerator>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+{
   for (StepNumberType i = 0; i < step_number; ++i)
   {
     // Propose a new step
     StepType next_step = this->configuration_space->propose_step(this->rng);
     
     // If the next step is executable, calculate the acceptance probability
-    if (next_step.is_executable())
+    if (STEP_HAS_IS_EXECUTABLE && next_step.is_executable())
     {
       // Calculate selection probability factor and acceptance probability
-      double selection_probability_factor = next_step.selection_probability_factor();
-      double acceptance_probability = static_cast<Derived*>(this)->acceptance_probability(next_step, acceptance_probability_parameter);
-      double step_probability = acceptance_probability / selection_probability_factor;
+      double step_probability(static_cast<Derived*>(this)->acceptance_probability(next_step, acceptance_probability_parameter));
+      if (STEP_HAS_SELECTION_PROBABILITY_FACTOR)
+      {
+	step_probability /= next_step.selection_probability_factor();
+      }
 
       // Do the step with the correct probability and call the handlers
       if (step_probability > 0.0 && (step_probability >= 1.0 || this->rng->random_double() < step_probability))

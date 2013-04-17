@@ -24,3 +24,6 @@ test: $(TEST_OBJECTS)
 
 clean:
 	rm -f $(TEST_OBJECTS) *.o test
+
+compile_tests: compile_tests/compile_test.o
+	$(CXX) $(CFLAGS) $(INCLUDE) -o compile_tests/compile_test.o -c compile_tests/compile_test.cpp

@@ -31,16 +31,16 @@ namespace Mocasinns
 	step.execute();
 
 	// There must be a function is_executable with result bool
-	is_executable_result = step.is_executable();
+	//is_executable_result = step.is_executable();
 
 	// There must be a function selection_probability_factor with result double
-	selection_probability_factor_result = step.selection_probability_factor();
+	//selection_probability_factor_result = step.selection_probability_factor();
       }
       
     private:
       StepType step;
-      bool is_executable_result;
-      double selection_probability_factor_result;
+      //      bool is_executable_result;
+      //double selection_probability_factor_result;
 
     };
   }

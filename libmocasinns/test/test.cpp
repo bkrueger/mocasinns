@@ -26,6 +26,7 @@
 #include "test_histograms/test_histogram_number.hpp"
 #include "test_observables/test_vector_observable.hpp"
 #include "test_energy_types/test_vector_energy.hpp"
+#include "test_energy_types/test_array_energy.hpp"
 #include "test_observables/test_array_observable.hpp"
 #include "test_analysis/test_jackknife_analysis.hpp"
 #include "test_analysis/test_bootstrap_analysis.hpp"
@@ -80,6 +81,7 @@ int main(int argc, char *argv[])
   if (test_all || test_name == "EnergyTypes")
   {
     runner.addTest(TestVectorEnergy::suite());
+    runner.addTest(TestArrayEnergy::suite());
   }
   if (test_all || test_name == "Details")
   {

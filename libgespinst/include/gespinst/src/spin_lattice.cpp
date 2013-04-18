@@ -65,9 +65,17 @@ SpinLatticeBase<dimension, SpinType, Derived>::SpinLatticeBase(std::vector<unsig
  */
 template<unsigned int dimension, class SpinType, class Derived>
 SpinLatticeBase<dimension, SpinType, Derived>::SpinLatticeBase(const SpinLatticeBase<dimension, SpinType, Derived>& other)
-  : _simulation_time(0),
-    spin_lattice(other.spin_lattice)
-{ }
+  : _simulation_time(0)
+{ 
+  // Get the extension of the multi array
+  std::vector<size_t> ex;
+  const size_t* shape = other.spin_lattice.shape();
+  ex.assign(shape, shape + other.spin_lattice.num_dimensions());
+
+  // Resize and assign the array
+  spin_lattice.resize(ex);
+  spin_lattice = other.spin_lattice;
+}
 
 template<unsigned int dimension, class SpinType, class Derived>
 SpinType SpinLatticeBase<dimension, SpinType, Derived>::get_spin(index_type coordinates) const

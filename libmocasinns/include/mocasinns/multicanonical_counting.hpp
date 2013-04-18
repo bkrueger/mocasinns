@@ -51,16 +51,31 @@ namespace Mocasinns
     MulticanonicalCounting(const ParametersOriginalType& params, ConfigurationType* initial_configuration, ConfigurationType* reference_configuration)
       : Base(typename Base::Parameters(params), new ExtendedConfigurationType(initial_configuration, reference_configuration)) {}
 
+    //! Calculate the normalised density of states, override the base class function
+    HistoType<EnergyType, double> get_log_density_of_states() const;
+    //! Return the extended density of states with ground state flag
+    HistoType<ExtendedEnergyType, double> get_log_density_of_states_extended() const
+    {
+      // Get the original density of states
+      HistoType<ExtendedEnergyType, double> result(static_cast<const Base*>(this)->get_log_density_of_states());
+      
+      // Shift the reference bin to zero
+      ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configuration_energy(), 1);
+      typename HistoType<ExtendedEnergyType, double>::const_iterator reference_bin = result.find(reference_energy);
+      result.shift_bin_zero(reference_bin);
+
+      return result;
+    }
     //! Get the number of states based on the density of states that was precalculated using the member functions of the original algorithm
     double number_of_states() const;
 
+    //! DEBUG
+    void print_configuration_pointers() const
+    {
+      std::cout << "Work: " << this->get_config_space()->get_original_configuration() << ", Reference: " << this->get_config_space()->get_reference_configuration() << ", Extended: " << this->get_config_space() << std::endl;
+    }
+
   private:
-    // Configuration that will be used as a comparison for the reference bin
-    ConfigurationType* reference_configuration;
-
-    // Extended configuration that will be used for the simulations
-    ExtendedConfigurationType* extended_configuration;
-
     // Extended parameters that will be used for the simulation
     ParametersExtendedType extended_simulation_parameters;
   };

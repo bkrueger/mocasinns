@@ -62,6 +62,8 @@ namespace Mocasinns
 	const EnergyType& get_reference_configuration_energy() { return reference_configuration_energy; }
 	//! Get-Accessor for the flag is reference configuration
 	bool get_is_reference_configuration() { return (is_reference_configuration == 1); }
+
+	int get_simulation_time() const { return work_configuration->get_simulation_time(); }
 	
 	//! Function overriding the commit function of the original configuration, sets the flag whether the system is on reference configuration
 	void commit(StepTypeExtended<ConfigurationType, StepType, EnergyType>& step_to_commit);

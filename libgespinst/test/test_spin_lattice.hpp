@@ -43,6 +43,7 @@ public:
   void test_get_simulation_time();
 
   void test_operator_equal();
+  void test_operator_equal_automatically();
   void test_operator_access();
 
   void test_all_steps();

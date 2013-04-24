@@ -2,6 +2,9 @@
 
 #include "boost/multi_array.hpp"
 
+#include <cstdlib>
+#include <sstream>
+
 CppUnit::Test* TestSpinLattice::suite()
 {
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestSpinLattice");
@@ -12,6 +15,7 @@ CppUnit::Test* TestSpinLattice::suite()
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_get_simulation_time", &TestSpinLattice::test_get_simulation_time ) );
 
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_operator_equal", &TestSpinLattice::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_operator_equal_automatically", &TestSpinLattice::test_operator_equal ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_operator_access", &TestSpinLattice::test_operator_access ) );
 
     suiteOfTests->addTest( new CppUnit::TestCaller<TestSpinLattice>("TestSpinLattice: test_all_steps", &TestSpinLattice::test_all_steps ) );
@@ -185,6 +189,30 @@ void TestSpinLattice::test_operator_equal()
   CPPUNIT_ASSERT(*testlattice_1d_copy == *testlattice_1d);
   CPPUNIT_ASSERT(*testlattice_2d_copy == *testlattice_2d);
   CPPUNIT_ASSERT(*testlattice_1d_real_copy == *testlattice_1d_real);
+}
+void TestSpinLattice::test_operator_equal_automatically()
+{
+  // Copy the spin lattices
+  SpinLattice<1, IsingSpin>* testlattice_1d_copy = new SpinLattice<1, IsingSpin>(*testlattice_1d);
+
+  // Propose and execute steps often on one of the test lattices and check that the comparison operator agrees with the output stream
+  for (unsigned int i = 0; i < 10000; ++i)
+  {
+    // Propose and execute
+    double random_double = static_cast<double>(rand())/RAND_MAX;
+    SpinLatticeStep<1, IsingSpin> step = testlattice_1d->propose_step(random_double);
+    step.execute();
+
+    // Create the strings of the outstreams of the lattices
+    std::stringstream stream_lattice; std::stringstream stream_copy;
+    stream_lattice << *testlattice_1d;
+    stream_copy << *testlattice_1d_copy;
+    bool streams_agree = (stream_lattice.str() == stream_copy.str());
+
+    bool operators_agree = (*testlattice_1d == *testlattice_1d_copy);
+
+    CPPUNIT_ASSERT(streams_agree = operators_agree);
+  }
 }
 void TestSpinLattice::test_operator_access()
 {

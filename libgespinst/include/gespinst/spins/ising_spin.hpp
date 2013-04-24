@@ -124,7 +124,13 @@ namespace Gespinst
   {
     return spin_1._value * spin_2._value;
   }
-  
+
+  //! Output stream operator for Ising Spin
+  inline std::ostream& operator<<(std::ostream& lhs, IsingSpin const& rhs)
+  {
+    lhs << rhs.get_value();
+    return lhs;
+  }
 } // of namespace Ising
 
 #endif

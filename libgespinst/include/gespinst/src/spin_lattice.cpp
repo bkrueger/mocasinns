@@ -179,6 +179,19 @@ double SpinLatticeBase<dimension, SpinType, Derived>::energy() const
 }
 
 /*! 
+ * \param dim Number of the dimension which size should be returned
+ * \returns The size of the lattice in the specified direction if dim < dimension, otherwise 0
+ */
+template<unsigned int dimension, class SpinType, class Derived>
+unsigned int SpinLatticeBase<dimension, SpinType, Derived>::extension(unsigned int dim) const
+{
+  if (dim >= dimension) 
+    return 0;
+  else
+    return spin_lattice.shape()[dim];
+}
+
+/*! 
  * \details Calculates the magnetization of the lattice by summing over all spins and returning the sum of their values
  */
 template<unsigned int dimension, class SpinType, class Derived>

@@ -155,7 +155,7 @@ void TestStepTypeExtended::test_delta_E_automatically()
 
   // Do automatic tests with test_extended_config_1
   EnergyTypeExtended<int> energy_1 = test_extended_config_1->energy();
-  for (unsigned int i = 0; i < 1000; i++)
+  for (unsigned int i = 0; i < 10000; i++)
   {
     // Propose a random step
     ExtendedStepType step = test_extended_config_1->propose_step(&rng);
@@ -165,11 +165,15 @@ void TestStepTypeExtended::test_delta_E_automatically()
     // Test that the energies match
     CPPUNIT_ASSERT(energy_1 + energy_difference == test_extended_config_1->energy());
     energy_1 += energy_difference;
+
+    // Test that the configuration is in fact in the ground state if the energy indicates
+    if (energy_1.get_in_ground_state() == 1)
+      CPPUNIT_ASSERT(*(test_extended_config_1->get_original_configuration()) == *(test_extended_config_1->get_reference_configuration()));
   }
 
   // Do automatic tests with test_extended_config_2
   EnergyTypeExtended<int> energy_2 = test_extended_config_2->energy();
-  for (unsigned int i = 0; i < 1000; i++)
+  for (unsigned int i = 0; i < 10000; i++)
   {
     // Propose a random step
     ExtendedStepType step = test_extended_config_2->propose_step(&rng);
@@ -179,11 +183,15 @@ void TestStepTypeExtended::test_delta_E_automatically()
     // Test that the energies match
     CPPUNIT_ASSERT(energy_2 + energy_difference == test_extended_config_2->energy());
     energy_2 += energy_difference;
+
+    // Test that the configuration is in fact in the ground state if the energy indicates
+    if (energy_2.get_in_ground_state() == 1)
+      CPPUNIT_ASSERT(*(test_extended_config_2->get_original_configuration()) == *(test_extended_config_2->get_reference_configuration()));
   }
 
   // Do automatic tests with test_extended_config_3
   EnergyTypeExtended<int> energy_3 = test_extended_config_3->energy();
-  for (unsigned int i = 0; i < 1000; i++)
+  for (unsigned int i = 0; i < 10000; i++)
   {
     // Propose a random step
     ExtendedStepType step = test_extended_config_3->propose_step(&rng);
@@ -193,11 +201,15 @@ void TestStepTypeExtended::test_delta_E_automatically()
     // Test that the energies match
     CPPUNIT_ASSERT(energy_3 + energy_difference == test_extended_config_3->energy());
     energy_3 += energy_difference;
+
+    // Test that the configuration is in fact in the ground state if the energy indicates
+    if (energy_3.get_in_ground_state() == 1)
+      CPPUNIT_ASSERT(*(test_extended_config_3->get_original_configuration()) == *(test_extended_config_3->get_reference_configuration()));
   }
 
   // Do automatic tests with test_extended_config_4
   EnergyTypeExtended<int> energy_4 = test_extended_config_4->energy();
-  for (unsigned int i = 0; i < 1000; i++)
+  for (unsigned int i = 0; i < 10000; i++)
   {
     // Propose a random step
     ExtendedStepType step = test_extended_config_4->propose_step(&rng);
@@ -207,6 +219,10 @@ void TestStepTypeExtended::test_delta_E_automatically()
     // Test that the energies match
     CPPUNIT_ASSERT(energy_4 + energy_difference == test_extended_config_4->energy());
     energy_4 += energy_difference;
+
+    // Test that the configuration is in fact in the ground state if the energy indicates
+    if (energy_4.get_in_ground_state() == 1)
+      CPPUNIT_ASSERT(*(test_extended_config_4->get_original_configuration()) == *(test_extended_config_4->get_reference_configuration()));
   }
 }
 void TestStepTypeExtended::test_execute()

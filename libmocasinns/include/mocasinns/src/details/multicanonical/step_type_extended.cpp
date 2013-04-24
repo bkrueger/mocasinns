@@ -68,7 +68,8 @@ namespace Mocasinns
 	  {
 	    execute_testwise();
 	      
-	    if (extended_configuration_space->get_is_reference_configuration())
+	    if (*(extended_configuration_space->get_reference_configuration()) ==
+		*(extended_configuration_space->get_original_configuration()))	
 	    {
 	      groundstate_delta_E = 0;
 	      return EnergyTypeExtended<EnergyType>(original_delta_E, 0);

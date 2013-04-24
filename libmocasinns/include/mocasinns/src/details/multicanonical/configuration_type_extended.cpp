@@ -79,10 +79,7 @@ namespace Mocasinns
 	current_energy += delta_E_original;
 
 	// Set the reference configuration indicator
-	if (is_reference_configuration + delta_E_groundstate == 1)
-	  is_reference_configuration = 1;
-	else
-	  is_reference_configuration = 0;
+	is_reference_configuration += delta_E_groundstate;
       }
     }
   }

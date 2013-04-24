@@ -139,7 +139,15 @@ namespace Gespinst
       return 1;
     else
       return 0;
+ }
+
+  //! Output stream operator for Potts Spin
+  inline std::ostream& operator<<(std::ostream& lhs, PottsSpin const& rhs)
+  {
+    lhs << rhs.get_value();
+    return lhs;
   }
+
 } // of namespace Ising
 
 #endif

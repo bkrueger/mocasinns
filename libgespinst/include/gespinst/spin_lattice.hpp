@@ -83,6 +83,9 @@ public:
   //! Calculate the energy of this lattice
   double energy() const;
 
+  //! Get the extension of the lattice in the specified direction. Returns 0 if there is no such direction
+  unsigned int extension(unsigned int dim) const;
+
   //! Magnetization of the lattice (sum over all spin values)
   double magnetization() const;
 
@@ -122,7 +125,7 @@ private:
   typedef SpinLatticeBase<1, SpinType, SpinLattice<1, SpinType> > Base;
   typedef typename Base::lattice_array_type::index subindex_type;
 
-  typename Base::index_type create_array_index(subindex_type x1)
+  typename Base::index_type create_array_index(subindex_type x1) const
   {
     typename Base::index_type array_index;
     array_index[0] = x1;
@@ -157,7 +160,7 @@ private:
   typedef SpinLatticeBase<2, SpinType, SpinLattice<2, SpinType> > Base;
   typedef typename Base::lattice_array_type::index subindex_type;
 
-  typename Base::index_type create_array_index(subindex_type x1, subindex_type x2)
+  typename Base::index_type create_array_index(subindex_type x1, subindex_type x2) const
   {
     typename Base::index_type array_index;
     array_index[0] = x1;
@@ -193,7 +196,7 @@ private:
   typedef SpinLatticeBase<3, SpinType, SpinLattice<3, SpinType> > Base;
   typedef typename Base::lattice_array_type::index subindex_type;
 
-  typename Base::index_type create_array_index(subindex_type x1, subindex_type x2, subindex_type x3)
+  typename Base::index_type create_array_index(subindex_type x1, subindex_type x2, subindex_type x3) const
   {
     typename Base::index_type array_index;
     array_index[0] = x1;
@@ -221,6 +224,29 @@ public:
     return this->spin_lattice(create_array_index(x1, x2, x3));
   }
 };
+
+//! Outstream operator for a 1d spin lattice
+template <class SpinType>
+std::ostream& operator<<(std::ostream& lhs, SpinLattice<1,SpinType> const& rhs)
+{
+  for (unsigned int i = 0; i < rhs.extension(0); ++i)
+    lhs << rhs(i) << " ";
+  return lhs;
+} 
+//! Outstream operator for a 2d spin lattice
+template <class SpinType>
+std::ostream& operator<<(std::ostream& lhs, SpinLattice<2,SpinType> const& rhs)
+{
+  for (unsigned int i = 0; i < rhs.extension(0); ++i)
+  {
+    for (unsigned int j = 0; j < rhs.extension(1); ++j)
+    {
+      lhs << rhs(i,j) << " ";
+    }
+    lhs << std::endl;
+  }
+  return lhs;
+}
 
 } // of namespace Ising
 

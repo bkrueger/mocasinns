@@ -153,7 +153,7 @@ void MetropolisParallel<ConfigurationType,Step,RandomNumberGenerator>::do_parall
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;
   for (; beta_iterator != beta_end; ++beta_iterator, ++measurement_accumulator_iterator)
   {
-    do_parallel_metropolis_simulation(*beta_iterator, *measurement_accumulator_iterator);
+    do_parallel_metropolis_simulation<Observator>(*beta_iterator, *measurement_accumulator_iterator);
     if (this->is_terminating) break;
   }
 }

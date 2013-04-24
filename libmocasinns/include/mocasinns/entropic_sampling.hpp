@@ -143,6 +143,9 @@ namespace Mocasinns
     
     //! Constructor to set default values
     Parameters();
+    //! Constructor to copy parameters from other parameters with convertible energy type
+    template <class OtherParametersType>
+    explicit Parameters(const OtherParametersType& other);
     
     //! Test for equality
     bool operator==(const Parameters& rhs) const;

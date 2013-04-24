@@ -26,6 +26,19 @@ EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGen
   prototype_histo()
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+template <class OtherParametersType>
+EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::Parameters(const OtherParametersType& other) :
+  binning_reference(other.binning_reference), 
+  binning_width(other.binning_width), 
+  energy_cutoff_lower(other.energy_cutoff_lower),
+  energy_cutoff_upper(other.energy_cutoff_upper),
+  use_energy_cutoff_lower(other.use_energy_cutoff_lower),
+  use_energy_cutoff_upper(other.use_energy_cutoff_upper),
+  flatness(other.flatness),
+  sweep_steps(other.sweep_steps),
+  prototype_histo(other.prototype_histo)
+{}
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
 ::Parameters::operator==(const Parameters& rhs) const
 {

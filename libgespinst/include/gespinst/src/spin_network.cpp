@@ -22,7 +22,7 @@ namespace Gespinst
       if ((*spin) != (*other_spin)) return false;
 
     // Test that the structure of the next neighbours does match
-    for (typename neighbour_container::const_iterator spin_neighbours = next_neighbour_spins.begin(), other_spin_neighbour = other.next_neighbour_spins.begin();
+    for (typename neighbour_container_list::const_iterator spin_neighbours = next_neighbour_spins.begin(), other_spin_neighbour = other.next_neighbour_spins.begin();
 	 spin_neighbours != next_neighbour_spins.end(); ++spin_neighbours, ++other_spin_neighbour)
     {
       // Test for the size
@@ -91,7 +91,7 @@ namespace Gespinst
     double result = 0;
 
     typename spin_container::const_iterator spin = spins.begin();
-    typename neighbour_container::const_iterator neighbours = next_neighbour_spins.begin();
+    typename neighbour_container_list::const_iterator neighbours = next_neighbour_spins.begin();
     for (; spin != spins.end(); ++spin, ++neighbours)
     {
       for (typename ContainerType::const_iterator neighbour = neighbours->begin();

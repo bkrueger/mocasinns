@@ -18,29 +18,13 @@ namespace Gespinst
   template<class SpinType, class ContainerType>
   class SpinNetwork
   {
-  private:
-    //! Vector of spins representing the different spins
-    std::vector<SpinType> spins;
-    //! Vector of containers for the next neighbours of each spin
-    std::vector<ContainerType> next_neighbour_spins;
-
-    //! Integer for the simulation time
-    int simulation_time;
-
-    //! Member variable for boost serialization
-    friend class boost::serialization::access;
-    //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
-    template<class Archive> void serialize(Archive & ar, const unsigned int)
-    {
-      ar & next_neighbour_spins;
-      ar & simulation_time;
-    }
-    
   public:
+    //! Typedef for the container of pointers to neighbouring spins
+    typedef ContainerType NeighbourContainerType;
     //! Typedef for the spin container
     typedef std::vector<SpinType> spin_container;
     //! Typedef for the next-neigbour container
-    typedef std::vector<ContainerType> neighbour_container;
+    typedef std::vector<ContainerType> neighbour_container_list;
     //! Typedef for the index
     typedef typename spin_container::size_type index_type;
     
@@ -55,9 +39,9 @@ namespace Gespinst
     const SpinType& operator[](index_type index) const { return spins[index]; }
        
     //! Get-Accessor for the neighbours at a given index
-    const ContainerType& get_neighbours(typename neighbour_container::size_type index) const { return next_neighbour_spins[index]; }
+    const ContainerType& get_neighbours(typename neighbour_container_list::size_type index) const { return next_neighbour_spins[index]; }
     //! Set-Accessor for the neighbours at a given index
-    void set_neighbours(typename neighbour_container::size_type index, const ContainerType& new_neighbours) { next_neighbour_spins[index] = new_neighbours; }
+    void set_neighbours(typename neighbour_container_list::size_type index, const ContainerType& new_neighbours) { next_neighbour_spins[index] = new_neighbours; }
 
     //! Get-accessor for the simulation time
     int get_simulation_time() const { return simulation_time; }
@@ -84,11 +68,31 @@ namespace Gespinst
 
     //! Calculate the system size (equals size)
     unsigned int system_size() const;
+
+  private:
+    //! Vector of spins representing the different spins
+    spin_container spins;
+    //! Vector of containers for the next neighbours of each spin
+    neighbour_container_list next_neighbour_spins;
+
+    //! Integer for the simulation time
+    int simulation_time;
+
+    //! Member variable for boost serialization
+    friend class boost::serialization::access;
+    //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
+    template<class Archive> void serialize(Archive & ar, const unsigned int)
+    {
+      ar & next_neighbour_spins;
+      ar & simulation_time;
+    }
+
   };
 
   /*! 
    * \brief Class template for a network of spins with next-neighbour interactions and fixes number of neighbours
    * \author Benedikt Krüger
+   * \details The container of the pointers to the next neighbour spins is realised by a std::array
    * \tparam SpinType Spin to use in the network
    * \tparam neighbour_number Fixed number of neighbours of every spin
    */
@@ -98,6 +102,8 @@ namespace Gespinst
   public:
     //! Typedef for the base class
     typedef SpinNetwork<SpinType, std::array<SpinType*, neighbour_number> > Base;
+    //! Typedef for type of the container of pointers to neighbour spins
+    typedef std::array<SpinType*, neighbour_number> NeighbourContainerType;
 
     //! Default constructor
     SpinNetworkStatic() : Base() {}
@@ -106,10 +112,10 @@ namespace Gespinst
   };
 
   /*! 
-   * \brief Class template for a network of spins with next-neighbour interactions and variable number of neighbours
+   * \brief Class template for a network of spins with next-neighbour interactions and variable number of neighbours.
    * \author Benedikt Krüger
+   * \details The container of the pointer to the next neighbour spins is realised by a std::vector
    * \tparam SpinType Spin to use in the network
-   * \tparam neighbour_number Fixed number of neighbours of every spin
    */
   template<class SpinType>
   class SpinNetworkDynamic : public SpinNetwork<SpinType, std::vector<SpinType*> >
@@ -117,6 +123,8 @@ namespace Gespinst
   public:
     //! Typedef for the base class
     typedef SpinNetwork<SpinType, std::vector<SpinType*> > Base;
+    //! Typedef for type of the container of pointers to neighbour spins
+    typedef std::vector<SpinType*> NeighbourContainerType;
 
     //! Default constructor
     SpinNetworkDynamic() : Base() {}

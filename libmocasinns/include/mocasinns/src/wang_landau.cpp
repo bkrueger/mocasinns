@@ -116,7 +116,12 @@ double WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGe
     return 0.0;
 
   // Calculate and return the acceptance probability
-  return exp(log_density_of_states[step_parameters.total_energy] - log_density_of_states[step_parameters.total_energy + step_parameters.delta_E]);
+  // If the new energy is not contained in the density of the states, return an acceptance probability of 1.0
+  typename HistoType<EnergyType, double>::iterator new_energy_bin = log_density_of_states.find(step_parameters.total_energy + step_parameters.delta_E);
+  if (new_energy_bin != log_density_of_states.end())
+    return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
+  else
+    return 1.0;
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

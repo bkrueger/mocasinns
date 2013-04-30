@@ -124,8 +124,16 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 {
   // Increment the total energy
   step_parameters.total_energy += step_parameters.delta_E;
-  // Update the histograms
-  log_density_of_states[step_parameters.total_energy] += modification_factor_current;
+  
+  // If the according bin does not exist in the density of states, initialise the density of states with the minimum dos + the current modification factor
+  // If the according bin does exist, add the current modification factor to the density of states
+  typename HistoType<EnergyType, double>::iterator update_position = log_density_of_states.find(step_parameters.total_energy);
+  if (update_position == log_density_of_states.end())
+    log_density_of_states.insert(std::pair<EnergyType, double>(step_parameters.total_energy, log_density_of_states.min_y_value()->second + modification_factor_current));
+  else
+    update_position->second += modification_factor_current;
+  
+  // Update the incidence counter
   incidence_counter[step_parameters.total_energy]++;
 }
 

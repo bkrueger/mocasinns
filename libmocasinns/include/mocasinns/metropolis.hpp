@@ -155,11 +155,14 @@ struct Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameter
   MeasurementNumberType measurement_number;
   //! Number of steps to perform between two data measurements
   StepNumberType steps_between_measurement;
-  
+  //! Number of measurements to perform before calling each signal
+  unsigned int measurements_per_signal;
+
   //! Standard constructor for setting default values
   Parameters() : relaxation_steps(1000),
 		 measurement_number(100),
-		 steps_between_measurement(100) {}
+		 steps_between_measurement(100),
+		 measurements_per_signal(1) {}
 };
   
 } // of namespace Mocasinns

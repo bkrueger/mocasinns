@@ -99,8 +99,14 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
   // For each measurement, perform the steps, invoke the signal handler, take the measurement and check for posix signals
   for (unsigned int m = 0; m < simulation_parameters.measurement_number; ++m)
   {
+    // Do the steps
     do_metropolis_steps(simulation_parameters.steps_between_measurement, beta);
-    signal_handler_measurement(this);
+
+    // If the right number of measurments was performed, call the signal handler
+    if (m / simulation_parameters.measurement_number == 0)
+      signal_handler_measurement(this);
+
+    // Observe and check for posix signals
     measurement_accumulator(Observator::observe(this->configuration_space));
     if (this->check_for_posix_signal()) return;
   }

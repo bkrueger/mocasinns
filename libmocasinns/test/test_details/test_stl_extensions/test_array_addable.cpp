@@ -9,6 +9,8 @@ CppUnit::Test* TestArrayAddable::suite()
   suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_substract", &TestArrayAddable::test_operator_substract) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_multiply", &TestArrayAddable::test_operator_multiply) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_divide", &TestArrayAddable::test_operator_divide) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_outstream", &TestArrayAddable::test_operator_outstream) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_instream", &TestArrayAddable::test_operator_instream) );
 
   return suite_of_tests;
 }
@@ -128,4 +130,15 @@ void TestArrayAddable::test_operator_divide()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, divided_array_addable_double[0], 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(1.25, divided_array_addable_double[1], 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, divided_array_addable_double[2], 1e-4);
+}
+
+void TestArrayAddable::test_operator_outstream()
+{
+  std::stringstream ss;
+  ss << *array_addable_int;
+  CPPUNIT_ASSERT_EQUAL(static_cast<std::string>("2 6 -1"), ss.str());
+}
+void TestArrayAddable::test_operator_instream()
+{
+  
 }

@@ -29,6 +29,8 @@ public:
   void test_operator_substract();
   void test_operator_multiply();
   void test_operator_divide();
+  void test_operator_outstream();
+  void test_operator_instream();
 };
 
 #endif

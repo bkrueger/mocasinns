@@ -165,6 +165,11 @@ namespace Mocasinns
 	  return *(static_cast<Derived*>(this));
 	}
 
+	template <class TT, size_t NN, class DDerived>
+	friend std::ostream& operator<<(std::ostream& stream, const ArrayAddable<TT,NN,DDerived>& rhs);
+	template <class TT, size_t NN, class DDerived>
+	friend std::istream& operator>>(std::istream& stream, ArrayAddable<TT,NN,DDerived>& rhs);
+
 	//! Returns an iterator pointing to the beginning of the ArrayAddable
 	iterator begin() { return data.begin(); }
 	//! Returns an iterator pointing to the end of the ArrayAddable
@@ -233,6 +238,27 @@ namespace Mocasinns
       //! Divide an ArrayAddable by a scalar
       template <class T, size_t N, class Derived, class S>
       const Derived operator/(const ArrayAddable<T,N,Derived>& lhs, const S& rhs) { return static_cast<Derived>(ArrayAddable<T,N,Derived>(lhs) /= rhs); }
+
+      //! Write an addable array to a stream (seperated by spaces)
+      template <class T, size_t N, class Derived>
+      std::ostream& operator<<(std::ostream& stream, const ArrayAddable<T,N,Derived>& rhs)
+      {
+	for (unsigned int i = 0; i < N; ++i)
+	{
+	  stream << rhs[i];
+	  if (i != N - 1) 
+	    stream << " ";
+	}
+	return stream;
+      }
+      //! Read an addable array from a stream
+      template <class T, size_t N, class Derived>
+      std::istream& operator>>(std::istream& stream, ArrayAddable<T,N,Derived>& rhs)
+      {
+	for (unsigned int i = 0; i < N; ++i) stream >> rhs[i];
+
+	return stream;
+      }
 
       template <class T, size_t N>
       class ArrayAddablePlain : public ArrayAddable<T,N,ArrayAddablePlain<T,N> >

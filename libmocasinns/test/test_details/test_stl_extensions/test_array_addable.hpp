@@ -31,6 +31,8 @@ public:
   void test_operator_divide();
   void test_operator_outstream();
   void test_operator_instream();
+
+  void test_serialization();
 };
 
 #endif

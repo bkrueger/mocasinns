@@ -1,5 +1,8 @@
 #include "test_array_addable.hpp"
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 CppUnit::Test* TestArrayAddable::suite()
 {
   CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestObservables/TestArrayAddable");
@@ -11,6 +14,8 @@ CppUnit::Test* TestArrayAddable::suite()
   suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_divide", &TestArrayAddable::test_operator_divide) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_outstream", &TestArrayAddable::test_operator_outstream) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_operator_instream", &TestArrayAddable::test_operator_instream) );
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestArrayAddable>("TestObservables/TestArrayAddable: test_serialization", &TestArrayAddable::test_serialization) );
 
   return suite_of_tests;
 }
@@ -141,4 +146,23 @@ void TestArrayAddable::test_operator_outstream()
 void TestArrayAddable::test_operator_instream()
 {
   
+}
+
+void TestArrayAddable::test_serialization()
+{
+  // Create an output file
+  std::ofstream ofs("serialization.dat");
+  {
+    boost::archive::text_oarchive oa(ofs);
+    oa << *array_addable_int;
+  }
+  // Read from an input file
+  ArrayAddablePlain<int,3> array_addable_int_loaded;
+  {
+    std::ifstream ifs("serialization.dat");
+    boost::archive::text_iarchive ia(ifs);
+    ia >> array_addable_int_loaded;
+  }
+  // Test that both addable arrays are identical
+  CPPUNIT_ASSERT(*array_addable_int == array_addable_int_loaded);
 }

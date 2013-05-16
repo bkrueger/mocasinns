@@ -3,6 +3,9 @@
 
 #include <boost/array.hpp>
 
+// Header for the serialization of the class
+#include <boost/serialization/array.hpp>
+
 namespace Mocasinns
 {
   namespace Details
@@ -79,7 +82,7 @@ namespace Mocasinns
 	//! Test the arrays component-wise for inequality
 	bool operator!=(const ArrayAddable<T,N,Derived>& rhs) { return !operator==(rhs); }
 	//! Compare the arrays component-wise, starting with the first entry
-	bool operator<(const ArrayAddable<T,N,Derived>& rhs)
+	bool operator<(const ArrayAddable<T,N,Derived>& rhs) const
 	{
 	  for (unsigned int i = 0; i < N; ++i)
 	  {
@@ -92,7 +95,7 @@ namespace Mocasinns
 	  return false;
 	}
 	//! Compare the arrays component-wise, starting with the first entry
-	bool operator>(const ArrayAddable<T,N,Derived>& rhs)
+	bool operator>(const ArrayAddable<T,N,Derived>& rhs) const
 	{
 	  for (unsigned int i = 0; i < N; ++i)
 	  {
@@ -105,9 +108,9 @@ namespace Mocasinns
 	  return false;
 	}
 	//! Compare the arrays component-wise, starting with the first entry
-	bool operator<=(const ArrayAddable<T,N,Derived>& rhs) { return !operator>(rhs); }
+	bool operator<=(const ArrayAddable<T,N,Derived>& rhs) const { return !operator>(rhs); }
 	//! Compare the arrays component-wise, starting with the first entry
-	bool operator>=(const ArrayAddable<T,N,Derived>& rhs) { return !operator<(rhs); }
+	bool operator>=(const ArrayAddable<T,N,Derived>& rhs) const { return !operator<(rhs); }
 	//! Adds a scalar to each component of this ArrayAddable
 	Derived& operator+=(const T& rhs)
 	{
@@ -210,6 +213,13 @@ namespace Mocasinns
 	
 	//! Swaps the contents of two ArrayAddables
 	void swap(ArrayAddable<T,N,Derived>& other) { data.swap(other.data); }
+
+      private:
+	friend class boost::serialization::access;
+	template<class Archive> void serialize(Archive & ar, const unsigned int) 
+	{
+	  ar & data;
+	}
       };
       
       //! Adds an ArrayAddable and a scalar

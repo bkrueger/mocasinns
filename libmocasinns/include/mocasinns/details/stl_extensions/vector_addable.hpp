@@ -4,6 +4,9 @@
 #include <vector>
 #include <stdexcept>
 
+// Header for the serialization of the class
+#include <boost/serialization/vector.hpp>
+
 namespace Mocasinns
 {
   namespace Details
@@ -237,6 +240,13 @@ namespace Mocasinns
 	void clear() { data.clear(); }
 	//! Inserts or erases elements at the end such that the size becomes n. 
 	void resize(size_type n, const T& element = T()) { data.resize(n, element); }
+
+      private:
+	friend class boost::serialization::access;
+	template<class Archive> void serialize(Archive & ar, const unsigned int) 
+	{
+	  ar & data;
+	}
       };
       
       //! Tests two VectorAddables for equality

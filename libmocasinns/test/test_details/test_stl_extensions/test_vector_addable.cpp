@@ -1,5 +1,8 @@
 #include "test_vector_addable.hpp"
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 CppUnit::Test* TestVectorAddable::suite()
 {
   CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestObservables/TestVectorAddable");
@@ -9,6 +12,8 @@ CppUnit::Test* TestVectorAddable::suite()
   suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorAddable>("TestObservables/TestVectorAddable: test_operator_substract", &TestVectorAddable::test_operator_substract) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorAddable>("TestObservables/TestVectorAddable: test_operator_multiply", &TestVectorAddable::test_operator_multiply) );
   suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorAddable>("TestObservables/TestVectorAddable: test_operator_divide", &TestVectorAddable::test_operator_divide) );
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestVectorAddable>("TestObservables/TestVectorAddable: test_serialization", &TestVectorAddable::test_serialization) );
 
   return suite_of_tests;
 }
@@ -148,3 +153,21 @@ void TestVectorAddable::test_operator_divide()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, divided_addable_vector_double[2], 1e-4);
 }
 
+void TestVectorAddable::test_serialization()
+{
+  // Create an output file
+  std::ofstream ofs("serialization.dat");
+  {
+    boost::archive::text_oarchive oa(ofs);
+    oa << *vector_addable_int;
+  }
+  // Read from an input file
+  VectorAddablePlain<int> vector_addable_int_loaded;
+  {
+    std::ifstream ifs("serialization.dat");
+    boost::archive::text_iarchive ia(ifs);
+    ia >> vector_addable_int_loaded;
+  }
+  // Test that both addable arrays are identical
+  CPPUNIT_ASSERT(*vector_addable_int == vector_addable_int_loaded);
+}

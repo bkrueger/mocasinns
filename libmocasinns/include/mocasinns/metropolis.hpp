@@ -80,7 +80,7 @@ public:
   template <class TemperatureType>
   inline double acceptance_probability(StepType& step_to_execute, const TemperatureType& beta = 0)
   {
-    return exp( -beta * step_to_execute.delta_E());
+    return exp( -(beta * step_to_execute.delta_E()));
   }
   //! Handle an executed step (do nothing, must be implemented to use Simulation::do_steps)
   template <class NotImportant>

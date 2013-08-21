@@ -166,6 +166,9 @@ public:
 
   //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
   HistoType<EnergyType, IncidenceCounterYValueType> prototype_histo;
+
+  //! Number of sweeps that should be executed before a reset of the incidence counter and recalculation. Choose 0 (default) for no resets.
+  unsigned int reset_sweep_number;
     
   //! Constructor to set default values
   Parameters();

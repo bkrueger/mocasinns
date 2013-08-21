@@ -25,7 +25,8 @@ WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator
   modification_factor_final(1e-7),
   modification_factor_multiplier(0.9),
   sweep_steps(1000),
-  prototype_histo()
+  prototype_histo(),
+  reset_sweep_number(0)
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 template <class OtherParametersType>
@@ -41,7 +42,8 @@ WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator
   modification_factor_final(other.modification_factor_final),
   modification_factor_multiplier(other.modification_factor_multiplier),
   sweep_steps(other.sweep_steps),
-  prototype_histo(other.prototype_histo)
+  prototype_histo(other.prototype_histo),
+  reset_sweep_number(other.reset_sweep_number)
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::operator==(const Parameters& rhs) const
@@ -56,7 +58,8 @@ bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 	  (modification_factor_initial == rhs.modification_factor_initial) &&
 	  (modification_factor_final == rhs.modification_factor_final) &&
 	  (modification_factor_multiplier == rhs.modification_factor_multiplier) &&
-	  (sweep_steps == rhs.sweep_steps));
+	  (sweep_steps == rhs.sweep_steps) && 
+	  (reset_sweep_number == rhs.reset_sweep_number));
 }
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 bool WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::operator!=(const Parameters& rhs) const
@@ -164,6 +167,9 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
 void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_wang_landau_steps()
 {
+  // Set a local sweep counter
+  unsigned int modfac_sweep_counter = 0;
+
   // While the flatness is below the desired flatness, do sweep_steps wang landau steps
   while (incidence_counter.flatness() < simulation_parameters.flatness)
   {
@@ -173,7 +179,15 @@ void WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGene
     signal_handler_sweep(this);
 
     do_wang_landau_steps(simulation_parameters.sweep_steps);
+    modfac_sweep_counter++;
     sweep_counter++;
+
+    // If the modfac_sweep_counter reached the reset number, reset the incidence counter
+    if (modfac_sweep_counter == simulation_parameters.reset_sweep_number)
+    {
+      modfac_sweep_counter = 0;
+      incidence_counter.set_all_y_values(0);
+    }
   }
 }
 

@@ -116,11 +116,10 @@ void Simulation<ConfigurationType, RandomNumberGenerator>::do_generic_steps(cons
     if (STEP_HAS_IS_EXECUTABLE && next_step.is_executable())
     {
       // Calculate selection probability factor and acceptance probability
+      double selection_probability_factor = 1.0;
+      if (STEP_HAS_SELECTION_PROBABILITY_FACTOR) selection_probability_factor = next_step.selection_probability_factor();
       double step_probability(static_cast<Derived*>(this)->acceptance_probability(next_step, acceptance_probability_parameter));
-      if (STEP_HAS_SELECTION_PROBABILITY_FACTOR)
-      {
-	step_probability /= next_step.selection_probability_factor();
-      }
+      step_probability /= selection_probability_factor;
 
       // Do the step with the correct probability and call the handlers
       if (step_probability > 0.0 && (step_probability >= 1.0 || this->rng->random_double() < step_probability))

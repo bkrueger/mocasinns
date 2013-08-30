@@ -325,7 +325,8 @@ void HistoBase<x_value_type,y_value_type,Derived>::load_csv(std::istream& input_
     x_value_type x; 
     y_value_type y;
     line.erase(line.begin(), find_if(line.begin(), line.end(), not1(std::ptr_fun<int, int>(isspace)))); // remove leading whitespace
-    if(line[0] == '#') continue; // ignore comments
+    if (line[0] == '#') continue; // ignore comments
+    if (line.length() == 0) continue; // ignore empty lines
     std::stringstream(line) >> x >> y;
     static_cast<Derived*>(this)->insert(std::pair<x_value_type, y_value_type>(x,y));
   }

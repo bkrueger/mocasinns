@@ -71,7 +71,7 @@ namespace Mocasinns
 	//! Returns the n'th element
 	const_reference operator[](size_type n) const { return data[n]; }
 	//! Test the arrays component-wise for equality
-	bool operator==(const ArrayAddable<T,N,Derived>& rhs)
+	bool operator==(const ArrayAddable<T,N,Derived>& rhs) const
 	{
 	  for (unsigned int i = 0; i < N; ++i)
 	  {
@@ -80,7 +80,7 @@ namespace Mocasinns
 	  return true;
 	}
 	//! Test the arrays component-wise for inequality
-	bool operator!=(const ArrayAddable<T,N,Derived>& rhs) { return !operator==(rhs); }
+	bool operator!=(const ArrayAddable<T,N,Derived>& rhs) const { return !operator==(rhs); }
 	//! Compare the arrays component-wise, starting with the first entry
 	bool operator<(const ArrayAddable<T,N,Derived>& rhs) const
 	{

@@ -17,18 +17,19 @@
 
 using namespace Mocasinns;
 
-typedef Gespinst::SpinLattice<1, Gespinst::IsingSpin> IsingConfiguration1d;
-typedef Gespinst::SpinLatticeStep<1, Gespinst::IsingSpin> IsingStep1d;
-typedef WangLandau<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> OriginalIsingSimulation1d;
-typedef MulticanonicalCounting<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937, WangLandau> IsingSimulation1d;
-
-typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> IsingConfiguration2d;
-typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> IsingStep2d;
-typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> OriginalIsingSimulation2d;
-typedef MulticanonicalCounting<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937, WangLandau> IsingSimulation2d;
-
 class TestMulticanonicalCounting : CppUnit::TestFixture
 {
+public:
+  typedef Gespinst::SpinLattice<1, Gespinst::IsingSpin> IsingConfiguration1d;
+  typedef Gespinst::SpinLatticeStep<1, Gespinst::IsingSpin> IsingStep1d;
+  typedef WangLandau<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937> OriginalIsingSimulation1d;
+  typedef MulticanonicalCounting<IsingConfiguration1d, IsingStep1d, int, Histograms::Histocrete, Random::Boost_MT19937, WangLandau> IsingSimulation1d;
+  
+  typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> IsingConfiguration2d;
+  typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> IsingStep2d;
+  typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> OriginalIsingSimulation2d;
+  typedef MulticanonicalCounting<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937, WangLandau> IsingSimulation2d;
+  
 private:
   IsingConfiguration1d* test_ising_config_1d;
   IsingSimulation1d* test_ising_simulation_1d;

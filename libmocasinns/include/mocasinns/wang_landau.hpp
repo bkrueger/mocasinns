@@ -68,10 +68,12 @@ public:
   void set_modification_factor_current(double value) { modification_factor_current = value; }
   //! Get-Accessor for the estimation of the density of states
   const HistoType<EnergyType, double>& get_log_density_of_states() const { return log_density_of_states; }
-  //! Set-Accessor for the estimation of the density of states
+  //! Set-Accessor for the estimation of the density of states.
   void set_log_density_of_states(const HistoType<EnergyType, double>& value) { log_density_of_states = value; }
   //! Get-Accessor for the incidence counter
   const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
+  //! Set-Accessor for an empty incidence counter (initialises an empty incidence counter that looks like the density of states)
+  void set_incidence_counter() { incidence_counter.initialise_empty(log_density_of_states); }
   //! Set-Accessor for the incidence counter
   void set_incidence_counter(const HistoType<EnergyType, IncidenceCounterYValueType>& value) { incidence_counter = value; }
   //! Get-Accessor for the sweep counter
@@ -100,17 +102,18 @@ public:
   //! Save the data of the Wang-Landau simulation to a serialization file
   virtual void save_serialize(const char* filename) const;
 
+protected:
+  //! Histogram for the estimation of the density of states
+  HistoType<EnergyType, double> log_density_of_states;
+  //! Histogram for the incidence counter
+  HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
+
 private:
   //! Parameters of the simulation
   Parameters simulation_parameters;
 
   //! Current value of the modification factor
   double modification_factor_current;
-
-  //! Histogram for the estimation of the density of states
-  HistoType<EnergyType, double> log_density_of_states;
-  //! Histogram for the incidence counter
-  HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
 
   //! Counter for the number of sweeps
   StepNumberType sweep_counter;

@@ -33,9 +33,10 @@ namespace Mocasinns
 	original_delta_E = work_step.delta_E();
 		
 	// Make a case by case study whether the system is in reference state or not before and after the flip
+	EnergyTypeExtended<EnergyType> new_original_energy = extended_configuration_space->energy().get_original_energy() + original_delta_E;
 	if (!extended_configuration_space->get_is_reference_configuration())
 	{
-	  if (extended_configuration_space->energy().get_original_energy() + original_delta_E != extended_configuration_space->get_reference_configuration_energy())
+	  if (new_original_energy != extended_configuration_space->get_reference_configuration_energy())
 	  {
 	    groundstate_delta_E = 0;
 	    return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
@@ -59,7 +60,7 @@ namespace Mocasinns
 	}
 	else // extended_configuration_space->get_is_reference_configuration
 	{
-	  if (extended_configuration_space->energy().get_original_energy() + original_delta_E != extended_configuration_space->get_reference_configuration_energy())
+	  if (new_original_energy != extended_configuration_space->get_reference_configuration_energy())
 	  {
 	    groundstate_delta_E = -1;
 	    return EnergyTypeExtended<EnergyType>(original_delta_E, -1);

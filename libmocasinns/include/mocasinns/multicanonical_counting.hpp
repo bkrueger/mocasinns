@@ -53,6 +53,8 @@ namespace Mocasinns
 
     //! Calculate the normalised density of states, override the base class function
     HistoType<EnergyType, double> get_log_density_of_states() const;
+    //! Set an estimation of the normalised density of states, override the base class function
+    void set_log_density_of_states(const HistoType<EnergyType, double>& value);
     //! Return the extended density of states with ground state flag
     HistoType<ExtendedEnergyType, double> get_log_density_of_states_extended() const
     {

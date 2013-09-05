@@ -68,6 +68,15 @@ namespace Mocasinns
 
       return result;
     }
+    //! Set the extended density of states with ground state flag
+    void set_log_density_of_states_extended(const HistoType<ExtendedEnergyType, double>& value)
+    {
+      // Shift the reference bin to 0
+      ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configuration_energy(), 1);
+      HistoType<ExtendedEnergyType, double> shifted_value(value);
+      shifted_value.shift_bin_zero(shifted_value.find(reference_energy));
+      static_cast<Base*>(this)->set_log_density_of_states(shifted_value);
+    }
     //! Get the number of states based on the density of states that was precalculated using the member functions of the original algorithm
     double number_of_states() const;
 

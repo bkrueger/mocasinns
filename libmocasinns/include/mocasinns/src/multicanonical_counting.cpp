@@ -24,7 +24,7 @@ namespace Mocasinns
       this->log_density_of_states[ExtendedEnergyType(it_reduced->first, 0)] = it_reduced->second;
     }
     this->log_density_of_states[reference_energy_reference_bin] = 0.0;
-    this->log_density_of_states[reference_energy_nonreference_bin] = log(exp(this->log_density_of_states[reference_energy_nonreference_bin] - 1));
+    this->log_density_of_states[reference_energy_nonreference_bin] = log(exp(this->log_density_of_states[reference_energy_nonreference_bin]) - 1);
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
@@ -48,9 +48,14 @@ namespace Mocasinns
     	 it_extended != extended_log_dos.end(); ++it_extended)
     {
       if (it_extended->first.get_in_ground_state() == 0)
-	result[it_extended->first.get_original_energy()] = it_extended->second;
+	//	result[it_extended->first.get_original_energy()] = it_extended->second;
+	result.insert(std::pair<EnergyType, double>(it_extended->first.get_original_energy(), it_extended->second));
     }
-    result[reference_energy.get_original_energy()] = log(exp(result[reference_energy.get_original_energy()]) + 1);
+    // Check whether a groundstate, non-reference bin is present
+    if (result.find(reference_energy.get_original_energy()) != result.end())
+      result[reference_energy.get_original_energy()] = log(exp(result[reference_energy.get_original_energy()]) + 1);
+    else
+      result[reference_energy.get_original_energy()] = 0.0;
 
     // Return the result
     return result;

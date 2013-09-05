@@ -29,6 +29,10 @@ public:
   typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> IsingStep2d;
   typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> OriginalIsingSimulation2d;
   typedef MulticanonicalCounting<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937, WangLandau> IsingSimulation2d;
+
+  typedef Details::Multicanonical::EnergyTypeExtended<int> EnergyTypeExtended;
+  typedef Histograms::Histocrete<int, double> HistoType;
+  typedef Histograms::Histocrete<EnergyTypeExtended, double> HistoTypeExtended; 
   
 private:
   IsingConfiguration1d* test_ising_config_1d;
@@ -45,6 +49,8 @@ public:
   void setUp();
   void tearDown();
 
+  void test_get_log_density_of_states();
+  void test_set_log_density_of_states();
   void test_do_multicanonical_counting_simulation();
 };
 

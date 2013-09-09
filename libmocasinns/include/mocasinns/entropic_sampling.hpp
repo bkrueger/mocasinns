@@ -62,6 +62,8 @@ namespace Mocasinns
     void set_log_density_of_states(const HistoType<EnergyType, double>& value) { log_density_of_states = value; }
     //! Get-Accessor for the incidence counter
     const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
+    //! Set-Accessor for an empty incidence counter (initialises an empty incidence counter that looks like the density of states)
+    void set_incidence_counter() { incidence_counter.initialise_empty(log_density_of_states); }
     //! Set-Accessor for the incidence counter
     void set_incidence_counter(const HistoType<EnergyType, IncidenceCounterYValueType>& value) { incidence_counter = value; }
     //! Get-Accessor for the current flatness

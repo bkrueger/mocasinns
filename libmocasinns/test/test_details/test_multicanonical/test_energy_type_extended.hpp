@@ -20,6 +20,7 @@ private:
   ExtendedInt* test_extended_int_2;
   ExtendedInt* test_extended_int_3;
   ExtendedInt* test_extended_int_4;
+  ExtendedInt* test_extended_int_5;
   
 public:
   static CppUnit::Test* suite();
@@ -29,7 +30,9 @@ public:
 
   void test_constructor();
   
-  void test_operator_compare();
+  void test_operator_equality();
+  void test_operator_less_greater_equal();
+  void test_operator_greater_less_equal();
   void test_operator_add();
   void test_operator_substract();
 };

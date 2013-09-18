@@ -39,7 +39,7 @@ namespace Mocasinns
 	{
 	  // If the energy is not allready contained, insert a new container
 	  if (reference_configurations.find((*reference_configuration)->energy()) == reference_configurations.end())
-	    reference_configurations.insert(reference_configurations_map_t::value_type((*reference_configuration)->energy(), reference_configurations_container_t(1, new ConfigurationType(**reference_configuration))));
+	    reference_configurations.insert(typename reference_configurations_map_t::value_type((*reference_configuration)->energy(), reference_configurations_container_t(1, new ConfigurationType(**reference_configuration))));
 	  // If the energy is allready contained, insert into the container (if not allready in references to avoid double checks)
 	  else
 	    if (!configuration_is_in_references(*reference_configuration))

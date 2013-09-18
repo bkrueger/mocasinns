@@ -50,6 +50,10 @@ namespace Mocasinns
     //! Initialise a multicanonical counting simulation with given initial configuration and given reference configuration
     MulticanonicalCounting(const ParametersOriginalType& params, ConfigurationType* initial_configuration, ConfigurationType* reference_configuration)
       : Base(typename Base::Parameters(params), new ExtendedConfigurationType(initial_configuration, reference_configuration)) {}
+    //! Initialise a multicanonical counting simulation with given initial configuration and a range of given reference configuration
+    template <class InputIterator>
+    MulticanonicalCounting(const ParametersOriginalType& params, ConfigurationType* initial_configuration, InputIterator reference_configurations_begin, InputIterator reference_configurations_end)
+      : Base(typename Base::Parameters(params), new ExtendedConfigurationType(initial_configuration, reference_configurations_begin, reference_configurations_end)) {}
 
     //! Calculate the normalised density of states, override the base class function
     HistoType<EnergyType, double> get_log_density_of_states() const;

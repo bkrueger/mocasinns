@@ -10,21 +10,24 @@ namespace Mocasinns
     typedef HistoType<ExtendedEnergyType, double> ExtendedHistoType;
     typedef HistoType<EnergyType, double> ReducedHistoType;
 
-    // Get the reference energy
-    ExtendedEnergyType reference_energy_reference_bin(this->get_config_space()->get_reference_configuration_energy(), 1);
-    ExtendedEnergyType reference_energy_nonreference_bin(this->get_config_space()->get_reference_configuration_energy(), 0);
-
-    // Create the result histogram setting all non-reference bins.
-    // Correct the histogram by reducing the number of the reference-energy (non-reference) bin by 1
-    // Include the reference bin with value 1
+    // Create the result histogram and set all non-reference bins
     this->log_density_of_states.clear();
-    for (typename ReducedHistoType::const_iterator it_reduced = value.begin();
-	 it_reduced != value.end(); ++it_reduced)
+    for (typename ReducedHistoType::const_iterator it_reduced_histo = value.begin();
+	 it_reduced_histo != value.end(); ++it_reduced_histo)
     {
-      this->log_density_of_states[ExtendedEnergyType(it_reduced->first, 0)] = it_reduced->second;
+      this->log_density_of_states[ExtendedEnergyType(it_reduced_histo->first, 0)] = it_reduced_histo->second;
     }
-    this->log_density_of_states[reference_energy_reference_bin] = 0.0;
-    this->log_density_of_states[reference_energy_nonreference_bin] = log(exp(this->log_density_of_states[reference_energy_nonreference_bin]) - 1);
+    // Set the value of the reference bin
+    this->log_density_of_states[ExtendedEnergyType(this->get_config_space()->get_reference_configurations().begin()->first, 1)]
+      = log(this->get_config_space()->count_reference_configurations());
+    // Decrease the values of the normal bins
+    for (typename ExtendedConfigurationType::reference_configurations_map_t::const_iterator energy_reference_configurations = this->get_config_space()->get_reference_configurations().begin();
+	 energy_reference_configurations != this->get_config_space()->get_reference_configurations().end(); ++energy_reference_configurations)
+    {
+      const EnergyType& reference_energy = energy_reference_configurations->first;
+      this->log_density_of_states[ExtendedEnergyType(reference_energy, 0)] 
+	= log(exp(this->log_density_of_states[ExtendedEnergyType(reference_energy, 0)]) - energy_reference_configurations->second.size());
+    }
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
@@ -38,9 +41,10 @@ namespace Mocasinns
     // Save the density of states
     ExtendedHistoType extended_log_dos = get_log_density_of_states_extended();
     
-    // Find the bin with the extended energy and shift it to 0
-    ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configuration_energy(), 1);
-    extended_log_dos.shift_bin_zero(extended_log_dos.find(reference_energy));
+    // Find the bin with the extended energy and shift it to log(number of reference states)
+    ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configurations().begin()->first, 1);
+    double shift_factor = log(this->get_config_space()->count_reference_configurations()) - extended_log_dos[reference_energy];
+    extended_log_dos += shift_factor;
     
     // Create the result histogram using only the non-reference bins. Then add the right number to the non-reference bin
     HistoType<EnergyType, double> result;
@@ -51,12 +55,19 @@ namespace Mocasinns
 	//	result[it_extended->first.get_original_energy()] = it_extended->second;
 	result.insert(std::pair<EnergyType, double>(it_extended->first.get_original_energy(), it_extended->second));
     }
-    // Check whether a groundstate, non-reference bin is present
-    if (result.find(reference_energy.get_original_energy()) != result.end())
-      result[reference_energy.get_original_energy()] = log(exp(result[reference_energy.get_original_energy()]) + 1);
-    else
-      result[reference_energy.get_original_energy()] = 0.0;
 
+    // Go through the reference energies and update the density of states
+    for (typename ExtendedConfigurationType::reference_configurations_map_t::const_iterator energy_reference_configurations = this->get_config_space()->get_reference_configurations().begin();
+	 energy_reference_configurations != this->get_config_space()->get_reference_configurations().end(); ++energy_reference_configurations)
+    {
+      const EnergyType& reference_energy = energy_reference_configurations->first;
+      // Check whether the energy is allready contained in the result density of states
+      if (result.find(reference_energy) != result.end())
+	result[reference_energy] = log(exp(result[reference_energy]) + this->get_config_space()->count_reference_configurations(reference_energy));
+      else
+	result[reference_energy] = log(this->get_config_space()->count_reference_configurations(reference_energy));
+    }
+    
     // Return the result
     return result;
   }

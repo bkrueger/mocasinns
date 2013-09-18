@@ -83,7 +83,7 @@ void TestEnergyTypeExtended::test_operator_compare()
   CPPUNIT_ASSERT(*test_extended_int_1 != *test_extended_int_4);
   CPPUNIT_ASSERT(*test_extended_int_2 != *test_extended_int_3);
   CPPUNIT_ASSERT(*test_extended_int_2 != *test_extended_int_4);
-  CPPUNIT_ASSERT(*test_extended_int_3 != *test_extended_int_4);
+  CPPUNIT_ASSERT(*test_extended_int_3 == *test_extended_int_4);
 
   // Test the comparison operator
   CPPUNIT_ASSERT(*test_extended_int_4 < *test_extended_int_2);

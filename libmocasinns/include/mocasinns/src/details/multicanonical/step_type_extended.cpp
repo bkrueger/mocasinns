@@ -33,10 +33,10 @@ namespace Mocasinns
 	original_delta_E = work_step.delta_E();
 		
 	// Make a case by case study whether the system is in reference state or not before and after the flip
-	EnergyTypeExtended<EnergyType> new_original_energy = extended_configuration_space->energy().get_original_energy() + original_delta_E;
+	EnergyType new_original_energy = extended_configuration_space->energy().get_original_energy() + original_delta_E;
 	if (!extended_configuration_space->get_is_reference_configuration())
 	{
-	  if (new_original_energy != extended_configuration_space->get_reference_configuration_energy())
+	  if (extended_configuration_space->count_reference_configurations(new_original_energy) == 0)
 	  {
 	    groundstate_delta_E = 0;
 	    return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
@@ -44,9 +44,8 @@ namespace Mocasinns
 	  else
 	  {
 	    execute_testwise();
-	    
-	    if (*(extended_configuration_space->get_reference_configuration()) ==
-		*(extended_configuration_space->get_original_configuration()))	
+
+	    if (extended_configuration_space->configuration_is_in_references(extended_configuration_space->get_original_configuration()))
 	    {
 	      groundstate_delta_E = 1;
 	      return EnergyTypeExtended<EnergyType>(original_delta_E, 1);
@@ -60,7 +59,7 @@ namespace Mocasinns
 	}
 	else // extended_configuration_space->get_is_reference_configuration
 	{
-	  if (new_original_energy != extended_configuration_space->get_reference_configuration_energy())
+	  if (extended_configuration_space->count_reference_configurations(new_original_energy) == 0)
 	  {
 	    groundstate_delta_E = -1;
 	    return EnergyTypeExtended<EnergyType>(original_delta_E, -1);
@@ -69,8 +68,7 @@ namespace Mocasinns
 	  {
 	    execute_testwise();
 	      
-	    if (*(extended_configuration_space->get_reference_configuration()) ==
-		*(extended_configuration_space->get_original_configuration()))	
+	    if (extended_configuration_space->configuration_is_in_references(extended_configuration_space->get_original_configuration()))
 	    {
 	      groundstate_delta_E = 0;
 	      return EnergyTypeExtended<EnergyType>(original_delta_E, 0);
@@ -102,7 +100,6 @@ namespace Mocasinns
 	was_executed_testwise = true;
 	extended_configuration_space->commit_testwise(*this);
       }
-
       
     }
   }

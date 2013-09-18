@@ -168,7 +168,7 @@ void TestStepTypeExtended::test_delta_E_automatically()
 
     // Test that the configuration is in fact in the ground state if the energy indicates
     if (energy_1.get_in_ground_state() == 1)
-      CPPUNIT_ASSERT(*(test_extended_config_1->get_original_configuration()) == *(test_extended_config_1->get_reference_configuration()));
+      CPPUNIT_ASSERT(test_extended_config_1->configuration_is_in_references(test_extended_config_1->get_original_configuration()));
   }
 
   // Do automatic tests with test_extended_config_2
@@ -186,7 +186,7 @@ void TestStepTypeExtended::test_delta_E_automatically()
 
     // Test that the configuration is in fact in the ground state if the energy indicates
     if (energy_2.get_in_ground_state() == 1)
-      CPPUNIT_ASSERT(*(test_extended_config_2->get_original_configuration()) == *(test_extended_config_2->get_reference_configuration()));
+      CPPUNIT_ASSERT(test_extended_config_2->configuration_is_in_references(test_extended_config_2->get_original_configuration()));
   }
 
   // Do automatic tests with test_extended_config_3
@@ -204,7 +204,7 @@ void TestStepTypeExtended::test_delta_E_automatically()
 
     // Test that the configuration is in fact in the ground state if the energy indicates
     if (energy_3.get_in_ground_state() == 1)
-      CPPUNIT_ASSERT(*(test_extended_config_3->get_original_configuration()) == *(test_extended_config_3->get_reference_configuration()));
+      CPPUNIT_ASSERT(test_extended_config_3->configuration_is_in_references(test_extended_config_3->get_original_configuration()));
   }
 
   // Do automatic tests with test_extended_config_4
@@ -222,7 +222,7 @@ void TestStepTypeExtended::test_delta_E_automatically()
 
     // Test that the configuration is in fact in the ground state if the energy indicates
     if (energy_4.get_in_ground_state() == 1)
-      CPPUNIT_ASSERT(*(test_extended_config_4->get_original_configuration()) == *(test_extended_config_4->get_reference_configuration()));
+      CPPUNIT_ASSERT(test_extended_config_4->configuration_is_in_references(test_extended_config_4->get_original_configuration()));
   }
 }
 void TestStepTypeExtended::test_execute()

@@ -29,7 +29,21 @@ namespace Mocasinns
       template <class EnergyType>
       bool EnergyTypeExtended<EnergyType>::operator==(const EnergyTypeExtended& rhs) const
       {
-	return (original_energy == rhs.original_energy) && (in_ground_state == rhs.in_ground_state);
+	// If both energies indicate that one is in the reference state, return true
+	if (in_ground_state)
+	{
+	  if (rhs.in_ground_state) 
+	    return true;
+	  else 
+	    return false;
+	}
+	else // !in_ground_state
+	{
+	  if (original_energy == rhs.original_energy)
+	    return true;
+	  else
+	    return false;
+	}
       }
       template <class EnergyType>
       bool EnergyTypeExtended<EnergyType>::operator!=(const EnergyTypeExtended& rhs) const
@@ -40,23 +54,23 @@ namespace Mocasinns
       template <class EnergyType>
       bool EnergyTypeExtended<EnergyType>::operator<(const EnergyTypeExtended& rhs) const
       {
-	// Test first the original energys
-	if (original_energy < rhs.original_energy) return true;
-	if (original_energy > rhs.original_energy) return false;
-	
-	// If the original energies match, check the in_ground_state integer
+	// Test first whether the two states are in ground state
 	if (in_ground_state < rhs.in_ground_state) return true;
+	if (in_ground_state > rhs.in_ground_state) return false;
+
+	// If the reference bons match, check the original energy
+	if (original_energy < rhs.original_energy) return true;
 	else return false;
       }
       template <class EnergyType>
       bool EnergyTypeExtended<EnergyType>::operator>(const EnergyTypeExtended& rhs) const
       {
-	// Test first the original energys
-	if (original_energy > rhs.original_energy) return true;
-	if (original_energy < rhs.original_energy) return false;
-	
-	// If the original energies match, check the in_ground_state integer
+	// Test first whether the two states are in ground state
 	if (in_ground_state > rhs.in_ground_state) return true;
+	if (in_ground_state < rhs.in_ground_state) return false;
+
+	// If the reference bons match, check the original energy
+	if (original_energy > rhs.original_energy) return true;
 	else return false;
       }
       template <class EnergyType>

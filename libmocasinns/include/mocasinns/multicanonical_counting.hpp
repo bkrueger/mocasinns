@@ -62,7 +62,7 @@ namespace Mocasinns
       HistoType<ExtendedEnergyType, double> result(static_cast<const Base*>(this)->get_log_density_of_states());
       
       // Shift the reference bin to zero
-      ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configuration_energy(), 1);
+      ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configurations().begin()->second[0]->energy(), 1);
       typename HistoType<ExtendedEnergyType, double>::const_iterator reference_bin = result.find(reference_energy);
       result.shift_bin_zero(reference_bin);
 
@@ -72,7 +72,7 @@ namespace Mocasinns
     void set_log_density_of_states_extended(const HistoType<ExtendedEnergyType, double>& value)
     {
       // Shift the reference bin to 0
-      ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configuration_energy(), 1);
+      ExtendedEnergyType reference_energy(this->get_config_space()->get_reference_configurations().begin()->second[0]->energy(), 1);
       HistoType<ExtendedEnergyType, double> shifted_value(value);
       shifted_value.shift_bin_zero(shifted_value.find(reference_energy));
       static_cast<Base*>(this)->set_log_density_of_states(shifted_value);
@@ -89,8 +89,7 @@ namespace Mocasinns
   private:
     // Extended parameters that will be used for the simulation
     ParametersExtendedType extended_simulation_parameters;
-  };
-  
+  };  
 }
 
 #include "src/multicanonical_counting.cpp"

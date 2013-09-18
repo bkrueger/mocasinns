@@ -74,15 +74,15 @@ void TestConfigurationTypeExtended::test_constructor()
 
 void TestConfigurationTypeExtended::test_get_reference_configuration()
 {
-  CPPUNIT_ASSERT(*(test_extended_config_1->get_reference_configuration()) ==
+  CPPUNIT_ASSERT(*(test_extended_config_1->get_reference_configurations().begin()->second[0]) ==
 		 *test_reference_1);
-  CPPUNIT_ASSERT(*(test_extended_config_2->get_reference_configuration()) ==
+  CPPUNIT_ASSERT(*(test_extended_config_2->get_reference_configurations().begin()->second[0]) ==
 		 *test_reference_2);
 }
 void TestConfigurationTypeExtended::test_get_reference_configuration_energy()
 {
-  CPPUNIT_ASSERT_EQUAL(4, test_extended_config_1->get_reference_configuration_energy());
-  CPPUNIT_ASSERT_EQUAL(0, test_extended_config_2->get_reference_configuration_energy());
+  CPPUNIT_ASSERT_EQUAL(4, test_extended_config_1->get_reference_configurations().begin()->first);
+  CPPUNIT_ASSERT_EQUAL(0, test_extended_config_2->get_reference_configurations().begin()->first);
 }
 void TestConfigurationTypeExtended::test_get_is_reference_configuration()
 {

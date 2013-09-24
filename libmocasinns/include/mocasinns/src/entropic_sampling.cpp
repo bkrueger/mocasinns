@@ -87,12 +87,12 @@ double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNu
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Increment the total energy
   step_parameters.total_energy += step_parameters.delta_E;
   // Update the histograms
-  incidence_counter[step_parameters.total_energy]++;
+  incidence_counter[step_parameters.total_energy] += time;
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

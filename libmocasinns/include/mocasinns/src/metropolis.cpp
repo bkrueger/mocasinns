@@ -27,15 +27,15 @@ namespace ba = boost::accumulators;
 namespace Mocasinns
 {
 /*!
-  \fn std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
+  \fn std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
   \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed.
   \returns Vector containing the single measurements performed
 */
-template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
+std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -58,9 +58,9 @@ std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, 
   \param beta_end Iterator pointing on position after the last inverse temperature that is calculated
   \returns Vector containing the vectors of measurments performed for each temperature. (First index: inverse temperature, second index: measurment number)
 */
-template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class InputIterator>
-std::vector<std::vector<typename Observator::observable_type> > Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
+std::vector<std::vector<typename Observator::observable_type> > MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -82,9 +82,9 @@ std::vector<std::vector<typename Observator::observable_type> > Metropolis<Confi
  \param beta Inverse temperature at which the simulation is performed
  \param measurement_accumulator Reference to the accumulator that stores the simulation results
 */
-template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class Accumulator, class TemperatureType>
-void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
+void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -121,9 +121,9 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
  \param measurement_accumulator_begin Iterator pointing to the first accumulator that calculates the data for the first inverse temperature.
  \param measurement_accumulator_end Iterator pointing one position after the last accumulator that calculates the data for the last inverse temperature
 */
-template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
-void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
+void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
 {  
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -158,9 +158,9 @@ void Metropolis<ConfigurationType,Step,RandomNumberGenerator>::do_metropolis_sim
   \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
   \param simulation_time_factor Run time of the simulation in units of the maximal time (also gives the number of measurements taken for averaging the value of the autocorrelation function at each time). The default value is 5.
 */									
-template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
+std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -221,9 +221,9 @@ std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, 
   \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
   \param simulation_time_factor Run time of the simulation in units of the maximal time (also gives the number of measurements taken for averaging the value of the autocorrelation function at each time). The default value is 5.
  */
-template<class ConfigurationType, class Step, class RandomNumberGenerator>
+template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-typename Observator::observable_type Metropolis<ConfigurationType, Step, RandomNumberGenerator>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
+typename Observator::observable_type MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -243,27 +243,27 @@ typename Observator::observable_type Metropolis<ConfigurationType, Step, RandomN
   return result;
 }
 
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::load_serialize(std::istream& input_stream)
+template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
+void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
   input_archive >> (*this);
 }
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::load_serialize(const char* filename)
+template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
+void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
 {
   std::ifstream input_filestream(filename);
   load_serialize(input_filestream);
   input_filestream.close();
 }
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::save_serialize(std::ostream& output_stream) const
+template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
+void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
 {
   boost::archive::text_oarchive output_archive(output_stream);
   output_archive << (*this);
 }
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void Metropolis<ConfigurationType, Step, RandomNumberGenerator>::save_serialize(const char* filename) const
+template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
+void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_serialize(output_filestream);

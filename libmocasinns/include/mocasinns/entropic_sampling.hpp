@@ -37,7 +37,7 @@ namespace Mocasinns
   public:
     // Typedefs for integers
     typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
-    typedef uint64_t IncidenceCounterYValueType;
+    typedef double IncidenceCounterYValueType;
 
     // Forward declaration of the parameters for the entropic sampling simulation
     struct Parameters;
@@ -72,7 +72,7 @@ namespace Mocasinns
     //! Calculate the acceptance probability of a step
     double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle an accepted step
-    void handle_executed_step(StepType& executed_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
+    void handle_executed_step(StepType& executed_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
     void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     

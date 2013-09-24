@@ -65,6 +65,9 @@ namespace Mocasinns
 
 	int get_simulation_time() const { return work_configuration->get_simulation_time(); }
 	
+	//! Function overriding the all_steps function of the original configuration
+	std::vector<StepTypeExtended<ConfigurationType, StepType, EnergyType> > all_steps();
+
 	//! Function overriding the commit function of the original configuration, sets the flag whether the system is on reference configuration
 	void commit(StepTypeExtended<ConfigurationType, StepType, EnergyType>& step_to_commit);
 	//! Function overriding the commit function of the original configuration, does not update the internal tracked energy.

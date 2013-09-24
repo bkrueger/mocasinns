@@ -147,7 +147,7 @@ namespace Mocasinns
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
     // Increment the total energy
     step_parameters.total_energy += step_parameters.delta_E;
@@ -161,9 +161,9 @@ namespace Mocasinns
 
     // Update the counting histograms
     if (walker_label == positive)
-      incidence_counter_positive[step_parameters.total_energy]++;
+      incidence_counter_positive[step_parameters.total_energy] += time;
     else
-      incidence_counter_negative[step_parameters.total_energy]++;
+      incidence_counter_negative[step_parameters.total_energy] += time;
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -221,7 +221,7 @@ namespace Mocasinns
 	if (this->check_for_posix_signal()) return HistoType<EnergyType, double>();
 
 	// Fill the fraction histogram
-	for (typename HistoType<EnergyType, unsigned long int>::const_iterator it = incidence_counter_positive.begin();
+	for (typename HistoType<EnergyType, IncidenceCounterYValueType>::const_iterator it = incidence_counter_positive.begin();
 	     it != incidence_counter_positive.end(); ++it)
 	{	  
 	  fraction_histogram[it->first] = static_cast<double>(it->second) 
@@ -249,7 +249,7 @@ namespace Mocasinns
       // Create and fill the fraction histogram
       HistoType<EnergyType, double> fraction_histogram;
       fraction_histogram.initialise_empty(weights);
-      for (typename HistoType<EnergyType, unsigned long int>::const_iterator it = incidence_counter_positive.begin();
+      for (typename HistoType<EnergyType, IncidenceCounterYValueType>::const_iterator it = incidence_counter_positive.begin();
 	   it != incidence_counter_positive.end(); ++it)
       {
 	EnergyType energy = it->first;

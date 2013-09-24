@@ -30,7 +30,7 @@ namespace Mocasinns
 {
 
 //! Base class for all Simulations in MoCaSinns
-template <class ConfigurationType, class RandomNumberGenerator = Random::Boost_MT19937>
+template <class ConfigurationType, class RandomNumberGenerator = Random::Boost_MT19937, bool rejection_free = false>
 class Simulation
 {
 public:
@@ -108,7 +108,7 @@ protected:
     ar & rng_seed;
   }
 
-  //! Do a number of steps using an acceptance probability provided by the actual algorithm
+  //! Do a number of steps using an acceptance probability provided by the actual algorithm, decides using the template parameter rejection free whether to do rejectio free or normal steps
   template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
   void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
 
@@ -117,13 +117,17 @@ private:
   template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool step_has_is_executable, bool step_has_selection_probability_factor>
   void do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
 
+  //! Do a number of generic rejection-free steps using the acceptance probability provided by the actual algorithm
+  template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool step_has_is_executable, bool step_has_selection_probability_factor>
+  void do_generic_steps_rejection_free(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
+
   //! Set the signals for POSIX signals
   void register_posix_signal_handler();
 };
 
 // Initialisation of the static member signal_number_caught
-template <class ConfigurationType, class RandomNumberGenerator>
-volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator>::signal_number_caught = 0;
+  template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
+  volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::signal_number_caught = 0;
 
 } // of namespace Mocasinns
 

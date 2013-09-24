@@ -32,6 +32,24 @@ namespace Mocasinns
       {
 	delete reference_configuration;
       }
+
+      template <class ConfigurationType, class StepType, class EnergyType>
+      std::vector<StepTypeExtended<ConfigurationType, StepType, EnergyType> > ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::all_steps()
+      {
+	// Get the steps of the original configuration type
+	std::vector<StepType> all_original_steps = work_configuration->all_steps();
+	
+	// Construct the extended steps
+	std::vector<StepTypeExtended<ConfigurationType, StepType, EnergyType> > all_extended_steps;
+	all_extended_steps.reserve(all_original_steps.size());
+	for (unsigned int s = 0; s < all_original_steps.size(); ++s)
+	{
+	  all_extended_steps.push_back(StepTypeExtended<ConfigurationType, StepType, EnergyType>(all_original_steps[s], this));
+	}
+
+	// Return all extended steps
+	return all_extended_steps;
+      }
       
       template <class ConfigurationType, class StepType, class EnergyType>
       void ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>::commit(StepTypeExtended<ConfigurationType, StepType, EnergyType>& step_to_commit)

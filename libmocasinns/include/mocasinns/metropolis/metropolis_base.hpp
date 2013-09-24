@@ -8,8 +8,8 @@
  * \author Johannes Knauf
  */
 
-#ifndef MOCASINNS_METROPOLIS_METROPOLIS_HPP
-#define MOCASINNS_METROPOLIS_METROPOLIS_HPP
+#ifndef MOCASINNS_METROPOLIS_METROPOLIS_BASE_HPP
+#define MOCASINNS_METROPOLIS_METROPOLIS_BASE_HPP
 
 #include "../simulation.hpp"
 #include "../concepts/concepts.hpp"
@@ -84,7 +84,7 @@ namespace Mocasinns
     }
     //! Handle an executed step (do nothing, must be implemented to use Simulation::do_steps)
     template <class NotImportant>
-    inline void handle_executed_step(StepType&, double time, NotImportant) {}
+    inline void handle_executed_step(StepType&, double, NotImportant) {}
     //! Handle a rejected step (do nothing, must be implemented to use Simulation::do_steps)
     template <class NotImportant>
     inline void handle_rejected_step(StepType&, NotImportant) {}

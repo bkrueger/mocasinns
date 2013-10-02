@@ -58,6 +58,9 @@ namespace Mocasinns
     WangLandauBase(const Parameters& params);
     //! Initialise a WangLandau-MC simulation with given configuration space and default RandomNumberGenerator
     WangLandauBase(const Parameters& params, ConfigurationType* initial_configuration);
+    //! Copy from a Wang-Landau simulation with possible different rejection free parameter
+    template <bool rejection_free_other>
+    WangLandauBase(const WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free_other>& other);
     
     //! Get-Accessor for the parameters of the simulation
     const Parameters& get_simulation_parameters() const { return simulation_parameters; }
@@ -85,7 +88,7 @@ namespace Mocasinns
     //! Handle an accepted step
     void handle_executed_step(StepType& executed_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
-    void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
+    void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
     //! Do a certain number of wang-landau steps updating the log_density_of_states and the incidence_counter at the current modification factor
     void do_wang_landau_steps(const uint32_t& number);
@@ -128,7 +131,7 @@ namespace Mocasinns
     template<class Archive> void serialize(Archive & ar, const unsigned int)
     {
       // serialize base class information
-      ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator> >(*this);
+      ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator, rejection_free> >(*this);
       ar & simulation_parameters;
       ar & modification_factor_current;
       ar & log_density_of_states;

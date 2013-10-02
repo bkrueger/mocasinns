@@ -9,6 +9,8 @@
 
 #ifdef MOCASINNS_SIMULATION_HPP
 
+#include <limits>
+
 #include "../details/optional_concept_checks/step_type_has_is_executable.hpp"
 #include "../details/optional_concept_checks/step_type_has_selection_probability_factor.hpp"
 
@@ -139,10 +141,10 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_ge
 	static_cast<Derived*>(this)->handle_executed_step(next_step, 1.0, acceptance_probability_parameter);
       }
       else
-	static_cast<Derived*>(this)->handle_rejected_step(next_step, acceptance_probability_parameter);
+	static_cast<Derived*>(this)->handle_rejected_step(next_step, 1.0, acceptance_probability_parameter);
     } // of if (next_step.is_executable())
     else
-      static_cast<Derived*>(this)->handle_rejected_step(next_step, acceptance_probability_parameter);
+      static_cast<Derived*>(this)->handle_rejected_step(next_step, 1.0, acceptance_probability_parameter);
   }
 }
 
@@ -170,7 +172,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_ge
 	step_probability /= selection_probability_factor;
 
 	// Store the acceptance probability
-	acceptance_probabilities[s] = step_probability;
+	acceptance_probabilities[s] = std::min(1.0, step_probability);
       }
     } 
 
@@ -178,23 +180,53 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_ge
     // If a step at position r is not executable, cumulative_acceptance_probabilities[r + 1] = cumulative_acceptance_probabilities[r]
     std::vector<double> cumulative_acceptance_probabilities(all_steps.size() + 1);
     cumulative_acceptance_probabilities[0] = 0.0;
-    for (unsigned int s = 0; s < all_steps.size() + 1; ++s)
+    for (unsigned int s = 1; s < all_steps.size() + 1; ++s)
     {
       cumulative_acceptance_probabilities[s] = cumulative_acceptance_probabilities[s - 1] + acceptance_probabilities[s - 1];
     }
 
     // Create a random number and determine which step to execute
     double rnd = rng->random_double()*cumulative_acceptance_probabilities[all_steps.size()];
-    unsigned int step_index;
+    unsigned int step_index = 0;
     for (unsigned int s = 0; s < all_steps.size(); ++s)
     {
       if (cumulative_acceptance_probabilities[s] <= rnd && cumulative_acceptance_probabilities[s+1] > rnd)
 	step_index = s;
     }
-    all_steps[step_index].execute();
+    // std::cout << "Energy: " << configuration_space->energy() << " -> " << configuration_space->energy() + all_steps[step_index].delta_E() << std::endl;
+    // std::cout << "Time: " << 1.0 / cumulative_acceptance_probabilities[all_steps.size()] << std::endl;
+    // if (all_steps[step_index].is_executable() == false || 1.0 / cumulative_acceptance_probabilities[all_steps.size()] > 10.0) 
+    // {
+    //   std::cout << "Non-executable step encountered!" << std::endl;
+    //   std::cout << "Step index: " << step_index << std::endl;
+    //   std::cout << "Actual energy: " << configuration_space->energy() << std::endl;
+    //   std::cout << "Parameter energy: " << acceptance_probability_parameter.total_energy << std::endl;
+    //   std::cout << "Simulation time: " << configuration_space->get_simulation_time() << std::endl;
+    //   for (unsigned int s = 0; s < all_steps.size(); ++s)
+    //   {
+    // 	std::cout << s << " " << acceptance_probabilities[s] << " " << cumulative_acceptance_probabilities[s] << std::endl;
+    // 	std::cout << all_steps[s].is_executable() << std::endl;
+    //   }
+    // }
 
-    // Handle the executed step with 
-    static_cast<Derived*>(this)->handle_executed_step(all_steps[step_index], -log(rng->random_double()) / cumulative_acceptance_probabilities[all_steps.size()], acceptance_probability_parameter);
+    // Calculate again the acceptance probability to get the acceptance probability parameter right.
+    // TODO: Correct this in the future because this is not efficient
+    static_cast<Derived*>(this)->acceptance_probability(all_steps[step_index], acceptance_probability_parameter);
+
+    // Check that the maximal cumulative acceptance probability is not 0 (this means that the entropy difference of the neighbouring bins is to high for double precission and we would stay infinitesimal long in the state
+    // If this is the case, do not execute the step, but handle a rejected step
+    double time = 1.0 / cumulative_acceptance_probabilities[all_steps.size()];
+    // ToDo: Check whether updating with another factor makes sense
+    if (time == std::numeric_limits<double>::infinity() || time != time)
+      static_cast<Derived*>(this)->handle_rejected_step(all_steps[step_index], 1.0, acceptance_probability_parameter);
+    else
+    {
+      all_steps[step_index].execute();
+      // Handle the executed step with 
+      static_cast<Derived*>(this)->handle_executed_step(all_steps[step_index], 1.0 / cumulative_acceptance_probabilities[all_steps.size()], acceptance_probability_parameter);
+    }
+
+    //    std::cout << static_cast<Derived*>(this)->get_log_density_of_states() << std::endl;
   }
 }
   

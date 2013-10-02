@@ -31,6 +31,8 @@ namespace Mocasinns
     WangLandauRejectionFree(const Parameters& params) : Base(params) { }
     //! Initialise a WangLandau-MC simulation with given configuration space and default RandomNumberGenerator
     WangLandauRejectionFree(const Parameters& params, ConfigurationType* initial_configuration) : Base(params, initial_configuration) { }
+    //! Copy from a non-rejection free simulation
+    WangLandauRejectionFree(const WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, false>& simulation_non_rejection_free) : Base(simulation_non_rejection_free) { }
   };
 }
 

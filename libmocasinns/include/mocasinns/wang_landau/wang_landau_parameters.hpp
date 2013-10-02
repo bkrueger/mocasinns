@@ -12,28 +12,21 @@
 
 #include "wang_landau_base.hpp"
 
+#include "../details/multicanonical/parameters_multicanonical.hpp"
+
+#include <boost/serialization/base_object.hpp>
+
 namespace Mocasinns
 {
 
   //! Struct for dealing with the parameters of a Wang-Landau-simulation
   template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  struct WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free>::Parameters
+  struct WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free>::Parameters : public Details::Multicanonical::ParametersMulticanonical<EnergyType>
   {
   public:
-    //! Energy value that is used as a reference point for the binning
-    EnergyType binning_reference;
-    //! Energy value range that is comprehended in one bin
-    EnergyType binning_width;
-    
-    //! Value of the minimal energy cutoff
-    EnergyType energy_cutoff_lower;
-    //! Value of the maximal energy cutoff
-    EnergyType energy_cutoff_upper;
-    //! Flag indicating whether to use the minimal energy cutoff, default value is false
-    bool use_energy_cutoff_lower;
-    //! Flag indicating whether to use the maximal energy cutoff, default value is false
-    bool use_energy_cutoff_upper;
-    
+    //! Typedef for the base class
+    typedef Details::Multicanonical::ParametersMulticanonical<EnergyType> Base;
+
     //! Flatness below that the modification factor is changed.
     double flatness;
     
@@ -55,12 +48,7 @@ namespace Mocasinns
     
     //! Constructor to set default values
     Parameters() :
-      binning_reference(0), 
-      binning_width(1), 
-      energy_cutoff_lower(0),
-      energy_cutoff_upper(0),
-      use_energy_cutoff_lower(false),
-      use_energy_cutoff_upper(false),
+      Base(),
       flatness(0.8),
       modification_factor_initial(1.0),
       modification_factor_final(1e-7),
@@ -72,12 +60,7 @@ namespace Mocasinns
     //! Constructor to copy parameters from other parameters with convertible energy type
     template <class OtherParametersType>
     explicit Parameters(const OtherParametersType& other) :
-      binning_reference(other.binning_reference), 
-      binning_width(other.binning_width), 
-      energy_cutoff_lower(other.energy_cutoff_lower),
-      energy_cutoff_upper(other.energy_cutoff_upper),
-      use_energy_cutoff_lower(other.use_energy_cutoff_lower),
-      use_energy_cutoff_upper(other.use_energy_cutoff_upper),
+      Base(other),
       flatness(other.flatness),
       modification_factor_initial(other.modification_factor_initial),
       modification_factor_final(other.modification_factor_final),
@@ -89,12 +72,7 @@ namespace Mocasinns
     //! Test for equality
     bool operator==(const Parameters& rhs) const
     {
-      return ((binning_reference == rhs.binning_reference) &&
-	      (binning_width == rhs.binning_width) &&
-	      (energy_cutoff_lower == rhs.energy_cutoff_lower) && 
-	      (energy_cutoff_upper == rhs.energy_cutoff_upper) &
-	      (use_energy_cutoff_lower == rhs.use_energy_cutoff_lower) && 
-	      (use_energy_cutoff_upper == rhs.use_energy_cutoff_upper) &&
+      return ((static_cast<Base>(*this) == static_cast<Base>(rhs)) &&
 	      (flatness == rhs.flatness) &&
 	      (modification_factor_initial == rhs.modification_factor_initial) &&
 	      (modification_factor_final == rhs.modification_factor_final) &&
@@ -116,12 +94,7 @@ namespace Mocasinns
     template<class Archive> void serialize(Archive & ar, const unsigned int)
     {
       // serialize base class information
-      ar & binning_reference;
-      ar & binning_width;
-      ar & energy_cutoff_lower;
-      ar & energy_cutoff_upper;
-      ar & use_energy_cutoff_lower;
-      ar & use_energy_cutoff_upper;
+      ar & boost::serialization::base_object<Base>(*this);
       ar & flatness;
       ar & modification_factor_initial;
       ar & modification_factor_final;

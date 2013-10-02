@@ -14,7 +14,7 @@ namespace Mocasinns
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
   WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase()
-    : Simulation<ConfigurationType, RandomNumberGenerator>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
+    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
   {
     simulation_parameters = Parameters();
     initialise_with_parameters();
@@ -22,7 +22,7 @@ namespace Mocasinns
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
   WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const Parameters& params) 
-    : Simulation<ConfigurationType, RandomNumberGenerator>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
+    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
   {
     simulation_parameters = params;
     initialise_with_parameters();
@@ -30,10 +30,22 @@ namespace Mocasinns
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
   WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const Parameters& params, ConfigurationType* initial_configuration) 
-    : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), sweep_counter(0)
+    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(initial_configuration), sweep_counter(0)
   {
     simulation_parameters = params;
     initialise_with_parameters();
+  }
+
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+  template <bool rejection_free_other>
+  WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free_other>& other)
+    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(this->configuration_space), sweep_counter(0)
+  {
+    log_density_of_states = other.log_density_of_states;
+    incidence_counter = other.incidence_counter;
+    simulation_parameters = other.simulation_parameters;
+    modification_factor_current = other.modification_factor_current;
+    sweep_counter = other.sweep_counter;
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
@@ -51,7 +63,12 @@ namespace Mocasinns
     // If the new energy is not contained in the density of the states, return an acceptance probability of 1.0
     typename HistoType<EnergyType, double>::iterator new_energy_bin = log_density_of_states.find(step_parameters.total_energy + step_parameters.delta_E);
     if (new_energy_bin != log_density_of_states.end())
-      return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
+    {
+      if (new_energy_bin->first == step_parameters.total_energy)
+	return 0.1;
+      else
+	return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
+    }
     else
       return 1.0;
   }
@@ -68,18 +85,18 @@ namespace Mocasinns
     if (update_position == log_density_of_states.end())
       log_density_of_states.insert(std::pair<EnergyType, double>(step_parameters.total_energy, log_density_of_states.min_y_value()->second + modification_factor_current*time));
     else
-      update_position->second += modification_factor_current*time;
+      update_position->second += std::min(1.0, modification_factor_current*time);
     
     // Update the incidence counter
-    incidence_counter[step_parameters.total_energy] += time;
+    incidence_counter[step_parameters.total_energy] += std::min(1.0, time);
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_rejected_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_rejected_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
     // Update the histograms
-    log_density_of_states[step_parameters.total_energy] += modification_factor_current;
-    incidence_counter[step_parameters.total_energy]++;
+    log_density_of_states[step_parameters.total_energy] += modification_factor_current*time;
+    incidence_counter[step_parameters.total_energy] += time;
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>

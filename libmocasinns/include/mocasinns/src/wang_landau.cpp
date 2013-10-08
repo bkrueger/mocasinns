@@ -63,12 +63,7 @@ namespace Mocasinns
     // If the new energy is not contained in the density of the states, return an acceptance probability of 1.0
     typename HistoType<EnergyType, double>::iterator new_energy_bin = log_density_of_states.find(step_parameters.total_energy + step_parameters.delta_E);
     if (new_energy_bin != log_density_of_states.end())
-    {
-      if (new_energy_bin->first == step_parameters.total_energy)
-	return 0.1;
-      else
-	return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
-    }
+      return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
     else
       return 1.0;
   }

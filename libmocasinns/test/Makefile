@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 OPT=-O2
-CFLAGS = -g -pg $(OPT) -Wall -Wextra -pedantic -std=c++0x -fopenmp
+CFLAGS = -g -pg $(OPT) -Wall -Wextra -pedantic -std=c++11 -fopenmp
 INCLUDE = -I../include -I../../libgespinst/include -I../../librandom/include
 
 TEST_LIBS = -lboost_serialization -lboost_signals -lboost_program_options -lcppunit -ldl

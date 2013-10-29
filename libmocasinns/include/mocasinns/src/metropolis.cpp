@@ -26,6 +26,7 @@ namespace ba = boost::accumulators;
 
 namespace Mocasinns
 {
+ 
 /*!
   \fn std::vector<typename Observator::observable_type> Metropolis<ConfigurationType, Step, RandomNumberGenerator>::do_metropolis_simulation(const TemperatureType& beta)
   \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.

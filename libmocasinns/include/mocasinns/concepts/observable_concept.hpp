@@ -35,7 +35,7 @@ namespace Mocasinns
 	observable_type_result = observable_1/2.0;
 
 	// There must be the pow and the sqrt functions defined for observables
-	observable_type_result = pow(observable_1, 2);
+	observable_type_result = pow(observable_1, 2.0);
 	observable_type_result = sqrt(observable_1);
       }
       

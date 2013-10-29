@@ -48,6 +48,8 @@ public:
   Simulation();
   //! Initialise a Simulation with given configuration space and default RandomNumberGenerator
   Simulation(ConfigurationType*);
+  //! Initialise a Simulation from a given simulation
+  Simulation(const Simulation& other);
   //! Virtual destructor, deletes the random number generator created in the constructors
   virtual ~Simulation();
 

@@ -159,6 +159,16 @@ Simulation<ConfigurationType, RandomNumberGenerator>::Simulation(ConfigurationTy
 }
 
 template <class ConfigurationType, class RandomNumberGenerator>
+Simulation<ConfigurationType, RandomNumberGenerator>::Simulation(const Simulation& other)
+  : rng_seed(other.rng_seed), is_terminating(other.is_terminating)
+{
+  rng = new RandomNumberGenerator();
+  rng->set_seed(rng_seed);
+  configuration_space = other.configuration_space;
+  dump_filename = other.dump_filename;
+}
+
+template <class ConfigurationType, class RandomNumberGenerator>
 Simulation<ConfigurationType, RandomNumberGenerator>::~Simulation()
 {
   delete rng;

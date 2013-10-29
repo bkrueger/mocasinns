@@ -65,6 +65,10 @@ public:
   Metropolis(const Parameters& params) : Simulation<ConfigurationType, RandomNumberGenerator>(), simulation_parameters(params) {}
   //! Initialise a Metropolis-MC simulation with given parameters and given configuration space
   Metropolis(const Parameters& params, ConfigurationType* initial_configuration) : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), simulation_parameters(params) {}
+  //! Initialise a Metropolis-MC simulation by copying from another simulation
+  Metropolis(const Metropolis& other)
+    : Simulation<ConfigurationType, RandomNumberGenerator>(other),
+      simulation_parameters(other.simulation_parameters) {}
 
   //! Get-accessor for the parameters of the Metropolis simulation
   const Parameters& get_simulation_parameters() { return simulation_parameters; }

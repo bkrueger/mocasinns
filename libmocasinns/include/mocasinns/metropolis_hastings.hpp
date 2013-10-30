@@ -98,7 +98,7 @@ namespace Mocasinns
     }
     //! Handle a rejected step (do nothing, must be implemented to use Simulation::do_steps)
     template <class NotImportant>
-    inline void handle_rejected_step(StepType&, NotImportant) {}
+    inline void handle_rejected_step(StepType&, NotImportant&) {}
 
     //! Execute a given number of Metropolis-MC steps on the configuration at inverse temperatur beta
     /*!

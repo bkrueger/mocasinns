@@ -97,7 +97,7 @@ bool Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::check
 
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   // Call the generic step function depending on the rejection free template parameter
   if (rejection_free)
@@ -118,7 +118,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_st
 
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   for (StepNumberType i = 0; i < step_number; ++i)
   {

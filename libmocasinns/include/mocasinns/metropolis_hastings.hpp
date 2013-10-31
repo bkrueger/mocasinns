@@ -48,6 +48,7 @@ namespace Mocasinns
     struct AcceptanceProbabilityParameters
     {
       EnergyType actual_energy;
+      EnergyType delta_E;
       AcceptanceProbabilityFunctor acceptance_probability_functor;
     };
     //! Forward declaration of an acceptance probability functor for the usual Boltzman weights
@@ -88,13 +89,15 @@ namespace Mocasinns
     template <class AcceptanceProbabilityParameters>
     inline double acceptance_probability(StepType& step_to_execute, AcceptanceProbabilityParameters& acceptance_probability_parameters)
     {
-      return acceptance_probability_parameters.acceptance_probability_functor(step_to_execute.delta_E(), acceptance_probability_parameters.actual_energy);
+      acceptance_probability_parameters.delta_E = step_to_execute.delta_E();
+      return acceptance_probability_parameters.acceptance_probability_functor(acceptance_probability_parameters.delta_E, 
+									      acceptance_probability_parameters.actual_energy);
     }
     //! Handle an executed step (do nothing, must be implemented to use Simulation::do_steps)
     template <class AcceptanceProbabilityParameters>
-    inline void handle_executed_step(StepType& executed_step, AcceptanceProbabilityParameters& acceptance_probability_parameters) 
+    inline void handle_executed_step(StepType&, AcceptanceProbabilityParameters& acceptance_probability_parameters) 
     {
-      acceptance_probability_parameters.actual_energy += executed_step.delta_E();
+      acceptance_probability_parameters.actual_energy += acceptance_probability_parameters.delta_E;
     }
     //! Handle a rejected step (do nothing, must be implemented to use Simulation::do_steps)
     template <class NotImportant>
@@ -106,10 +109,10 @@ namespace Mocasinns
       \param number Number of Metropolis-Hastings steps that will be performed
       \param acceptance_probability_functor Class object that defines a "double operator(EnergyType delta_E, EnergyType actual_energy)" returning the acceptance probability of the step.
     */
-    template<class AcceptanceProbabilityFunctor>
-    void do_metropolis_hastings_steps(const StepNumberType& number, const AcceptanceProbabilityFunctor& acceptance_probability_functor)
+    template<class AcceptanceProbabilityParameters>
+    void do_metropolis_hastings_steps(const StepNumberType& number, AcceptanceProbabilityParameters& acceptance_probability_parameters)
     {
-      this->template do_steps<this_type, StepType>(number, acceptance_probability_functor);
+      this->template do_steps<this_type, StepType>(number, acceptance_probability_parameters);
     }
 
     //! Execute a Metropolis Monte-Carlo simulation at given inverse temperature
@@ -167,7 +170,7 @@ namespace Mocasinns
   //! Struct for calculating the standard flat histogram acceptance probability
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
   template <class EnergyType, template<class,class> class HistoType>
-    struct MetropolisHastings<ConfigurationType, StepType, RandomNumberGenerator>::FlatHistogramAcceptanceProbability
+  struct MetropolisHastings<ConfigurationType, StepType, RandomNumberGenerator>::FlatHistogramAcceptanceProbability
   {
     //! Histogram of the log density of states
     HistoType<EnergyType, double> log_density_of_states;

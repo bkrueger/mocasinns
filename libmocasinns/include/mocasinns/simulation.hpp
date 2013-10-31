@@ -112,12 +112,12 @@ protected:
 
   //! Do a number of steps using an acceptance probability provided by the actual algorithm
   template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-  void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
+  void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 
 private:
   //! Do a number of generic steps using an acceptance probability provided by the actual algorithm
   template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool step_has_is_executable, bool step_has_selection_probability_factor>
-  void do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
+  void do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 
   //! Set the signals for POSIX signals
   void register_posix_signal_handler();

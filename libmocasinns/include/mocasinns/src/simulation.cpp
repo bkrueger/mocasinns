@@ -95,7 +95,7 @@ bool Simulation<ConfigurationType, RandomNumberGenerator>::check_for_posix_signa
 
 template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-void Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+void Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   // Call the generic get steps function
   do_generic_steps<Derived, StepType, AcceptanceProbabilityParameterType, 
@@ -105,7 +105,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNu
 
 template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
-void Simulation<ConfigurationType, RandomNumberGenerator>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+void Simulation<ConfigurationType, RandomNumberGenerator>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   for (StepNumberType i = 0; i < step_number; ++i)
   {

@@ -175,9 +175,26 @@ namespace Mocasinns
     //! Histogram of the log density of states
     HistoType<EnergyType, double> log_density_of_states;
     
+    //! Value of the minimal energy cutoff
+    EnergyType energy_cutoff_lower;
+    //! Value of the maximal energy cutoff
+    EnergyType energy_cutoff_upper;
+    //! Flag indicating whether to use the minimal energy cutoff, default value is false
+    bool use_energy_cutoff_lower;
+    //! Flag indicating whether to use the maximal energy cutoff, default value is false
+    bool use_energy_cutoff_upper;
+
+    FlatHistogramAcceptanceProbability()
+      : use_energy_cutoff_lower(false),
+	use_energy_cutoff_upper(false) { }
+
     //! Functor for calculating thea acceptance probability
     double operator()(const EnergyType& delta_E, const EnergyType& actual_energy) 
     { 
+      if ((simulation_parameters.use_energy_cutoff_lower && step_parameters.total_energy + step_parameters.delta_E < simulation_parameters.energy_cutoff_lower) ||
+	  (simulation_parameters.use_energy_cutoff_upper && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff_upper))
+	return 0.0;
+
       return exp(log_density_of_states[actual_energy] - log_density_of_states[actual_energy + delta_E]);
     }
   };

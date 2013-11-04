@@ -191,8 +191,8 @@ namespace Mocasinns
     //! Functor for calculating thea acceptance probability
     double operator()(const EnergyType& delta_E, const EnergyType& actual_energy) 
     { 
-      if ((simulation_parameters.use_energy_cutoff_lower && step_parameters.total_energy + step_parameters.delta_E < simulation_parameters.energy_cutoff_lower) ||
-	  (simulation_parameters.use_energy_cutoff_upper && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff_upper))
+      if ((use_energy_cutoff_lower && actual_energy + delta_E < energy_cutoff_lower) ||
+	  (use_energy_cutoff_upper && actual_energy + delta_E > energy_cutoff_upper))
 	return 0.0;
 
       return exp(log_density_of_states[actual_energy] - log_density_of_states[actual_energy + delta_E]);

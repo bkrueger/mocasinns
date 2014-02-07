@@ -180,6 +180,11 @@ ConfigurationType* Simulation<ConfigurationType, RandomNumberGenerator>::get_con
   return configuration_space;
 }
 template <class ConfigurationType, class RandomNumberGenerator>
+void Simulation<ConfigurationType, RandomNumberGenerator>::set_config_space(ConfigurationType* value) 
+{
+  configuration_space = value;
+}
+template <class ConfigurationType, class RandomNumberGenerator>
 int Simulation<ConfigurationType, RandomNumberGenerator>::get_random_seed() const
 {
   return rng_seed;

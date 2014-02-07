@@ -53,6 +53,8 @@ public:
 
   //! Get-Accessor for the pointer to the configuration space
   ConfigurationType* get_config_space() const;
+  //! Set-Accessor for the pointer to the configuration space
+  void set_config_space(ConfigurationType* value);
   //! Get-Accessor for the seed of the RandomNumberGenerator
   int get_random_seed() const;
   //! Set-Accessor for the seed of the RandomNumberGenerator

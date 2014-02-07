@@ -265,6 +265,11 @@ ConfigurationType* Simulation<ConfigurationType, RandomNumberGenerator, rejectio
   return configuration_space;
 }
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
+void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::set_config_space(ConfigurationType* value) 
+{
+  configuration_space = value;
+}
+template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 int Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::get_random_seed() const
 {
   return rng_seed;

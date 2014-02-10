@@ -64,8 +64,25 @@ namespace Mocasinns
     //! Initialise a Metropolis-MC simulation with default configuration space and given Parameters
     MetropolisBase(const Parameters& params) : Simulation<ConfigurationType, RandomNumberGenerator>(), simulation_parameters(params) {}
     //! Initialise a Metropolis-MC simulation with given parameters and given configuration space
-    MetropolisBase(const Parameters& params, ConfigurationType* initial_configuration) : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), simulation_parameters(params) {}
+    MetropolisBase(const Parameters& params, ConfigurationType* initial_configuration) 
+      : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), 
+	simulation_parameters(params) {}
+    //! Initialise a Metropolis-MC simulation by copying from another one
+    MetropolisBase(const MetropolisBase& other) 
+      : Simulation<ConfigurationType, RandomNumberGenerator>(other.configuration_space),
+	simulation_parameters(other.simulation_parameters) {}
     
+    //! Assignment operator
+    this_type& operator=(const MetropolisBase& other)
+    {
+      if (this != &other)
+      {
+	this->configuration_space = other.get_config_space();
+	this->simulation_parameters = other.simulation_parameters;
+      }
+      return *this;
+    }
+
     //! Get-accessor for the parameters of the Metropolis simulation
     const Parameters& get_simulation_parameters() { return simulation_parameters; }
     //! Set-accessor for the parameters of the Metropolis simulation

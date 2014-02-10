@@ -30,6 +30,11 @@ namespace Mocasinns
     MetropolisRejectionFree(const Parameters& params) : Base(params) {}
     //! Initialise a Metropolis-MC simulation with given parameters and given configuration space
     MetropolisRejectionFree(const Parameters& params, ConfigurationType* initial_configuration) : Base(params, initial_configuration) {}
+    //! Initialise a Metropolis-MC simulation by copying from another one
+    MetropolisRejectionFree(const MetropolisRejectionFree& other) : Base(other) {}
+
+    //! Assignment operator
+    MetropolisRejectionFree& operator=(const MetropolisRejectionFree& other) { Base::operator=(other); return *this;}
   };
 }
 

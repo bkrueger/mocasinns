@@ -30,6 +30,11 @@ namespace Mocasinns
     Metropolis(const Parameters& params) : Base(params) {}
     //! Initialise a Metropolis-MC simulation with given parameters and given configuration space
     Metropolis(const Parameters& params, ConfigurationType* initial_configuration) : Base(params, initial_configuration) {}
+    //! Initialise a Metropolis-MC simulation by copying from another one
+    Metropolis(const Metropolis& other) : Base(other) {}
+
+    //! Assignment operator
+    Metropolis& operator=(const Metropolis& other) { Base::operator=(other); return *this;}
   };
 }
 

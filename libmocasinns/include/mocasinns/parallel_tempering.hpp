@@ -52,7 +52,9 @@ namespace Mocasinns
     //! Boost signal handler invoked after every measurement
     boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
 
-    //! Initialise a parallel tempering simulation on one thread with given parameters and a range of pointers to configuration spaces
+    // //! Initialise a parallel tempering simulation with given parameters, one configuration space and the number of temperatures that will be used. The configuration space will be copied.
+    // ParallelTempering(const Parameters& params, ConfigurationType* configuration_space, unsigned int temperature_number);
+    //! Initialise a parallel tempering simulation with given parameters and a range of pointers to configuration spaces
     template <class ConfigurationPointerIterator>
     ParallelTempering(const Parameters& params, ConfigurationPointerIterator configuration_pointers_begin, ConfigurationPointerIterator configuration_pointers_end);
 
@@ -60,6 +62,14 @@ namespace Mocasinns
     ConfigurationType* get_config_space() { return get_config_space(0); }
     //! Get-accessor for the configuration pointer
     ConfigurationType* get_config_space(unsigned int index) { return metropolis_simulations[index].get_config_space(); }
+    //! Get-accessor for all configuration spaces
+    std::vector<ConfigurationType*> get_config_spaces()
+    {
+      std::vector<ConfigurationType*> result;
+      for (unsigned int i = 0; i < metropolis_simulations.size(); ++i)
+	result.push_back(get_config_space(i));
+      return result;
+    }
     //! Get-accessor for the parameters of the parallel tempering simulation
     const Parameters& get_simulation_parameters() { return simulation_parameters; }
     //! Set-accessor for the parameters of the parallel tempering simulation

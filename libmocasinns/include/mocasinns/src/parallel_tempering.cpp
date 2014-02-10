@@ -15,6 +15,22 @@
 
 namespace Mocasinns
 {
+  // /*!
+  //  * \param params Parameters of the simulation
+  //  * \param configuration_space Configuration space to work on, will be copied to be able to work on multiple configuration spaces
+  //  * \param temperature_number Number of inverse temperatures that will be simulated in parallel.
+  //  */
+  // template <class ConfigurationType, class StepType, class RandomNumberGenerator>
+  // ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::ParallelTempering(const Parameters& params, ConfigurationType* configuration_space, unsigned int inverse_temperature_number)
+  // {
+  //   for (unsigned int t = 0; t < inverse_temperature_number; ++t)
+  //   {
+  //     ConfigurationType* new_config_type = new ConfigurationType(*configuration_space);
+  //     MetropolisType new_metropolis_simulation(params, new_config_type);
+  //     metropolis_simulations.push_back(new_metropolis_simulation);
+  //   }
+  // }
+  
   /*!
     \tparam ConfigurationPointerIterator Iterator of a range of pointers to configurations to work on
     \param params Parameters of the simulation
@@ -222,7 +238,7 @@ namespace Mocasinns
       do_replica_exchange(inverse_temperatures_begin, inverse_temperatures_end);
 
       // Check for POSIX
-      if (this->check_for_posix_signal()) return;
+      //      if (this->check_for_posix_signal()) return;
     }
   }
 

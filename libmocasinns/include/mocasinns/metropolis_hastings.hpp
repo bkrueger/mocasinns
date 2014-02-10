@@ -25,7 +25,7 @@ namespace Mocasinns
 {
   //! Class for Metropolis-Hastings-Monte-Carlo simulations
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  class MetropolisHastings : public Simulation<ConfigurationType, RandomNumberGenerator>
+  class MetropolisHastings : public Simulation<ConfigurationType, RandomNumberGenerator, false>
   {
     // Check the configuration concept
     BOOST_CONCEPT_ASSERT((Concepts::ConfigurationConcept<ConfigurationType, StepType>));  
@@ -38,7 +38,7 @@ namespace Mocasinns
     //! Typedef of this class
     typedef MetropolisHastings<ConfigurationType, StepType, RandomNumberGenerator> this_type;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef typename Simulation<ConfigurationType, RandomNumberGenerator, false>::StepNumberType StepNumberType;
     typedef uint32_t MeasurementNumberType;
 
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
@@ -62,17 +62,17 @@ namespace Mocasinns
     typedef typename Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::ObserveEnergy DefaultObservator;
 
     //! Boost signal handler invoked after every measurement
-    boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
+    boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator, false>*)> signal_handler_measurement;
 
     //! Initialise a Metropolis-MC simulation with default configuration space and default Parameters
-    MetropolisHastings() : Simulation<ConfigurationType, RandomNumberGenerator>(), simulation_parameters() {}
+    MetropolisHastings() : Simulation<ConfigurationType, RandomNumberGenerator, false>(), simulation_parameters() {}
     //! Initialise a Metropolis-MC simulation with default configuration space and given Parameters
-    MetropolisHastings(const Parameters& params) : Simulation<ConfigurationType, RandomNumberGenerator>(), simulation_parameters(params) {}
+    MetropolisHastings(const Parameters& params) : Simulation<ConfigurationType, RandomNumberGenerator, false>(), simulation_parameters(params) {}
     //! Initialise a Metropolis-MC simulation with given parameters and given configuration space
-    MetropolisHastings(const Parameters& params, ConfigurationType* initial_configuration) : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), simulation_parameters(params) {}
+    MetropolisHastings(const Parameters& params, ConfigurationType* initial_configuration) : Simulation<ConfigurationType, RandomNumberGenerator, false>(initial_configuration), simulation_parameters(params) {}
     //! Initialise a Metropolis-MC simulation by copying from another simulation
     MetropolisHastings(const MetropolisHastings& other)
-      : Simulation<ConfigurationType, RandomNumberGenerator>(other),
+      : Simulation<ConfigurationType, RandomNumberGenerator, false>(other),
 	simulation_parameters(other.simulation_parameters) {}
 
     //! Get-accessor for the parameters of the Metropolis simulation
@@ -95,13 +95,13 @@ namespace Mocasinns
     }
     //! Handle an executed step (do nothing, must be implemented to use Simulation::do_steps)
     template <class AcceptanceProbabilityParameters>
-    inline void handle_executed_step(StepType&, AcceptanceProbabilityParameters& acceptance_probability_parameters) 
+    inline void handle_executed_step(StepType&, double, AcceptanceProbabilityParameters& acceptance_probability_parameters) 
     {
       acceptance_probability_parameters.actual_energy += acceptance_probability_parameters.delta_E;
     }
     //! Handle a rejected step (do nothing, must be implemented to use Simulation::do_steps)
     template <class NotImportant>
-    inline void handle_rejected_step(StepType&, NotImportant&) {}
+    inline void handle_rejected_step(StepType&, double, NotImportant&) {}
 
     //! Execute a given number of Metropolis-MC steps on the configuration at inverse temperatur beta
     /*!
@@ -142,7 +142,7 @@ namespace Mocasinns
     template<class Archive> void serialize(Archive & ar, const unsigned int)
     {
       // serialize base class information
-      ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator> >(*this);
+      ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator, false> >(*this);
     }
   };
 

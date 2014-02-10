@@ -15,6 +15,8 @@
 #include "test_entropic_sampling.hpp"
 #include "test_metropolis.hpp"
 #include "test_metropolis_parallel.hpp"
+#include "test_serial_tempering.hpp"
+#include "test_parallel_tempering.hpp"
 #include "test_wang_landau.hpp"
 #include "test_optimal_ensemble_sampling.hpp"
 #include "test_details/test_multicanonical/test_energy_type_extended.hpp"
@@ -58,6 +60,10 @@ int main(int argc, char *argv[])
     runner.addTest(TestMetropolis::suite());
   if (test_all || test_name == "MetropolisParallel")
     runner.addTest(TestMetropolisParallel::suite());
+  if (test_all || test_name == "SerialTempering")
+    runner.addTest(TestSerialTempering::suite());
+  if (test_all || test_name == "ParallelTempering")
+    runner.addTest(TestParallelTempering::suite());
   if (test_all || test_name == "WangLandau")
     runner.addTest(TestWangLandau::suite());
   if (test_all || test_name == "OptimalEnsembleSampling")

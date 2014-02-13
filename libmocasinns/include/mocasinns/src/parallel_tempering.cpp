@@ -15,23 +15,7 @@
 
 namespace Mocasinns
 {
-  // /*!
-  //  * \param params Parameters of the simulation
-  //  * \param configuration_space Configuration space to work on, will be copied to be able to work on multiple configuration spaces
-  //  * \param temperature_number Number of inverse temperatures that will be simulated in parallel.
-  //  */
-  // template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  // ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::ParallelTempering(const Parameters& params, ConfigurationType* configuration_space, unsigned int inverse_temperature_number)
-  // {
-  //   for (unsigned int t = 0; t < inverse_temperature_number; ++t)
-  //   {
-  //     ConfigurationType* new_config_type = new ConfigurationType(*configuration_space);
-  //     MetropolisType new_metropolis_simulation(params, new_config_type);
-  //     metropolis_simulations.push_back(new_metropolis_simulation);
-  //   }
-  // }
-  
-  /*!
+/*!
     \tparam ConfigurationPointerIterator Iterator of a range of pointers to configurations to work on
     \param params Parameters of the simulation
     \param configuration_pointers_begin Begin of the range of pointers to configurations to work on
@@ -42,12 +26,10 @@ namespace Mocasinns
   ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::ParallelTempering(const Parameters& params, ConfigurationPointerIterator configuration_pointers_begin, ConfigurationPointerIterator configuration_pointers_end) 
     : simulation_parameters(params),
       replica_exchange_direction(),
-      replica_exchange_log_rejected_up(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
-      replica_exchange_log_rejected_down(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
-      replica_exchange_log_rejected_null(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
-      replica_exchange_log_executed_up(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
-      replica_exchange_log_executed_down(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
-      replica_exchange_log_executed_null(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0)
+      replica_exchange_log_rejected(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
+      replica_exchange_log_executed(std::distance(configuration_pointers_begin, configuration_pointers_end) - 1, 0),
+      inverse_temperature_histogram_up(std::distance(configuration_pointers_begin, configuration_pointers_end), 0),
+      inverse_temperature_histogram_down(std::distance(configuration_pointers_begin, configuration_pointers_end), 0)
   {
     // Go through all configurations, store the pointers and set up a Metropolis simulation
     for (ConfigurationPointerIterator configuration_pointers_it = configuration_pointers_begin;
@@ -141,36 +123,26 @@ namespace Mocasinns
     double acceptance_probability = exp((*inverse_temperature_iterator_1 - *inverse_temperature_iterator_2) * 
   					(metropolis_simulations[exchange_index - 1].get_config_space()->energy() - metropolis_simulations[exchange_index].get_config_space()->energy()));
 
+    // Write the inverse temperature log
+    for (unsigned int b = 0; b < metropolis_simulations.size(); ++b)
+    {
+      typename std::map<ConfigurationType*, bool>::const_iterator direction = replica_exchange_direction.find(metropolis_simulations[b].get_config_space());
+      if (direction != replica_exchange_direction.end())
+      {
+	if (direction->second == false)
+	  inverse_temperature_histogram_up[b] += 1;
+	else
+	  inverse_temperature_histogram_down[b] += 1;
+      }
+    }
+
     // Do the step with the acceptance probability
     if (this->rng->random_double() < acceptance_probability)
     {
       ConfigurationType* temp(metropolis_simulations[exchange_index - 1].get_config_space());
 
-      // Exchange the configurations in the metropolis simulations
-      metropolis_simulations[exchange_index - 1].set_config_space(metropolis_simulations[exchange_index].get_config_space());
-      metropolis_simulations[exchange_index].set_config_space(temp);
-
-      // Write the replica exchange logs for index (exchange_index - 1)
-      if (replica_exchange_direction.find(metropolis_simulations[exchange_index - 1].get_config_space()) != replica_exchange_direction.end())
-      {
-	if (replica_exchange_direction[metropolis_simulations[exchange_index - 1].get_config_space()] == false)
-	  replica_exchange_log_executed_up[exchange_index - 1] += 1;
-	else
-	  replica_exchange_log_executed_down[exchange_index - 1] += 1;	
-      }
-      else
-	replica_exchange_log_executed_null[exchange_index - 1] += 1;
-
-      // Write the replica exchange logs for index (exchange_index)
-      if (replica_exchange_direction.find(metropolis_simulations[exchange_index].get_config_space()) != replica_exchange_direction.end())
-      {
-	if (replica_exchange_direction[metropolis_simulations[exchange_index].get_config_space()] == false)
-	  replica_exchange_log_executed_up[exchange_index] += 1;
-	else
-	  replica_exchange_log_executed_down[exchange_index] += 1;
-      }
-      else
-	replica_exchange_log_executed_null[exchange_index] += 1;
+      // Write the replica exchange log
+      replica_exchange_log_executed[exchange_index - 1] += 1;
 
       // Test whether the direction of replicas has changed
       if (exchange_index == 1)
@@ -178,31 +150,16 @@ namespace Mocasinns
       else if (exchange_index == metropolis_simulations.size() - 1)
 	replica_exchange_direction[metropolis_simulations[exchange_index - 1].get_config_space()] = true;
 
+      // Exchange the configurations in the metropolis simulations
+      metropolis_simulations[exchange_index - 1].set_config_space(metropolis_simulations[exchange_index].get_config_space());
+      metropolis_simulations[exchange_index].set_config_space(temp);
+
       return exchange_index;
     }
     else
     {
       // Write the replica exchange logs for index (exchange_index - 1)
-      if (replica_exchange_direction.find(metropolis_simulations[exchange_index - 1].get_config_space()) != replica_exchange_direction.end())
-      {
-	if (replica_exchange_direction[metropolis_simulations[exchange_index - 1].get_config_space()] == false)
-	  replica_exchange_log_rejected_up[exchange_index - 1] += 1;
-	else
-	  replica_exchange_log_rejected_down[exchange_index - 1] += 1;	
-      }
-      else
-	replica_exchange_log_rejected_null[exchange_index - 1] += 1;
-
-      // Write the replica exchange logs for index (exchange_index)
-      if (replica_exchange_direction.find(metropolis_simulations[exchange_index].get_config_space()) != replica_exchange_direction.end())
-      {
-	if (replica_exchange_direction[metropolis_simulations[exchange_index].get_config_space()] == false)
-	  replica_exchange_log_rejected_up[exchange_index] += 1;
-	else
-	  replica_exchange_log_rejected_down[exchange_index] += 1;
-      }
-      else
-	replica_exchange_log_rejected_null[exchange_index] += 1;
+      replica_exchange_log_rejected[exchange_index - 1] += 1;
 
       return 0;
     }
@@ -298,56 +255,22 @@ namespace Mocasinns
   }
 
   template <class ConfigurationType, class Step, class RandomNumberGenerator>
-  typename ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::ReplicaExchangeLog 
-  ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::replica_exchanges_executed() const
-  {
-    ReplicaExchangeLog result(metropolis_simulations.size() - 1);
-    for (unsigned int i = 0; i < result.size(); ++i)
-      result[i] = replica_exchange_log_executed_up[i] + replica_exchange_log_executed_down[i] + replica_exchange_log_executed_null[i];
-    return result;
-  }
-
-  template <class ConfigurationType, class Step, class RandomNumberGenerator>
-  typename ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::ReplicaExchangeLog 
-  ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::replica_exchanges_rejected() const
-  {
-    ReplicaExchangeLog result(metropolis_simulations.size() - 1);
-    for (unsigned int i = 0; i < result.size(); ++i)
-      result[i] = replica_exchange_log_rejected_up[i] + replica_exchange_log_rejected_down[i] + replica_exchange_log_rejected_null[i];
-    return result;
-  }
-
-  template <class ConfigurationType, class Step, class RandomNumberGenerator>
-  typename ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::ReplicaExchangeLog 
-  ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::replica_exchanges_up() const
-  {
-    ReplicaExchangeLog result(metropolis_simulations.size() - 1);
-    for (unsigned int i = 0; i < result.size(); ++i)
-      result[i] = replica_exchange_log_executed_up[i] + replica_exchange_log_rejected_up[i];
-    return result;
-  }
-
-  template <class ConfigurationType, class Step, class RandomNumberGenerator>
-  typename ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::ReplicaExchangeLog 
-  ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::replica_exchanges_down() const
-  {
-    ReplicaExchangeLog result(metropolis_simulations.size() - 1);
-    for (unsigned int i = 0; i < result.size(); ++i)
-      result[i] = replica_exchange_log_executed_down[i] + replica_exchange_log_rejected_down[i];
-    return result;
-  }
-
-  template <class ConfigurationType, class Step, class RandomNumberGenerator>
   void ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::replica_exchanges_reset()
   {
     for (unsigned int i = 0; i < metropolis_simulations.size() - 1; ++i)
     {
-      replica_exchange_log_rejected_up[i] = 0;
-      replica_exchange_log_rejected_down[i] = 0;
-      replica_exchange_log_rejected_null[i] = 0;
-      replica_exchange_log_executed_up[i] = 0;
-      replica_exchange_log_executed_down[i] = 0;
-      replica_exchange_log_executed_null[i] = 0;
+      replica_exchange_log_executed[i] = 0;
+      replica_exchange_log_rejected[i] = 0;
+    }
+  }
+
+  template <class ConfigurationType, class Step, class RandomNumberGenerator>
+  void ParallelTempering<ConfigurationType, Step, RandomNumberGenerator>::inverse_temperature_histograms_reset()
+  {
+    for (unsigned int i = 0; i < metropolis_simulations.size(); ++i)
+    {
+      inverse_temperature_histogram_up[i] = 0;
+      inverse_temperature_histogram_down[i] = 0;
     }
   }
 
@@ -385,197 +308,5 @@ namespace Mocasinns
   {
     assert(std::distance(inverse_temperatures_begin, inverse_temperatures_end) == static_cast<int>(metropolis_simulations.size()));
   }
-
-  template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  template <class InverseTemperatureIterator>
-  std::vector<double> ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::InverseTemperatureOptimization::optimize_berg_single(ParallelTemperingType& simulation, 
-																		  InverseTemperatureIterator inverse_temperatures_begin, 
-																		  InverseTemperatureIterator inverse_temperatures_end)
-  {
-    // Do a parallel tempering simulation until there is no exchange that was not done at least once
-    ReplicaExchangeLog replica_exchanges_executed = simulation.replica_exchanges_executed();
-    ReplicaExchangeLog replica_exchanges_rejected = simulation.replica_exchanges_rejected();
-    while (*std::min_element(replica_exchanges_executed.begin(), replica_exchanges_executed.end()) == 0)
-    {
-      // Do a parallel tempering simulation
-      simulation.do_parallel_tempering_simulation(inverse_temperatures_begin, inverse_temperatures_end);
-    
-      // Get the replica exchanges logs
-      replica_exchanges_executed = simulation.replica_exchanges_executed();
-      replica_exchanges_rejected = simulation.replica_exchanges_rejected();
-    }
-
-    // Get the number of replicas
-    unsigned int replica_number = replica_exchanges_executed.size() + 1;
-    // Reset the replica exchange logs
-    simulation.replica_exchanges_reset();
-      
-    // Calculate the acceptance probabilities
-    std::vector<double> acceptance_probabilities(replica_number - 1, 0.0);
-    for (unsigned int i = 0; i < replica_number - 1; ++i)
-      acceptance_probabilities[i] = static_cast<double>(replica_exchanges_executed[i]) / static_cast<double>(replica_exchanges_executed[i] + replica_exchanges_rejected[i]);
-      
-    // Calculate the correction constant lambda
-    double lambda_denominator = 0.0;
-    InverseTemperatureIterator inverse_temperature_small(inverse_temperatures_begin);
-    InverseTemperatureIterator inverse_temperature_large(inverse_temperatures_begin);
-    std::advance(inverse_temperature_large, 1);
-    for (unsigned int i = 0; i < replica_number - 1; ++i)
-    {
-      lambda_denominator += acceptance_probabilities[i] * (*inverse_temperature_large - *inverse_temperature_small);
-      inverse_temperature_small++;
-      inverse_temperature_large++;
-    }
-    double lambda = (*inverse_temperature_small - *inverse_temperatures_begin) / lambda_denominator;
-    
-    // Update the temperatures
-    inverse_temperature_small = inverse_temperatures_begin;
-    inverse_temperature_large = inverse_temperatures_begin;
-    std::advance(inverse_temperature_large, 1);
-    std::vector<typename std::iterator_traits<InverseTemperatureIterator>::value_type> new_temperatures(replica_number, 0.0);
-    new_temperatures[0] = *inverse_temperatures_begin;
-    for (unsigned int i = 1; i < replica_number; ++i)
-    {
-      new_temperatures[i] = new_temperatures[i - 1] + lambda * acceptance_probabilities[i - 1] * (*inverse_temperature_large - *inverse_temperature_small);
-      inverse_temperature_small++;
-      inverse_temperature_large++;
-    }
-    InverseTemperatureIterator inverse_temperature_it = inverse_temperatures_begin;
-    for (unsigned int i = 0; i < replica_number; ++i)
-    {
-      *inverse_temperature_it = new_temperatures[i];
-      inverse_temperature_it++;
-    }
-
-    return acceptance_probabilities;
-  }
-
-  template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  template <class InverseTemperatureIterator>
-  void ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::InverseTemperatureOptimization::
-  optimize_berg_general(ParallelTemperingType& simulation, 
-			InverseTemperatureIterator inverse_temperatures_begin, 
-			InverseTemperatureIterator inverse_temperatures_end, 
-			unsigned int recursion_number,
-			std::vector<std::vector<double> >& acceptance_probabilities_all,
-			std::vector<std::vector<typename std::iterator_traits<InverseTemperatureIterator>::value_type> >& inverse_temperatures_all)
-  {
-    typedef typename std::iterator_traits<InverseTemperatureIterator>::value_type InverseTemperatureType;
-    
-    // Save the old parameters
-    ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::Parameters old_parameters = simulation.get_simulation_parameters();
-    ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::Parameters new_parameters(old_parameters);
-    new_parameters.measurement_number = 1;
-    new_parameters.relaxation_steps = 0;
-    simulation.set_simulation_parameters(new_parameters);
-    // Do a manual relaxation
-    simulation.do_parallel_tempering_steps(old_parameters.relaxation_steps, inverse_temperatures_begin, inverse_temperatures_end);
-
-    // Do the number of given recursions
-    inverse_temperatures_all.push_back(std::vector<InverseTemperatureType>(inverse_temperatures_begin, inverse_temperatures_end));
-    for (unsigned int r = 0; r < recursion_number + 1; ++r)
-    {
-      acceptance_probabilities_all.push_back(optimize_berg_single(simulation, inverse_temperatures_begin, inverse_temperatures_end));
-      if (r != recursion_number)
-	inverse_temperatures_all.push_back(std::vector<InverseTemperatureType>(inverse_temperatures_begin, inverse_temperatures_end));
-    }
-				       
-    // Reset the old parameters
-    simulation.set_simulation_parameters(old_parameters);
-  }
-  
-  template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  template <class InverseTemperatureIterator>
-  void ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::InverseTemperatureOptimization::optimize_berg(ParallelTemperingType& simulation, 
-															    InverseTemperatureIterator inverse_temperatures_begin, 
-															    InverseTemperatureIterator inverse_temperatures_end, 
-															    unsigned int recursion_number)
-  {
-    typedef typename std::iterator_traits<InverseTemperatureIterator>::value_type InverseTemperatureType;
-    std::vector<std::vector<double> > acceptance_probabilities;
-    std::vector<std::vector<InverseTemperatureType> > inverse_temperatures;
-
-    optimize_berg_general(simulation, inverse_temperatures_begin, inverse_temperatures_end, recursion_number, acceptance_probabilities, inverse_temperatures);
-  }
-
-  template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  template <class InverseTemperatureIterator>
-  void ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::InverseTemperatureOptimization::optimize_berg_weights_worst_acceptance(ParallelTemperingType& simulation, 
-																		     InverseTemperatureIterator inverse_temperatures_begin, 
-																		     InverseTemperatureIterator inverse_temperatures_end, 
-																		     unsigned int recursion_number)
-  {
-    typedef typename std::iterator_traits<InverseTemperatureIterator>::value_type InverseTemperatureType;
-    std::vector<std::vector<double> > acceptance_probabilities;
-    std::vector<std::vector<InverseTemperatureType> > inverse_temperatures;
-
-    optimize_berg_general(simulation, inverse_temperatures_begin, inverse_temperatures_end, recursion_number, acceptance_probabilities, inverse_temperatures);
-
-    // Calculate the weights from the acceptance probabilities
-    std::vector<double> weights;
-    double weights_sum = 0.0;
-    unsigned int replica_number = acceptance_probabilities[0].size() + 1;
-    for (unsigned int r = 0; r < recursion_number; ++r)
-    {
-      weights.push_back(*std::min_element(acceptance_probabilities[r].begin(), acceptance_probabilities[r].end()));
-      weights_sum += weights[r];
-    }
-
-    // Write the resulting temperatures into the iterator
-    InverseTemperatureIterator inverse_temperature_it = inverse_temperatures_begin;
-    for (unsigned int i = 0; i < replica_number; ++i)
-    {
-      InverseTemperatureType inverse_temperature(0.0);
-      for (unsigned int r = 0; r < recursion_number; ++r)
-      {
-	inverse_temperature += weights[r] * inverse_temperatures[r][i];
-      }
-      *inverse_temperature_it = inverse_temperature / weights_sum;
-      inverse_temperature_it++;
-    }
-  }
-
-  template <class ConfigurationType, class StepType, class RandomNumberGenerator>
-  template <class InverseTemperatureIterator>
-  void ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::InverseTemperatureOptimization::
-  optimize_berg_weights_independent_acceptance(ParallelTemperingType& simulation, 
-					       InverseTemperatureIterator inverse_temperatures_begin, 
-					       InverseTemperatureIterator inverse_temperatures_end, 
-					       unsigned int recursion_number)
-  {
-    typedef typename std::iterator_traits<InverseTemperatureIterator>::value_type InverseTemperatureType;
-    std::vector<std::vector<double> > acceptance_probabilities;
-    std::vector<std::vector<InverseTemperatureType> > inverse_temperatures;
-
-    optimize_berg_general(simulation, inverse_temperatures_begin, inverse_temperatures_end, recursion_number, acceptance_probabilities, inverse_temperatures);
-
-    // Calculate the weights from the acceptance probabilities
-    std::vector<double> weights;
-    double weights_sum = 0.0;
-    unsigned int replica_number = acceptance_probabilities[0].size() + 1;
-    for (unsigned int r = 0; r < recursion_number; ++r)
-    {
-      double sigma_squared = 0.0;
-      for (unsigned int i = 0; i < replica_number - 1; ++i)
-	sigma_squared += 1.0/pow(acceptance_probabilities[r][i], 2);
-
-      weights.push_back(1.0 / sqrt(sigma_squared));
-      weights_sum += weights[r];
-    }
-
-    // Write the resulting temperatures into the iterator
-    InverseTemperatureIterator inverse_temperature_it = inverse_temperatures_begin;
-    for (unsigned int i = 0; i < replica_number; ++i)
-    {
-      InverseTemperatureType inverse_temperature(0.0);
-      for (unsigned int r = 0; r < recursion_number; ++r)
-      {
-	inverse_temperature += weights[r] * inverse_temperatures[r][i];
-      }
-      *inverse_temperature_it = inverse_temperature / weights_sum;
-      inverse_temperature_it++;
-    }
-  }
-} // of namespace Mocasinns
-
+}
 #endif

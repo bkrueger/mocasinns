@@ -45,11 +45,15 @@ namespace Mocasinns
     typedef typename MetropolisType::DefaultObservator DefaultObservator;
     //! Type of the replica exchange logs
     typedef std::vector<unsigned int> ReplicaExchangeLog;
+    //! Type of the inverse temperature histograms
+    typedef std::vector<unsigned int> InverseTemperatureHistogram;
     // Typedefs for integers
     typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
     typedef uint32_t MeasurementNumberType;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
+
+    template <class InverseTemperatureType> class InverseTemperatureOptimization;
 
     //! Boost signal handler invoked after every measurement
     boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_measurement;
@@ -79,6 +83,18 @@ namespace Mocasinns
     //! Set-accessor for the parameters of the parallel tempering simulation
     void set_simulation_parameters(const Parameters& value) { simulation_parameters = value; }
 
+    //! Number of executed replica exchanges. 
+    //! At index i the number of executed exchanges between inverse temperature index i and (i+1) is recorded
+    const ReplicaExchangeLog& get_replica_exchanges_executed() const { return replica_exchange_log_executed; }
+    //! Number of rejected replica exchanges. 
+    //! At index i the number of rejected exchanges between inverse temperature index i and (i+1) is recorded
+    const ReplicaExchangeLog get_replica_exchanges_rejected() const { return replica_exchange_log_rejected; }
+
+    //! Histogram of temperature visits after leaving the minimal inverse temperature
+    const InverseTemperatureHistogram& get_inverse_temperature_histogram_up() const { return inverse_temperature_histogram_up; }
+    //! Histogram of temperature visits after leaving the maximal inverse temperature
+    const InverseTemperatureHistogram& get_inverse_temperature_histogram_down() const { return inverse_temperature_histogram_down; }
+
     //! Execute a given number of parallel tempering steps on the configuration at inverse temperatur beta
     template <class TemperatureTypeIterator>
     void do_parallel_tempering_steps(const StepNumberType& number, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
@@ -94,7 +110,7 @@ namespace Mocasinns
     template<class Observator = DefaultObservator, class TemperatureTypeIterator>
     std::vector<std::vector<typename Observator::observable_type> > do_parallel_tempering_simulation(TemperatureTypeIterator inverse_temperatures_begin, 
     												   TemperatureTypeIterator inverse_temperatures_end);
-    
+   
     //! Execute a Metropolis Monte-Carlo simulation with an accumulator for storing the measurements results (inverse temperatures must be provided as parameters). Copies the accumulators and returns a vector of these accumulators.
     template<class Observator = DefaultObservator, class Accumulator, class TemperatureTypeIterator>
     std::vector<Accumulator> do_parallel_tempering_simulation(const Accumulator& measurement_accumulator,
@@ -104,31 +120,11 @@ namespace Mocasinns
     void do_parallel_tempering_simulation(AccumulatorIterator measurement_accumulators_begin, AccumulatorIterator measurement_accumulators_end,
 					TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
 
-    //! Class for doing inverse temperature optimization of a parallel tempering simulation
-    class InverseTemperatureOptimization;
-
-    //! Number of executed replica exchanges. 
-    //! At index i the number of executed exchanges between inverse temperature index i and (i+1) is recorded
-    ReplicaExchangeLog replica_exchanges_executed() const;
-    //! Number of rejected replica exchanges. 
-    //! At index i the number of rejected exchanges between inverse temperature index i and (i+1) is recorded
-    ReplicaExchangeLog replica_exchanges_rejected() const;
-    //! Number of replica exchanges (executed and rejected) going from minimal inverse temperature to maximal inverse temperature. 
-    //! At index i the number of executed exchanges between inverse temperature index i and (i+1) is recorded
-    ReplicaExchangeLog replica_exchanges_up() const;
-    //! Number of replica exchanges (executed and rejected) going from maximal inverse temperature to maximal inverse temperature. 
-    //! At index i the number of executed exchanges between inverse temperature index i and (i+1) is recorded
-    ReplicaExchangeLog replica_exchanges_down() const;
-    //! Number of executed replica exchanges for configurations that were last at the minimal inverse temperature
-    const ReplicaExchangeLog& replica_exchanges_executed_up() const { return replica_exchange_log_executed_up; }
-    //! Number of executed replica exchanges for configurations that were last at the maximal inverse temperature
-    const ReplicaExchangeLog& replica_exchanges_executed_down() const { return replica_exchange_log_executed_down; }
-    //! Number of rejected replica exchanges for configurations that were last at the minimal inverse temperature
-    const ReplicaExchangeLog& replica_exchanges_rejected_up() const { return replica_exchange_log_rejected_up; }
-    //! Number of rejected replica exchanges for configurations that were last at the maximal inverse temperature
-    const ReplicaExchangeLog& replica_exchanges_rejected_down() const { return replica_exchange_log_rejected_down; }
     //! Reset the replica exchange logs
     void replica_exchanges_reset();
+    
+    //! Reset the inverse temperature histograms
+    void inverse_temperature_histograms_reset();
 
     //! Load the data of the Metropolis simulation from a serialization stream
     virtual void load_serialize(std::istream& input_stream);
@@ -148,18 +144,14 @@ namespace Mocasinns
 
     //! Vector that stores for each configuration pointer whether the minimal inverse temperature (false) or the maximal inverse temperature (true) was left
     std::map<ConfigurationType*, bool> replica_exchange_direction;
-    //! Variable for logging the number of rejected replica exchanges after leaving the minimal inverse temperature
-    ReplicaExchangeLog replica_exchange_log_rejected_up;
-    //! Variable for logging the number of rejected replica exchanges after leaving the minimal inverse temperature
-    ReplicaExchangeLog replica_exchange_log_rejected_down;
-    //! Variable for logging the number of rejected replica exchanges not having met the maximal or minimal inverse temperature
-    ReplicaExchangeLog replica_exchange_log_rejected_null; 
-    //! Variable for logging the number of accepted replica exchanges after leaving the minimal inverse temperature
-    ReplicaExchangeLog replica_exchange_log_executed_up;
-    //! Variable for logging the number of accepted replica exchanges after leaving the maximal inverse temperature
-    ReplicaExchangeLog replica_exchange_log_executed_down;
-    //! Variable for logging the number of accepted replica exchanges not having met the maximal or minimal inverse temperature
-    ReplicaExchangeLog replica_exchange_log_executed_null; 
+    //! Variable for loggint the number of rejected replica exchanges (at index i the exchanges between indices i and (i+1) are logged)
+    ReplicaExchangeLog replica_exchange_log_rejected;
+    //! Variable for loggint the number of execyted replica exchanges (at index i the exchanges between indices i and (i+1) are logged)
+    ReplicaExchangeLog replica_exchange_log_executed;
+    //! Variable for storing the temperature visits after leaving the minimal inverse temperature
+    InverseTemperatureHistogram inverse_temperature_histogram_up;
+    //! Variable for storing the temperature visits after leaving the maximal inverse temperature
+    InverseTemperatureHistogram inverse_temperature_histogram_down;
 
     //! Private function to check whether a given temperature range has the same size as the configuration pointers and throw an error if necessary.
     template <class TemperatureTypeIterator>
@@ -188,64 +180,87 @@ namespace Mocasinns
 
   //! Class for doing inverse temperature optimization of a parallel tempering simulation
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
+  template <class InverseTemperatureType>
   class ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::InverseTemperatureOptimization
   {
   public:
     typedef ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator> ParallelTemperingType;
+    typedef typename ParallelTemperingType::ReplicaExchangeLog ReplicaExchangeLog;
+    typedef typename ParallelTemperingType::InverseTemperatureHistogram InverseTemperatureHistogram;
 
-    //! Static function for optimizing the inverse temperatures, can be used in the signal handlers.
+    template <class InverseTemperatureIterator>
+    InverseTemperatureOptimization(ParallelTemperingType* optimize_simulation, 
+				   InverseTemperatureIterator inverse_temperatures_begin,
+				   InverseTemperatureIterator inverse_temperatures_end) 
+      : simulation(optimize_simulation), 
+	original_parameters(optimize_simulation->get_simulation_parameters()),
+	replica_number(optimize_simulation->get_config_spaces().size())
+    { 
+      std::vector<InverseTemperatureType> first_inverse_temperatures;
+      for (InverseTemperatureIterator it = inverse_temperatures_begin;
+	   it != inverse_temperatures_end; ++it)
+	first_inverse_temperatures.push_back(*it);
+      inverse_temperatures.push_back(first_inverse_temperatures);
+    }
+
+    //! Vector that stores the inverse temperatures of the replicas for each recursion step
+    const std::vector<std::vector<InverseTemperatureType> >& get_inverse_temperatures() const { return inverse_temperatures; }
+    //! Vector that stores the acceptance probabilities of the replica exchanges for each recursion step
+    const std::vector<std::vector<double> >& get_acceptance_probabilities() const { return acceptance_probabilities;}
+
+    //! Function for optimizing the inverse temperatures, can be used in the signal handlers.
     //! Uses the method suggested by B.A. Berg (2004, p. 304) without weights.
-    template <class InverseTemperatureIterator>
-    static void optimize_berg(ParallelTemperingType& simulation, 
-			      InverseTemperatureIterator inverse_temperatures_begin, 
-			      InverseTemperatureIterator inverse_temperatures_end, 
-			      unsigned int recursion_number);
+    void optimize_berg(unsigned int recursion_number);
 
-    //! Static function for optimizing the inverse temperatures, can be used in the signal handlers.
+    //! Function for optimizing the inverse temperatures, can be used in the signal handlers.
     //! Uses the method suggested by B.A. Berg (2004, p. 304) with weights from worst acceptance rates.
-    template <class InverseTemperatureIterator>
-    static void optimize_berg_weights_worst_acceptance(ParallelTemperingType& simulation, 
-						       InverseTemperatureIterator inverse_temperatures_begin, 
-						       InverseTemperatureIterator inverse_temperatures_end, 
-						       unsigned int recursion_number);
+    void optimize_berg_weights_worst_acceptance(unsigned int recursion_number);
 
-    //! Static function for optimizing the inverse temperatures, can be used in the signal handlers.
+    //! Function for optimizing the inverse temperatures, can be used in the signal handlers.
     //! Uses the method suggested by B.A. Berg (2004, p. 304) with weights from statistical independent acceptance rates.
-    template <class InverseTemperatureIterator>
-    static void optimize_berg_weights_independent_acceptance(ParallelTemperingType& simulation, 
-							     InverseTemperatureIterator inverse_temperatures_begin, 
-							     InverseTemperatureIterator inverse_temperatures_end, 
-							     unsigned int recursion_number);
+    void optimize_berg_weights_independent_acceptance(unsigned int recursion_number);
 
-    //! Static function for optimizing the inverse temperatures, can be used in the signal handlers.
+    //! Function for optimizing the inverse temperatures, can be used in the signal handlers.
     //! Uses the method suggested by H.G. Katzgraber et al. (2006)
-    template <class InverseTemperatureIterator>
-    static void optimize_katzgraber(ParallelTemperingType& simulation, 
-				    InverseTemperatureIterator inverse_temperatures_begin, 
-				    InverseTemperatureIterator inverse_temperatures_end, 
-				    unsigned int recursion_number);
+    void optimize_katzgraber(unsigned int recursion_number);
 
   private:
+    //! Pointer to the parallel tempering simulation
+    ParallelTemperingType* simulation;
+    //! Parameters of the original simulation
+    typename ParallelTemperingType::Parameters original_parameters;
+    //! Number of replicas in the simulations
+    unsigned int replica_number;
+
+    //! Vector that stores the inverse temperatures of the replicas for each recursion step
+    std::vector<std::vector<InverseTemperatureType> > inverse_temperatures;
+    //! Vector that stores the acceptance probabilities of the replica exchanges for each recursion step
+    std::vector<std::vector<double> > acceptance_probabilities;
+
+    //! Alter the parameters to perform inverse temperature optimization
+    void set_parameters_optimize()
+    {
+      typename ParallelTemperingType::Parameters optimization_parameters(original_parameters);
+      optimization_parameters.measurement_number = 1;
+      optimization_parameters.relaxation_steps = 0;
+      simulation->set_simulation_parameters(optimization_parameters);
+    }
+    //! Undo the change in the parameters
+    void unset_parameters_optimize() { simulation->set_simulation_parameters(original_parameters); }
+
+    //! Mesure the acceptance probabilities. Does simulations until each replica exchange was accepted at least once
+    void measure_acceptance_probabilities();
+    //! Logs the acceptance probabilities and resets the replica exchange logs
+    void log_acceptance_probabilities();
+    
     //! Does a single temperature optimization step using the method suggested by B.A. Berg (2004, p. 304)
-    template <class InverseTemperatureIterator>
-    static std::vector<double> optimize_berg_single(ParallelTemperingType& simulation,
-						    InverseTemperatureIterator inverse_temperatures_begin,
-						    InverseTemperatureIterator inverse_temperatures_end);
-
-    //! Does the given number of optimization steps using the method suggestes by B.A. Berg (2004, p. 304) and returns the inverse temperatures and the acceptance probabilities
-    template <class InverseTemperatureIterator>
-    static void optimize_berg_general(ParallelTemperingType& simulation,
-				      InverseTemperatureIterator inverse_temperatures_begin,
-				      InverseTemperatureIterator inverse_temperatures_end,
-				      unsigned int recursion_number,
-				      std::vector<std::vector<double> >& acceptance_probabilities_all,
-				      std::vector<std::vector<typename std::iterator_traits<InverseTemperatureIterator>::value_type> >& inverse_temperatures_all);
-
-
+    void optimize_berg_step();
+    //! Does a single temperature optimization step using the method suggested by H.G. Katzgraber et al. (2006)
+    void optimize_katzgraber_step();
   };
-  
-} // of namespace Mocasinns
+}  
 
 #include "src/parallel_tempering.cpp"
+#include "src/parallel_tempering_inverse_temperature_optimization.cpp"
 
 #endif

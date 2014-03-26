@@ -228,6 +228,40 @@ def bootstrap_2(a, b, bootstrap_number, function=lambda a, b: a + b, dtype=None)
     bootstrap_values = numpy.fromiter((function(numpy.mean(a[numpy.random.randint(0, high=n_a, size=n_a)], dtype=dtype), numpy.mean(b[numpy.random.randint(0, high=n_b, size=n_b)], dtype=dtype)) for i in range(bootstrap_number)), numpy.float)
     return numpy.mean(bootstrap_values), math.sqrt(float(bootstrap_number)/(bootstrap_number - 1))*numpy.std(bootstrap_values)
 
+def bootstrap_N(a, bootstrap_number, function=lambda x: numpy.sum(x), dtype=None):
+    """
+    Compute the expectation value and the error of a function of an arbitrary number of parameters, where there is an independent data set for each parameter
+
+    Parameters
+    ----------
+    a : list of array_like
+        List of N one-dimensional numpy arrays, the i-th list entry are the measurements for the i-th parameter of the function
+        If the elements of `a` are not arrays, a conversion is attempted.
+    bootstrapnumber : integer
+        Number of bootstrap resamplings
+    function : callable function
+        Function of a list N of variables resulting in a scalar for which the expectation value and the error should be calculated
+    dtype : data-type, optional
+        Type to use in computing the jackknife mean and error. 
+        For integer inputs, the default is `float64`; for floating point inputs, it is the same as the input dtype.
+
+    Examples and Tests
+    ------------------
+    >>> a = numpy.random.normal(loc=5.0, scale=2.0, size=1000)
+    >>> b = numpy.random.normal(loc=3.0, scale=1.0, size=1000)
+    >>> mean, error = bootstrap_N([a, b], 100)
+    >>> (mean > 7.9, mean < 8.1)
+    (True, True)
+    >>> (error > math.sqrt(5.0)/math.sqrt(1000 - 1) - 0.01, error < math.sqrt(5.0)/math.sqrt(1000 - 1) + 0.01)
+    (True, True)
+    """
+    # Define the number of data points
+    n = [x.size for x in a]
+    
+    # Do the bootstrapping
+    bootstrap_values = numpy.fromiter((function([numpy.mean(a[i][numpy.random.randint(0, high=n[i], size=n[i])], dtype=dtype) for i in range(len(a))]) for j in range(bootstrap_number)), numpy.float)
+    return numpy.mean(bootstrap_values), math.sqrt(float(bootstrap_number)/(bootstrap_number - 1))*numpy.std(bootstrap_values)
+
 # Use doctest for unit tests
 if __name__ == "__main__":
     import doctest

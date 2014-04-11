@@ -204,6 +204,67 @@ void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,R
     modification_factor_current *= simulation_parameters.modification_factor_multiplier;
   }
 }
+
+/*! \fn AUTO_TEMPLATE_1
+ * \details Performs the Belardinelli version of the Wang-Landau algorithm that can be found in PRE 75, 046701 (2007).
+ *
+ * The basic differences are:
+ * - The flatness of the incidence histogram is not checked, it does only matter that every energy has to be visited once
+ * - If the new modfication factor is smaller than 1/t (where t is the Monte-Carlo time), it is not multiplied with the modification_factor multiplier, but chosen according to 1/t.
+ *
+ * \param monte_carlo_time_unit Number that specifies how many single steps are one Monte-Carlo time unit
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation(unsigned int monte_carlo_time_unit)
+{
+  // Set the sweep counter to 0
+  sweep_counter = 0;
+
+  // Do the first part of the algorithm (modification factor is bigger than the inverse Monte-Carlo time)
+  while (modification_factor_current > simulation_parameters.modification_factor_final &&
+	 (sweep_counter == 0 || // Needed to avoid dividing by one
+	  modification_factor_current > static_cast<double>(monte_carlo_time_unit)/(sweep_counter * simulation_parameters.sweep_steps)))
+  {
+    // Do steps until each energy has been reached at least once
+    while (incidence_counter.min_y_value()->second == 0)
+    {
+      do_wang_landau_steps(simulation_parameters.sweep_steps);
+      sweep_counter++;
+    }
+
+    // Invoke the information signal handler
+    signal_handler_modfac_change(this);
+    // If the simulation was aborted, exit the loop
+    if (this->is_terminating) break;
+    
+    // Reset the incidence counter
+    incidence_counter.set_all_y_values(0);
+    // Renormalize the density of states
+    log_density_of_states.shift_bin_zero(log_density_of_states.min_x_value());
+    // Decrease the modification factor
+    modification_factor_current *= simulation_parameters.modification_factor_multiplier;
+  }
+
+  // Do the second part of the algorithm (modification factor is smaller than the inverse Monte-Carlo time)
+  unsigned long monte_carlo_time_counter = 0;
+  while (modification_factor_current > simulation_parameters.modification_factor_final)
+  {
+    do_wang_landau_steps(monte_carlo_time_unit);
+    monte_carlo_time_counter++;
+    
+    // Decrease the modification factor
+    modification_factor_current = 1.0 / (monte_carlo_time_counter + static_cast<double>(sweep_counter * simulation_parameters.sweep_steps) / monte_carlo_time_unit);
+
+    // Invoke the information signal handler
+    signal_handler_modfac_change(this);
+
+    // If the simulation was aborted, exit the loop
+    if (this->is_terminating) break;  
+  }
+    
+  // Renormalize the density of states
+  log_density_of_states.shift_bin_zero(log_density_of_states.min_x_value());
+}
   
 /*! \fn AUTO_TEMPLATE_1
  * \details The modficiation_factor_current is set to the initial modification factor given by the parameters object, the histograms log_density_of_states and incidence_counter are resetted and initialised according to the prototype histogram given with the parameters object.

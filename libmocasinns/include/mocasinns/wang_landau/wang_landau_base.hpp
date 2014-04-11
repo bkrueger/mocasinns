@@ -96,6 +96,8 @@ namespace Mocasinns
     void do_wang_landau_steps();
     //! Do a complete wang-landau simulation until the final modification factor is reached
     void do_wang_landau_simulation();
+    //! Do a complete wang-landau simulation using a 1/t change in the modification factor until the final modifcation factor is reached
+    void do_wang_landau_simulation_1_t(unsigned int monte_carlo_time_unit);
     
     virtual void load_serialize(std::istream& input_stream);
     virtual void load_serialize(const char* filename);

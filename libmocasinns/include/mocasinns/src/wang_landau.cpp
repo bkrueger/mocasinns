@@ -1,5 +1,4 @@
-/*!
- * \file wang_landau.cpp
+/*! \file src/wang_landau.cpp
  * \brief Implementation of the WangLandau simulation class
  * 
  * Usage examples are found in the test cases.
@@ -9,192 +8,247 @@
 
 #ifdef MOCASINNS_WANG_LANDAU_WANG_LANDAU_BASE_HPP
 
-namespace Mocasinns
+/*! \fn AUTO_TEMPLATE_1
+ * \details Construct a Wang-Landau simulation with standard parameters and a new ConfigurationType
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase()
+  : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
 {
+  simulation_parameters = Parameters();
+  initialise_with_parameters();
+}
 
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase()
-    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
-  {
-    simulation_parameters = Parameters();
-    initialise_with_parameters();
-  }
-  
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const Parameters& params) 
-    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
-  {
-    simulation_parameters = params;
-    initialise_with_parameters();
-  }
+/*! \fn AUTO_TEMPLATE_1
+ * \details Construct a Wang-Landau simulation with given parameters and a new ConfigurationType
+ * \param params Wang-Landau parameter object with the parameters of the simulation.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const Parameters& params) 
+  : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(static_cast<ConfigurationType*>(0)), sweep_counter(0)
+{
+  simulation_parameters = params;
+  initialise_with_parameters();
+}
 
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const Parameters& params, ConfigurationType* initial_configuration) 
-    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(initial_configuration), sweep_counter(0)
-  {
-    simulation_parameters = params;
-    initialise_with_parameters();
-  }
+/*! \fn AUTO_TEMPLATE_1
+ * \details Construct a Wang-Landau simulation with given parameters and a given ConfigurationType
+ * \param params Wang-Landau parameter object with the parameters of the simulation.
+ * \param initial_configuration Pointer to a ConfigurationType onto which the simulation will be performed.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const Parameters& params, ConfigurationType* initial_configuration) 
+  : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(initial_configuration), sweep_counter(0)
+{
+  simulation_parameters = params;
+  initialise_with_parameters();
+}
 
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  template <bool rejection_free_other>
-  WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free_other>& other)
-    : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(this->configuration_space), sweep_counter(0)
-  {
-    log_density_of_states = other.log_density_of_states;
-    incidence_counter = other.incidence_counter;
-    simulation_parameters = other.simulation_parameters;
-    modification_factor_current = other.modification_factor_current;
-    sweep_counter = other.sweep_counter;
-  }
+/*! \fn AUTO_TEMPLATE_2
+ * \details Copies a Wang-Landau simulation from another given simulation.
+ * \tparam rejection_free_other Automatically determined from parameter
+ * \param other WangLandau or WangLandauRejectionFree simulation object that will be copied.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+template <bool rejection_free_other>
+Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandauBase(const WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free_other>& other)
+  : Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>(this->configuration_space), sweep_counter(0)
+{
+  log_density_of_states = other.log_density_of_states;
+  incidence_counter = other.incidence_counter;
+  simulation_parameters = other.simulation_parameters;
+  modification_factor_current = other.modification_factor_current;
+  sweep_counter = other.sweep_counter;
+}
 
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  double WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
-  {
-    // Calculate the energy difference of the step
-    step_parameters.delta_E = step_to_execute.delta_E();
-    
-    // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
-    if ((simulation_parameters.use_energy_cutoff_lower && step_parameters.total_energy + step_parameters.delta_E < simulation_parameters.energy_cutoff_lower) ||
-	(simulation_parameters.use_energy_cutoff_upper && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff_upper))
-      return 0.0;
-    
-    // Calculate and return the acceptance probability
-    // If the new energy is not contained in the density of the states, return an acceptance probability of 1.0
-    typename HistoType<EnergyType, double>::iterator new_energy_bin = log_density_of_states.find(step_parameters.total_energy + step_parameters.delta_E);
-    if (new_energy_bin != log_density_of_states.end())
-      return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
-    else
-      return 1.0;
-  }
+/*! \fn AUTO_TEMPLATE_1
+ * \details The acceptance probability of the Wang-Landau simulation is calculated using the following formula:
+ * \f[
+ *   A(1 \rightarrow 2) = \mathrm{min}\left(1, \frac{g(E_1)}{g(E_2)}\right)
+ * \f]
+ *
+ * \param step_to_execute Step of which the acceptance probability will be calculated
+ * \param step_parameter Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+double Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+{
+  // Calculate the energy difference of the step
+  step_parameters.delta_E = step_to_execute.delta_E();
   
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
-  {
-    // Increment the total energy
-    step_parameters.total_energy += step_parameters.delta_E;
-    
-    // If the according bin does not exist in the density of states, initialise the density of states with the minimum dos + the current modification factor
-    // If the according bin does exist, add the current modification factor to the density of states
-    typename HistoType<EnergyType, double>::iterator update_position = log_density_of_states.find(step_parameters.total_energy);
-    if (update_position == log_density_of_states.end())
-      log_density_of_states.insert(std::pair<EnergyType, double>(step_parameters.total_energy, log_density_of_states.min_y_value()->second + modification_factor_current*time));
-    else
-      update_position->second += std::min(1.0, modification_factor_current*time);
-    
-    // Update the incidence counter
-    incidence_counter[step_parameters.total_energy] += std::min(1.0, time);
-  }
+  // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
+  if ((simulation_parameters.use_energy_cutoff_lower && step_parameters.total_energy + step_parameters.delta_E < simulation_parameters.energy_cutoff_lower) ||
+      (simulation_parameters.use_energy_cutoff_upper && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff_upper))
+    return 0.0;
   
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_rejected_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
-  {
-    // Update the histograms
-    log_density_of_states[step_parameters.total_energy] += modification_factor_current*time;
-    incidence_counter[step_parameters.total_energy] += time;
-  }
+  // Calculate and return the acceptance probability
+  // If the new energy is not contained in the density of the states, return an acceptance probability of 1.0
+  typename HistoType<EnergyType, double>::iterator new_energy_bin = log_density_of_states.find(step_parameters.total_energy + step_parameters.delta_E);
+  if (new_energy_bin != log_density_of_states.end())
+    return exp(log_density_of_states[step_parameters.total_energy] - new_energy_bin->second);
+  else
+    return 1.0;
+}
   
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_steps(const uint32_t& number)
-  {
-    // Variable to track the energy
-    Details::Multicanonical::StepParameter<EnergyType> step_parameters;
-    step_parameters.total_energy = this->configuration_space->energy();
-    
-    // Call the generic function of Simulation
-    this->template do_steps<WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>, StepType>(number, step_parameters);
-  }
+/*! \fn AUTO_TEMPLATE_1
+ * \details the following updates are performed:
+ * - The total energy stored in the \c step_parameter is increased by the energy difference of the step
+ * - The incidence counter at the new total energy is increase by one
+ * - The density of states is increased by the current modification factor
+ *
+ * If a new energy bin that was not encountered before is found, it is set to the minimum of all other density of states energy bins.
+ *
+ * \param step_to_execute Step of which the acceptance probability will be calculated
+ * \param step_parameter Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+{
+  // Increment the total energy
+  step_parameters.total_energy += step_parameters.delta_E;
   
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_steps()
+  // If the according bin does not exist in the density of states, initialise the density of states with the minimum dos + the current modification factor
+  // If the according bin does exist, add the current modification factor to the density of states
+  typename HistoType<EnergyType, double>::iterator update_position = log_density_of_states.find(step_parameters.total_energy);
+  if (update_position == log_density_of_states.end())
+    log_density_of_states.insert(std::pair<EnergyType, double>(step_parameters.total_energy, log_density_of_states.min_y_value()->second + modification_factor_current*time));
+  else
+    update_position->second += std::min(1.0, modification_factor_current*time);
+  
+  // Update the incidence counter
+  incidence_counter[step_parameters.total_energy] += std::min(1.0, time);
+}
+  
+/*! \fn AUTO_TEMPLATE_1
+ * \details Increase the incidence histogram at the current energy of the system.
+ *
+ * \param step_to_execute Step of which the acceptance probability will be calculated
+ * \param step_parameter Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_rejected_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+{
+  // Update the histograms
+  log_density_of_states[step_parameters.total_energy] += modification_factor_current*time;
+  incidence_counter[step_parameters.total_energy] += time;
+}
+
+/*! \fn AUTO_TEMPLATE_1
+ * \details The incidence counter and the density of states are modified using the actual modification factor.
+ * \param number Number of steps to perform.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_steps(const uint32_t& number)
+{
+  // Variable to track the energy
+  Details::Multicanonical::StepParameter<EnergyType> step_parameters;
+  step_parameters.total_energy = this->configuration_space->energy();
+  
+  // Call the generic function of Simulation
+  this->template do_steps<WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>, StepType>(number, step_parameters);
+}
+  
+/*! \fn AUTO_TEMPLATE_1
+ * \details The steps are executed in portions of the sweep steps given by the parameter object. Before each sweep a check for POSIX signals takes place and the signal_handler_sweep is called.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_steps()
+{
+  // Set a local sweep counter
+  unsigned int modfac_sweep_counter = 0;
+  
+  // While the flatness is below the desired flatness, do sweep_steps wang landau steps
+  while (incidence_counter.flatness() < simulation_parameters.flatness)
   {
-    // Set a local sweep counter
-    unsigned int modfac_sweep_counter = 0;
+    // Check for signals and return if simulation should be terminated
+    if (this->check_for_posix_signal()) return;
+    // Handle the sweep signal handler
+    signal_handler_sweep(this);
     
-    // While the flatness is below the desired flatness, do sweep_steps wang landau steps
-    while (incidence_counter.flatness() < simulation_parameters.flatness)
+    do_wang_landau_steps(simulation_parameters.sweep_steps);
+    modfac_sweep_counter++;
+    sweep_counter++;
+    
+    // If the modfac_sweep_counter reached the reset number, reset the incidence counter
+    if (modfac_sweep_counter == simulation_parameters.reset_sweep_number)
     {
-      // Check for signals and return if simulation should be terminated
-      if (this->check_for_posix_signal()) return;
-      // Handle the sweep signal handler
-      signal_handler_sweep(this);
-      
-      do_wang_landau_steps(simulation_parameters.sweep_steps);
-      modfac_sweep_counter++;
-      sweep_counter++;
-      
-      // If the modfac_sweep_counter reached the reset number, reset the incidence counter
-      if (modfac_sweep_counter == simulation_parameters.reset_sweep_number)
-      {
-	modfac_sweep_counter = 0;
-	incidence_counter.set_all_y_values(0);
-      }
-    }
-  }
-  
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation()
-  {
-    while (modification_factor_current > simulation_parameters.modification_factor_final)
-    {
-      // Do steps until the flatness criterion is reached
-      do_wang_landau_steps();
-      
-      // Invoke the information signal handler
-      signal_handler_modfac_change(this);
-      // If the simulation was aborted, exit the loop
-      if (this->is_terminating) break;
-
-      // Reset the incidence counter
+      modfac_sweep_counter = 0;
       incidence_counter.set_all_y_values(0);
-      // Renormalize the density of states
-      log_density_of_states.shift_bin_zero(log_density_of_states.min_x_value());
-      // Decrease the modification factor
-      modification_factor_current *= simulation_parameters.modification_factor_multiplier;
     }
   }
-  
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::initialise_with_parameters()
+}
+
+/*! \fn AUTO_TEMPLATE_1
+ * \details Performs the full Wang-Landau simulation. Executes step in portions of the sweep number (given by the parameters object) and test whether the incidence counter is flat.
+ *
+ * If the incidence counter is flat, the modification factor will be decreased, the incidence counter will be resetted, the density of states will be normalized and the signal_handler_modfac_change is called.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation()
+{
+  while (modification_factor_current > simulation_parameters.modification_factor_final)
   {
-    // Set the current modification factor to the initial modification factor
-    modification_factor_current = simulation_parameters.modification_factor_initial;
+    // Do steps until the flatness criterion is reached
+    do_wang_landau_steps();
     
-    // Set the binnings of the density of states and the incidence counter
-    log_density_of_states.initialise_empty(simulation_parameters.prototype_histo);
-    incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
+    // Invoke the information signal handler
+    signal_handler_modfac_change(this);
+    // If the simulation was aborted, exit the loop
+    if (this->is_terminating) break;
+    
+    // Reset the incidence counter
+    incidence_counter.set_all_y_values(0);
+    // Renormalize the density of states
+    log_density_of_states.shift_bin_zero(log_density_of_states.min_x_value());
+    // Decrease the modification factor
+    modification_factor_current *= simulation_parameters.modification_factor_multiplier;
   }
+}
   
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(std::istream& input_stream)
-  {
-    boost::archive::text_iarchive input_archive(input_stream);
-    input_archive >> (*this);
-  }
-
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(const char* filename)
-  {
-    std::ifstream input_filestream(filename);
-    load_serialize(input_filestream);
-    input_filestream.close();
-  }
-
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(std::ostream& output_stream) const
-  {
-    boost::archive::text_oarchive output_archive(output_stream);
-    output_archive << (*this);
-  }
+/*! \fn AUTO_TEMPLATE_1
+ * \details The modficiation_factor_current is set to the initial modification factor given by the parameters object, the histograms log_density_of_states and incidence_counter are resetted and initialised according to the prototype histogram given with the parameters object.
+ *
+ * If the incidence counter is flat, the modification factor will be decreased, the incidence counter will be resetted, the density of states will be normalized and the signal_handler_modfac_change is called.
+ */
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::initialise_with_parameters()
+{
+  // Set the current modification factor to the initial modification factor
+  modification_factor_current = simulation_parameters.modification_factor_initial;
   
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-  void WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(const char* filename) const
-  {
-    std::ofstream output_filestream(filename);
-    save_serialize(output_filestream);
-    output_filestream.close();
-  }
+  // Set the binnings of the density of states and the incidence counter
+  log_density_of_states.initialise_empty(simulation_parameters.prototype_histo);
+  incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
+}
+  
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(std::istream& input_stream)
+{
+  boost::archive::text_iarchive input_archive(input_stream);
+  input_archive >> (*this);
+}
 
-} // of namespace Mocasinns
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(const char* filename)
+{
+  std::ifstream input_filestream(filename);
+  load_serialize(input_filestream);
+  input_filestream.close();
+}
+
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(std::ostream& output_stream) const
+{
+  boost::archive::text_oarchive output_archive(output_stream);
+  output_archive << (*this);
+}
+  
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(const char* filename) const
+{
+  std::ofstream output_filestream(filename);
+  save_serialize(output_filestream);
+  output_filestream.close();
+}
 
 #endif

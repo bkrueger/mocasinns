@@ -1,5 +1,4 @@
-/*!
- * \file simulation.cpp
+/*! \file simulation.cpp
  * \brief Implementation of the base class for all Monte-Carlo-Simulations in MoCaSinns
  * 
  * Usage examples are found in the test cases.
@@ -14,11 +13,8 @@
 #include "../details/optional_concept_checks/step_type_has_is_executable.hpp"
 #include "../details/optional_concept_checks/step_type_has_selection_probability_factor.hpp"
 
-namespace Mocasinns
-{
-
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::register_posix_signal_handler()
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::register_posix_signal_handler()
 {
   // Set the signal handle
   signal(SIGTERM, handle_posix_signal);
@@ -27,7 +23,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::regis
 }
 
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::move_dump_file()
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::move_dump_file()
 {
   std::stringstream command_builder;
   command_builder << "mv ";
@@ -36,7 +32,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::move_
   system(command_builder.str().c_str());
 }
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::remove_temporary_dump_file()
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::remove_temporary_dump_file()
 {
   std::stringstream command_builder;
   command_builder << "rm ";
@@ -44,7 +40,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::remov
   system(command_builder.str().c_str());
 }
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::initialise_dump_file_random()
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::initialise_dump_file_random()
 {
   // Try as long as the dump file name does not exist
   bool file_exists = true;
@@ -65,8 +61,11 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::initi
   }
 }
 
+  /*! \fn 
+   * \param signal_number Enum for the type of the signals
+   */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::handle_posix_signal(int signal_number)
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::handle_posix_signal(int signal_number)
 {
   if (signal_number == SIGTERM) signal_number_caught = 1;
   if (signal_number == SIGUSR1) signal_number_caught = 2;
@@ -74,7 +73,7 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::handl
 }
 
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-bool Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::check_for_posix_signal()
+bool Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::check_for_posix_signal()
 {
   switch(signal_number_caught)
   {
@@ -95,9 +94,35 @@ bool Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::check
   }
 }
 
+/*! \fn AUTO_TEMPLATE_2
+ * \details Executes a number of steps using the acceptance_probability, the handle_executed_step and the handle_rejected_step functions of the derived algorithm. It can be specified whether the used step type provides the member function is_executable (otherwise the algorithm does not test the executability and executes every step) and selection_probaility_factor (otherwise the algorithm assumes that the ratio of selection probabilities is allways 1.0).
+ * 
+ * If the simulation is not rejection-free (specified by the template parameter of the class), one step is executed in the following way (by calling the function do_steps_generic):
+ * -# The step will be proposed using the random number generator of the simulation
+ * -# If the StepType provides the function is_executable and the current step is not executable, the handle_rejected_step function of the derived algorithm is executed and the next step will be proposed. Otherwise the current step will be examined further as following:
+ * -# If the StepType provides the function selection_probability_factor, it is calculated for the current step.
+ * -# The acceptance probability of the step is calculated using the acceptance_probability function of the Dervied algorithm. Afterwards it is devided by the selection probability ratio if applicable.
+ * -# A random number is generated that deterimines whether the step will be executed. According to the outcome of the random number the step is executed and the handle_executed_step function of the Derived algorithm is called, otherwise the handle_rejected_step function of the Derived algorithm is called.
+ *
+ * If the simulation is rejection-free (specified by the template parameter of the class), one step is executed in the following way (by calling the function do_steps_generic_rejection_free)
+ * -# All possible steps of the current configurations are proposed using the ConfigurationType::all_steps() function.
+ * -# For each step it is determined whether it is executable (if the StepType does not provide an is_executable function, this is automatically assumed). If this is not the case, the acceptance probability of the step is set to 0.0
+ * -# If the StepType provides the function selection_probability_factor, it is calculated for the current step.
+ * -# The acceptance probability of the step is calculated using the acceptance_probability function of the Dervied algorithm. Afterwards it is devided by the selection probability ratio if applicable.
+ * -# After the exception probabilities of all steps were calculated, the step to execute is determined by randomly choosing an step weighted with their acceptance probability, and the time that a non-rejection free algorithm would spent in the actual state is calculated by inverting the sum of all acceptance probabilities.
+ * -# The acceptance probability of the step that will be executed is calculated again to get the acceptance_probability_parameter right
+ * -# If the calculated time is infinite (this is the case if all acceptance probabilities are 0), the step is rejected and the handle_rejected_step of the Derived algorithm is called
+ * -# If there is a finite time the step is executed and the handle_executed_step function of the Derived algorithm is called with the time as parameter.
+ *
+ * \tparam Derived Type of the derived algorithm
+ * \tparam StepType Type of the steps proposed by the ConfigurationType
+ * \tparam AcceptanceProbabilityParameterType Type of the data that is piped to the acceptance probability calculation of the derived algorithm
+ * \param step_number Number of steps to propose (= number of executed steps + number of rejected steps)
+ * \param acceptance_probability_parameter Some object or quantity that piped to the acceptance probability calculation of the derived algorithm.
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   // Call the generic step function depending on the rejection free template parameter
   if (rejection_free)
@@ -116,9 +141,15 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_st
   }
 }
 
+/*! \fn AUTO_TEMPLATE_2
+ * \details Private function. See do_steps(step_number, acceptance_probability_parameters) for documentation of implementation details and (template) parameters.
+ * 
+ * \tparam STEP_HAS_IS_EXECUTABLE Boolean stating whether the StepType provides the function is_executable
+ * \tparam STEP_HAS_SELECTION_PROBABILITY_FACTOR Boolean stating whether the StepType associated provides the function selection_probability_factor
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   for (StepNumberType i = 0; i < step_number; ++i)
   {
@@ -148,9 +179,15 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_ge
   }
 }
 
+/*! \fn AUTO_TEMPLATE_2
+ * \details Private function. See do_steps(step_number, acceptance_probability_parameters) for documentation of implementation details and (template) parameters.
+ * 
+ * \tparam STEP_HAS_IS_EXECUTABLE Boolean stating whether the StepType provides the function is_executable
+ * \tparam STEP_HAS_SELECTION_PROBABILITY_FACTOR Boolean stating whether the StepType associated provides the function selection_probability_factor
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps_rejection_free(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps_rejection_free(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
 {
   for (StepNumberType i = 0; i < step_number; ++i)
   {
@@ -193,21 +230,6 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_ge
       if (cumulative_acceptance_probabilities[s] <= rnd && cumulative_acceptance_probabilities[s+1] > rnd)
 	step_index = s;
     }
-    // std::cout << "Energy: " << configuration_space->energy() << " -> " << configuration_space->energy() + all_steps[step_index].delta_E() << std::endl;
-    // std::cout << "Time: " << 1.0 / cumulative_acceptance_probabilities[all_steps.size()] << std::endl;
-    // if (all_steps[step_index].is_executable() == false || 1.0 / cumulative_acceptance_probabilities[all_steps.size()] > 10.0) 
-    // {
-    //   std::cout << "Non-executable step encountered!" << std::endl;
-    //   std::cout << "Step index: " << step_index << std::endl;
-    //   std::cout << "Actual energy: " << configuration_space->energy() << std::endl;
-    //   std::cout << "Parameter energy: " << acceptance_probability_parameter.total_energy << std::endl;
-    //   std::cout << "Simulation time: " << configuration_space->get_simulation_time() << std::endl;
-    //   for (unsigned int s = 0; s < all_steps.size(); ++s)
-    //   {
-    // 	std::cout << s << " " << acceptance_probabilities[s] << " " << cumulative_acceptance_probabilities[s] << std::endl;
-    // 	std::cout << all_steps[s].is_executable() << std::endl;
-    //   }
-    // }
 
     // Calculate again the acceptance probability to get the acceptance probability parameter right.
     // TODO: Correct this in the future because this is not efficient
@@ -230,9 +252,11 @@ void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_ge
   }
 }
   
-
+/*! \fn AUTO_TEMPLATE_1
+ * \details The configuration space is allocated during the construction of the simulation.
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::Simulation()
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::Simulation()
   : rng_seed(0), is_terminating(false)
 {
   rng = new RandomNumberGenerator();
@@ -242,8 +266,11 @@ Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::Simulation
   register_posix_signal_handler();
 }
 
+/*! \fn AUTO_TEMPLATE_1
+ * \param new_configuration Pointer to the configuration space onto which the algorithm will work. The configuration space is not copied in the constructor.
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::Simulation(ConfigurationType* new_configuration)
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::Simulation(ConfigurationType* new_configuration)
   : rng_seed(0), is_terminating(false)
 {
   rng = new RandomNumberGenerator();
@@ -254,70 +281,52 @@ Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::Simulation
 }
 
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::~Simulation()
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::~Simulation()
 {
   delete rng;
 }
 
+/*! \fn AUTO_TEMPLATE_1
+ * \details Uses the functionality of boost::serialization.
+ * \param input_stream Stream from which the simulation will be loaded.
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-ConfigurationType* Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::get_config_space() const
-{
-  return configuration_space;
-}
-template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::set_config_space(ConfigurationType* value) 
-{
-  configuration_space = value;
-}
-template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-int Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::get_random_seed() const
-{
-  return rng_seed;
-}
-template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::set_random_seed(int seed) 
-{
-  rng_seed = seed;
-  rng->set_seed(seed);
-}
-template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-const std::string& Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::get_dump_filename() const
-{
-  return dump_filename;
-}
-template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::set_dump_filename(const std::string& value) 
-{
-  dump_filename = value;
-}
-
-template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
   input_archive >> (*this);
 }
+/*! \fn AUTO_TEMPLATE_1
+ * \details Uses the functionality of boost::serialization.
+ * \param filename Filename of the stored simulation
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
 {
   std::ifstream input_filestream(filename);
   load_serialize(input_filestream);
   input_filestream.close();
 }
+/*! \fn AUTO_TEMPLATE_1
+ * \details Uses the functionality of boost::serialization.
+ * \param output_stream Stream to which the simulation will be written
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
 {
   boost::archive::text_oarchive output_archive(output_stream);
   output_archive << (*this);
 }
+/*! \fn AUTO_TEMPLATE_1
+ * \details Uses the functionality of boost::serialization.
+ * \param filename Filename of the stored simulation
+ */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-void Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_serialize(output_filestream);
   output_filestream.close();
 }
-
-} // of namespace Mocasinns
 
 #endif

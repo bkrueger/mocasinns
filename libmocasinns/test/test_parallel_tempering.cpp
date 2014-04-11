@@ -128,11 +128,6 @@ void TestParallelTempering::test_do_parallel_tempering_simulation()
   std::cout << "beta = 0.4, <E> = " << ba::mean(acc_default_vector[2]) << " +- " << ba::error_of<ba::tag::mean>(acc_default_vector[2]) << std::endl;
   std::cout << "beta = 0.6, <E> = " << ba::mean(acc_default_vector[3]) << " +- " << ba::error_of<ba::tag::mean>(acc_default_vector[3]) << std::endl;
   std::cout << "beta = 0.8, <E> = " << ba::mean(acc_default_vector[4]) << " +- " << ba::error_of<ba::tag::mean>(acc_default_vector[4]) << std::endl;
-  std::cout << "Replica exchanges rejected:    " << test_simulation->get_replica_exchange_log()[0] << std::endl;
-  std::cout << "Replica exchanges 0.0 <-> 0.2: " << test_simulation->get_replica_exchange_log()[1] << std::endl;
-  std::cout << "Replica exchanges 0.2 <-> 0.4: " << test_simulation->get_replica_exchange_log()[2] << std::endl;
-  std::cout << "Replica exchanges 0.4 <-> 0.6: " << test_simulation->get_replica_exchange_log()[3] << std::endl;
-  std::cout << "Replica exchanges 0.6 <-> 0.8: " << test_simulation->get_replica_exchange_log()[4] << std::endl;
   CPPUNIT_ASSERT_DOUBLES_EQUAL(+0.00, ba::mean(acc_default_vector[0]), 0.5);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-3.41, ba::mean(acc_default_vector[1]), 0.5);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-6.41, ba::mean(acc_default_vector[2]), 0.5);

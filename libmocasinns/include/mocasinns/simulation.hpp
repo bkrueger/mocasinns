@@ -52,17 +52,17 @@ public:
   virtual ~Simulation();
 
   //! Get-Accessor for the pointer to the configuration space
-  ConfigurationType* get_config_space() const;
+  ConfigurationType* get_config_space() const { return configuration_space; }
   //! Set-Accessor for the pointer to the configuration space
-  void set_config_space(ConfigurationType* value);
+  void set_config_space(ConfigurationType* value) { configuration_space = value;}
   //! Get-Accessor for the seed of the RandomNumberGenerator
-  int get_random_seed() const;
+  int get_random_seed() const { return rng_seed; }
   //! Set-Accessor for the seed of the RandomNumberGenerator
-  void set_random_seed(int seed);
+  void set_random_seed(int seed) { rng_seed = seed; rng->set_seed(seed); }
   //! Get-Accessor for the path and name of the dumped file
-  const std::string& get_dump_filename() const;
+  const std::string& get_dump_filename() const { return dump_filename; }
   //! Set-Accesspr for the path and name of the dumped file
-  void set_dump_filename(const std::string& value);
+  void set_dump_filename(const std::string& value) { dump_filename = value; }
 
   //! Load the data of the simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream);
@@ -110,7 +110,6 @@ protected:
     ar & rng_seed;
   }
 
-  //! Do a number of steps using an acceptance probability provided by the actual algorithm, decides using the template parameter rejection free whether to do rejectio free or normal steps
   template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
   void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 

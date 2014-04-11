@@ -24,10 +24,7 @@ namespace ba = boost::accumulators;
 
 #include "../details/metropolis/vector_accumulator.hpp"
 
-namespace Mocasinns
-{
-/*!
-  \fn std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
+/*! \fn AUTO_TEMPLATE_2
   \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed.
@@ -35,7 +32,7 @@ namespace Mocasinns
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
+std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -50,7 +47,7 @@ std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationTy
   return measurements_accumulator.internal_vector;
 }
 
-/*!  
+/*! \fn AUTO_TEMPLATE_2 
   \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
   \tparam InputIterator Type of the iterator that iterates the different temperatures that will be considered
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
@@ -60,7 +57,7 @@ std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationTy
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class InputIterator>
-std::vector<std::vector<typename Observator::observable_type> > MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
+std::vector<std::vector<typename Observator::observable_type> > Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -75,7 +72,7 @@ std::vector<std::vector<typename Observator::observable_type> > MetropolisBase<C
   }
 }  
 
-/*!
+/*! \fn AUTO_TEMPLATE_2
  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
  \tparam Accumulator Class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
@@ -84,7 +81,7 @@ std::vector<std::vector<typename Observator::observable_type> > MetropolisBase<C
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class Accumulator, class TemperatureType>
-void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
+void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -112,7 +109,7 @@ void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>
   }
 }
 
-/*!
+/*! \fn AUTO_TEMPLATE_2
  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
  \tparam AccumulatorIterator Iterator of a container of a class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
  \tparam InverseTemperatureIterator  Iterator of a container of a type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
@@ -123,7 +120,7 @@ void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
-void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
+void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
 {  
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -141,7 +138,7 @@ void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>
   }
 }
 
-/*!
+/*! \fn AUTO_TEMPLATE_2
   \details Calculates the autocorrelation function C(t) of the observable f using the formula
   \f[
   C_f(t) = \left\langle f_0 f_t \right\rangle - \langle f \rangle^2
@@ -160,7 +157,7 @@ void MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>
 */									
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
+std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -208,7 +205,7 @@ std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationTy
   return results;
 }
 
-/*!
+/*! \fn AUTO_TEMPLATE_2
   \details Calculates the integrated autocorrelation time \f$ \tau_\mathrm{int} \f$ based on the autocorrelation function \f$ C(t) \f$ using this formula:
   \f[
   \tau_\mathrm{int} = \left[1 + 2\sum_{t=1}^{N-1} \left( 1 - \frac{t}{N}\right) \frac{C(t)}{C(0)} \right]
@@ -223,7 +220,7 @@ std::vector<typename Observator::observable_type> MetropolisBase<ConfigurationTy
  */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-typename Observator::observable_type MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
+typename Observator::observable_type Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -244,32 +241,30 @@ typename Observator::observable_type MetropolisBase<ConfigurationType, Step, Ran
 }
 
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
+void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
   input_archive >> (*this);
 }
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
+void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
 {
   std::ifstream input_filestream(filename);
   load_serialize(input_filestream);
   input_filestream.close();
 }
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
+void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
 {
   boost::archive::text_oarchive output_archive(output_stream);
   output_archive << (*this);
 }
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
+void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_serialize(output_filestream);
   output_filestream.close();
 }
-
-} // of namespace Mocasinns
 
 #endif

@@ -5,6 +5,30 @@ Python module for the statistical analysis of mocasinns-generated data using pyt
 import numpy
 import math
 
+def array_to_dict(array, key_columns=[0], value_columns=[1]):
+    """
+    Convert an numpy array to a dictionary.
+    If more than one key- or value-column is given, the key and/or the value will be stored as tuple
+
+    Parameters
+    ----------
+    array : numpy array
+        Array with data that should be converted to an dictionary
+    key_columns : list of integers
+        List of integers specifying the columns to use as keys; default = [0]
+    value_columns: list of integers
+        List of integers specifying the columns to use as values; default = [1]
+    """
+    # Create dictionary
+    if len(key_columns) == 1 and len(value_columns) == 1:
+        return {array[i,key_columns[0]]: array[i,value_columns[0]] for i in range(array.shape[0])}
+    if len(key_columns) == 1 and len(value_columns) > 1:
+        return {array[i,key_columns[0]]: tuple(array[i,value_columns]) for i in range(array.shape[0])}
+    if len(key_columns) > 1 and len(value_columns) == 1:
+        return {tuple(array[i,key_columns]): array[i,value_columns[0]] for i in range(array.shape[0])}
+    if len(key_columns) > 1 and len(value_columns) > 1:
+        return {tuple(array[i,key_columns]): tuple(array[i,value_columns]) for i in range(array.shape[0])}
+
 def loadtxt_dict(fname, key_columns=[0], value_columns=[1], dtype=float, comments='#', delimiter=None, skiprows=0):
     """
     Load data from a text file into a dictionary using the specified colums as key and values.
@@ -50,15 +74,8 @@ def loadtxt_dict(fname, key_columns=[0], value_columns=[1], dtype=float, comment
     dict_columns.extend(value_columns)
     # Use the numpy function to load the text to an array
     array = numpy.loadtxt(fname, dtype=dtype, comments=comments, delimiter=delimiter, skiprows=skiprows)
-    # Create dictionary
-    if len(key_columns) == 1 and len(value_columns) == 1:
-        return {array[i,key_columns[0]]: array[i,value_columns[0]] for i in range(array.shape[0])}
-    if len(key_columns) == 1 and len(value_columns) > 1:
-        return {array[i,key_columns[0]]: tuple(array[i,value_columns]) for i in range(array.shape[0])}
-    if len(key_columns) > 1 and len(value_columns) == 1:
-        return {tuple(array[i,key_columns]): array[i,value_columns[0]] for i in range(array.shape[0])}
-    if len(key_columns) > 1 and len(value_columns) > 1:
-        return {tuple(array[i,key_columns]): tuple(array[i,value_columns]) for i in range(array.shape[0])}
+    # Convert the array to a dictionary
+    return array_to_dict(array, key_columns=key_columns, value_columns=value_columns)
 
 def dictionary_average(dicts, function=lambda x: (numpy.mean(x), numpy.std(x)/math.sqrt(x.size - 1))):
     """

@@ -1,5 +1,5 @@
 /**
- * \file wang_landau_rejection free.hpp
+ * \file wang_landau/wang_landau_rejection_free.hpp
  * \brief Contains the declaration of the rejection-free Wang-Landau algorithm
  * 
  * Do not include the file, but include <mocasinns/wang_landau.hpp>

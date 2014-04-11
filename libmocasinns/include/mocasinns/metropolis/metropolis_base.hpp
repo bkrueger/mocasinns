@@ -25,6 +25,9 @@
 namespace Mocasinns
 {
   //! Base class for Metropolis-Monte-Carlo simulations
+  /*!
+   * \tparam ConfigurationType \concept{ConfigurationType}
+   */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator, bool rejection_free>
   class MetropolisBase : public Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>
   {

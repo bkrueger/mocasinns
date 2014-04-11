@@ -90,20 +90,16 @@ namespace Mocasinns
     //! Handle a rejected step
     void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
-    //! Do a certain number of wang-landau steps updating the log_density_of_states and the incidence_counter at the current modification factor
+    //! Do a given number of wang-landau steps
     void do_wang_landau_steps(const uint32_t& number);
     //! Do wang-landau steps until the incidence counter is flat
     void do_wang_landau_steps();
     //! Do a complete wang-landau simulation until the final modification factor is reached
     void do_wang_landau_simulation();
     
-    //! Load the data of the Wang-Landau simulation from a serialization stream
     virtual void load_serialize(std::istream& input_stream);
-    //! Load the data of the Wang-Landau simulation from a serialization file
     virtual void load_serialize(const char* filename);
-    //! Save the data of the Wang-Landau simulation to a serialization stream
     virtual void save_serialize(std::ostream& output_stream) const;
-    //! Save the data of the Wang-Landau simulation to a serialization file
     virtual void save_serialize(const char* filename) const;
     
   protected:

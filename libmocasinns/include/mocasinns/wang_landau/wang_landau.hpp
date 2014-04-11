@@ -1,5 +1,5 @@
 /**
- * \file wang_landau.hpp
+ * \file wang_landau/wang_landau.hpp
  * \brief Contains the declaration of the normal (non rejection-free) Wang-Landau algorithm
  * 
  * Do not include the file, but include <mocasinns/wang_landau.hpp>
@@ -25,9 +25,9 @@ namespace Mocasinns
     //! Parameters of the base class, equal the parameters of this class
     typedef typename Base::Parameters Parameters;
   
-    //! Initialise a WangLanday-MC simulation with default parameters, default configuration space and default RandomNumberGenerator
+    // Initialise a WangLanday-MC simulation with default parameters, default configuration space and default RandomNumberGenerator
     WangLandau() : Base() { }
-    //! Initialise a WangLandau-MC simulation with default configuration space and default RandomNumberGenerator
+    // Initialise a WangLandau-MC simulation with default configuration space and default RandomNumberGenerator
     WangLandau(const Parameters& params) : Base(params) { }
     //! Initialise a WangLandau-MC simulation with given configuration space and default RandomNumberGenerator
     WangLandau(const Parameters& params, ConfigurationType* initial_configuration) : Base(params, initial_configuration) { }

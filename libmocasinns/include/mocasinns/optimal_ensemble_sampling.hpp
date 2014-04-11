@@ -92,7 +92,7 @@ namespace Mocasinns
     //! Handle an accepted step
     void handle_executed_step(StepType& executed_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
-    void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
+    void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
 
     //! Do a certain number of steps updating the log_density_of_states and the incidence_counter
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);

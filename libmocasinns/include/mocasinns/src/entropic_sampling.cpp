@@ -96,7 +96,7 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, double, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Update the histograms
   incidence_counter[step_parameters.total_energy]++;

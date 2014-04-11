@@ -74,7 +74,7 @@ namespace Mocasinns
     //! Handle an accepted step
     void handle_executed_step(StepType& executed_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
-    void handle_rejected_step(StepType& rejected_step, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
+    void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
     //! Do a certain number of entropic sampling steps updating the incidence_counter
     void do_entropic_sampling_steps(const StepNumberType& number);

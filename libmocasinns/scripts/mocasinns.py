@@ -107,7 +107,7 @@ def dictionary_average(dicts, function=lambda x: (numpy.mean(x), numpy.std(x)/ma
     for dictionary in dicts:
         keys.update(dictionary.keys())
     # Create the compound dictionary
-    dict_compound = {key: [] for key in keys}
+    dict_compound = dict((key, []) for key in keys)
     for dictionary in dicts:
         for key, value in dictionary.iteritems():
             dict_compound[key].append(value)

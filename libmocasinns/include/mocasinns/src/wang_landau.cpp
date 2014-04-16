@@ -215,7 +215,7 @@ void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,R
  * \param monte_carlo_time_unit Number that specifies how many single steps are one Monte-Carlo time unit
  */
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation(unsigned int monte_carlo_time_unit)
+void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation_1_t(unsigned int monte_carlo_time_unit)
 {
   // Set the sweep counter to 0
   sweep_counter = 0;

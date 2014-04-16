@@ -190,11 +190,12 @@ void Mocasinns::WangLandauBase<ConfigurationType,StepType,EnergyType,HistoType,R
   {
     // Do steps until the flatness criterion is reached
     do_wang_landau_steps();
+
+    // If the simulation was aborted, exit the loop
+    if (this->is_terminating) break;
     
     // Invoke the information signal handler
     signal_handler_modfac_change(this);
-    // If the simulation was aborted, exit the loop
-    if (this->is_terminating) break;
     
     // Reset the incidence counter
     incidence_counter.set_all_y_values(0);

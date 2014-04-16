@@ -18,16 +18,21 @@ def array_to_dict(array, key_columns=[0], value_columns=[1]):
         List of integers specifying the columns to use as keys; default = [0]
     value_columns: list of integers
         List of integers specifying the columns to use as values; default = [1]
+
+    Examples and Tests
+    ------------------
+    >>> array_to_dict(numpy.loadtxt("test_data.dat")) == {1.0: 2.0, 4.0: 5.0, 7.0: 8.0}
+    True
     """
     # Create dictionary
     if len(key_columns) == 1 and len(value_columns) == 1:
-        return {array[i,key_columns[0]]: array[i,value_columns[0]] for i in range(array.shape[0])}
+        return dict((array[i,key_columns[0]], array[i,value_columns[0]]) for i in range(array.shape[0]))
     if len(key_columns) == 1 and len(value_columns) > 1:
-        return {array[i,key_columns[0]]: tuple(array[i,value_columns]) for i in range(array.shape[0])}
+        return dict((array[i,key_columns[0]], tuple(array[i,value_columns])) for i in range(array.shape[0]))
     if len(key_columns) > 1 and len(value_columns) == 1:
-        return {tuple(array[i,key_columns]): array[i,value_columns[0]] for i in range(array.shape[0])}
+        return dict((tuple(array[i,key_columns]), array[i,value_columns[0]]) for i in range(array.shape[0]))
     if len(key_columns) > 1 and len(value_columns) > 1:
-        return {tuple(array[i,key_columns]): tuple(array[i,value_columns]) for i in range(array.shape[0])}
+        return dict((tuple(array[i,key_columns]), tuple(array[i,value_columns])) for i in range(array.shape[0]))
 
 def loadtxt_dict(fname, key_columns=[0], value_columns=[1], dtype=float, comments='#', delimiter=None, skiprows=0):
     """

@@ -22,7 +22,7 @@ doxygen Doxyfile
 find ../include/mocasinns/src/ -name "*.dox" | while read FILENAME_DOX
 do
     echo "Removing documentation for source file $FILENAME_DOX"
-    rm $FILENAME_DOX
+#    rm $FILENAME_DOX
 done
 
 # Remove template parameters from the html documentation overview that blow it up unneccessary
@@ -37,10 +37,10 @@ do
 done
 
 # Remove template parameters from the tex overview files that blow it up unneccessary
-echo "Removing unnecessary template parameters from file latex/annotated.tex"
-doctools/remove_template_parameters_overview.sh -l latex/annotated.tex
-echo "Removing unnecessary template parameters from file latex/hierarchy.tex"
-doctools/remove_template_parameters_overview.sh -l latex/hierarchy.tex
+#echo "Removing unnecessary template parameters from file latex/annotated.tex"
+#doctools/remove_template_parameters_overview.sh -l latex/annotated.tex
+#echo "Removing unnecessary template parameters from file latex/hierarchy.tex"
+#doctools/remove_template_parameters_overview.sh -l latex/hierarchy.tex
 
 # Remove template parameters from detailed member descriptions
 for CLASS in $(doctools/algorithm_classes.sh -H)
@@ -57,17 +57,30 @@ do
 done
 
 # Remove template parameters from detailed member descriptions
-for CLASS in $(doctools/algorithm_classes.sh -l)
+#for CLASS in $(doctools/algorithm_classes.sh -l)
+#do
+#    for CLASS_FULL in "$CLASS" "${CLASS}\\\-Base" "${CLASS}\\\-Rejection\\\-Free"
+#    do
+#	CLASS_FILENAME=$(echo ${CLASS_FULL} | sed 's@\\\\-@@g')
+#	FILENAME="latex/classMocasinns_1_1${CLASS_FILENAME}.tex"
+#	if [ -f $FILENAME ];
+#	then
+#	    echo "Removing unnecessary template parameters in member documentation from file $FILENAME"
+#	    doctools/remove_template_parameters_class_member_doc.sh -l $FILENAME
+#	fi
+#    done
+#done
+
+# Remove protected functions and members from the classes
+for CLASS in $(doctools/algorithm_classes_user.sh -H)
 do
-    for CLASS_FULL in "$CLASS" "${CLASS}\\\-Base" "${CLASS}\\\-Rejection\\\-Free"
+    for CLASS_FULL in $CLASS ${CLASS}Base ${CLASS}RejectionFree
     do
-	CLASS_FILENAME=$(echo ${CLASS_FULL} | sed 's@\\\\-@@g')
-	FILENAME="latex/classMocasinns_1_1${CLASS_FILENAME}.tex"
+	FILENAME="html/classMocasinns_1_1${CLASS_FULL}.html"
 	if [ -f $FILENAME ];
 	then
-	    echo "Removing unnecessary template parameters in member documentation from file $FILENAME"
-	    doctools/remove_template_parameters_class_member_doc.sh -l $FILENAME
+	    echo "Removing protected members and functions in documentation file $FILENAME"
+	    doctools/remove_protected.sh $FILENAME
 	fi
     done
 done
-

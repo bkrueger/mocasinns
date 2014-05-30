@@ -31,6 +31,12 @@
     <collaborationgraph visible="$COLLABORATION_GRAPH"/>
     <allmemberslink visible="yes"/>
     <memberdecl>
+      <protectedtypes title=""/>
+      <protectedslots title=""/>
+      <protectedmethods title=""/>
+      <protectedstaticmethods title=""/>
+      <protectedattributes title=""/>
+      <protectedstaticattributes title=""/>
       <nestedclasses visible="yes" title=""/>
       <publictypes title=""/>
       <publicslots title=""/>
@@ -39,12 +45,6 @@
       <publicstaticmethods title=""/>
       <publicattributes title=""/>
       <publicstaticattributes title=""/>
-      <protectedtypes title=""/>
-      <protectedslots title=""/>
-      <protectedmethods title=""/>
-      <protectedstaticmethods title=""/>
-      <protectedattributes title=""/>
-      <protectedstaticattributes title=""/>
       <packagetypes title=""/>
       <packagemethods title=""/>
       <packagestaticmethods title=""/>

@@ -14,8 +14,10 @@
 
 namespace Mocasinns
 {
-
-  //! Class for standard Wang-Landau simulations
+  /*!
+   * \brief Class for the standard (non-rejection-free) Wang-Landau algorithm.
+   * \copydetails Mocasinns::WangLandauBase
+   */
   template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
   class WangLandau : public WangLandauBase<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, false>
   {

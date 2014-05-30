@@ -4,13 +4,13 @@
 # Give option -H for giving the simulation names for replacing in HTML
 # Give option -l for giving the simulation names for replacing in Latex
 
-while getopts ":Hl" opt; do
+while getopts ":Hlu" opt; do
     case "${opt}" in
         H)
-	    echo "Simulation Metropolis MetropolisHastings MetropolisParallel ParallelTempering SerialTempering EntropicSampling WangLandau OptimalEnsembleSampling MulticanonicalCounting"	    
+	    echo "Simulation $(doctools/algorithm_classes_user.sh -H)"
             ;;
         l)
-	    echo "Simulation Metropolis Metropolis\\\-Hastings Metropolis\\\-Parallel Parallel\\\-Tempering Serial\\\-Tempering Entropic\\\-Sampling Wang\\\-Landau OptimalEnsemble\\\-Sampling Multicanonical\\\-Counting"
+	    echo "Simulation $(doctools/algorithm_classes_user.sh -l)"
             ;;
     esac
 done

@@ -13,22 +13,24 @@ First we start with the class for the configuration:
 class IsingConfiguration
 {
 public:
+  // The spins are stored as vectors of -1 and 1
   std::vector<int> spins;
 
+  // Create an Ising configuration with a certain number of spins
   IsingConfiguration(unsigned int length) : spins(length, 1) { }
 };
 \endcode
 We store the spins as a vector of integers with 1 for spins pointing upwards and -1 for spins pointing downwards. The size of the Ising spin chain can be specified in the constructor.
 Almost all Monte Carlo algorithms need some informations about the energy of the system, so we provide a function \c energy that returns the energy of the system. The return type must be something that behaves like an ordinary number, in our case the return type is just an integer:
 \code
-  int energy()
-  {
-    int result = 0;
-    for (unsigned int i = 0; i < spins.size() - 1; ++i)
-      result += spins[i] * spins[i + 1];
-    result += spins[0]*spins[spins.size() - 1];
-    return result;
-  }
+int IsingConfiguration::energy()
+{
+  int result = 0;
+  for (unsigned int i = 0; i < spins.size() - 1; ++i)
+    result += spins[i] * spins[i + 1];
+  result += spins[0]*spins[spins.size() - 1];
+  return result;
+}
 \endcode
 
 As a next step we have to define a class for a step (in our case a step is a flip of a spin) between two states of the configuration:
@@ -36,9 +38,12 @@ As a next step we have to define a class for a step (in our case a step is a fli
 class IsingStep
 {
 public:
+  // Pointer to the ising configuration to which the spin belongs
   IsingConfiguration* configuration;
+  // Index that specifies the index of the spin that will be flipped by this step
   unsigned int flip_index;
 
+  // Constructor taking the configuration and the spin index of the flip
   IsingStep(IsingConfiguration* config, unsigned int index) : configuration(config), flip_index(index) { }
 };
 \endcode
@@ -46,60 +51,58 @@ A step consists of a pointer to the configuration and the index of the flip that
 A basic information of a step needed by the Monte Carlo algorithms is the change in the energy the step produces if it is executed.
 So we need to define a function \c delta_E that has the same return type as the function \c IsingConfiguration::energy()
 \code
-  int delta_E()
-  {
-    // Calculate the indices of the neighbouring spins using the periodic boundary conditions
-    unsigned int flip_index_lower;
-    if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
-    else flip_index_lower = flip_index - 1;
-    unsigned int flip_index_upper;
-    if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
-    else flip_index_upper = flip_index + 1;
-
+int IsingStep::delta_E()
+{
+  // Calculate the indices of the neighbouring spins using the periodic boundary conditions
+  unsigned int flip_index_lower;
+  if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
+  else flip_index_lower = flip_index - 1;
+  unsigned int flip_index_upper;
+  if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
+  else flip_index_upper = flip_index + 1;
+  
     // Calculate the energy difference
-    return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
-  }
+  return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
+}
 \endcode
 
 Until now we have written the following code, which of course needs to be extended with some includes and a include guard and can be gathered in a single file:
+
 \code
-#ifndef ISING_HPP
-#define ISING_HPP
+#ifndef SIMPLE_ISING_HPP
+#define SIMPLE_ISING_HPP
 
 #include <vector>
 
 class IsingConfiguration;
 
+// Class representing a single step in an Ising chain
 class IsingStep
 {
 public:
+  // Pointer to the ising configuration to which the spin belongs
   IsingConfiguration* configuration;
+  // Index that specifies the index of the spin that will be flipped by this step
   unsigned int flip_index;
 
+  // Constructor taking the configuration and the spin index of the flip
   IsingStep(IsingConfiguration* config, unsigned int index) : configuration(config), flip_index(index) { }
 
-  int delta_E()
-  {
-    // Calculate the indices of the neighbouring spins using the periodic boundary conditions
-    unsigned int flip_index_lower;
-    if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
-    else flip_index_lower = flip_index - 1;
-    unsigned int flip_index_upper;
-    if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
-    else flip_index_upper = flip_index + 1;
-
-    // Calculate the energy difference
-    return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
-  }
+  // Calculates the energy difference induced by this step
+  int delta_E();
 };
 
+// Class representing a one-dimensiona chain of ising spins
 class IsingConfiguration
 {
 public:
+  // The spins are stored as vectors of -1 and 1
   std::vector<int> spins;
 
+  // Create an Ising configuration with a certain number of spins
   IsingConfiguration(unsigned int length) : spins(length, 1) { }
 
+  // Calculate the energy (sum over products of nearest neighbour spins) of the chain
   int energy()
   {
     int result = 0;
@@ -109,94 +112,62 @@ public:
     return result;
   }
 };
+  
+int IsingStep::delta_E()
+{
+  // Calculate the indices of the neighbouring spins using the periodic boundary conditions
+  unsigned int flip_index_lower;
+  if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
+  else flip_index_lower = flip_index - 1;
+  unsigned int flip_index_upper;
+  if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
+  else flip_index_upper = flip_index + 1;
+  
+    // Calculate the energy difference
+  return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
+}
 
 #endif
+
 \endcode
 
 \section tutorial_configuration_step_interaction Interaction of the ConfigurationType and the StepType
 
-Until now our configuration \c IsingConfiguration and our step \c IsingStep do not interact with each other, except for the calculation of the energy difference. This will be changed in this section.
+Until now our configuration <tt>IsingConfiguration</tt> and our step <tt>IsingStep</tt> do not interact with each other, except for the calculation of the energy difference. This will be changed in this section.
 
 First we have to implement a possibility for proposing a step emerging from a state. This function must be a member template function called \c propose_step, return a \c StepType object, accepting a pointer to a (templated) random number generator.
-The random number generator will be provided by the \c mocasinns library, you can use its functions to generate random doubles and random integers described in \ref concept-RandomNumberGenerator "RandomNumberGenerator").
+The random number generator will be provided by the <tt>mocasinns</tt> library, you can use its functions to generate random doubles and random integers described in \ref concept-RandomNumberGenerator "RandomNumberGenerator").
 In our case, the random number generator has to choose which spin should be flipped by the step:
 \code
+  // Create a step (spin flip) using a given random number generator
   template <class RandomNumberGenerator>
-  IsingStep propose_step(RandomNumberGenerator* rng) const { return IsingStep(this, rng->random_uint32(0, spins.size() -1); }
+  IsingStep IsingConfiguration::propose_step(RandomNumberGenerator* rng) const { return IsingStep(this, rng->random_uint32(0, spins.size() - 1)); }
 \endcode
 
 As a next step we need a possibility to apply a given step to the system and alter the state.
 This function must be called \c commit and take a StepType as argument:
 \code
-  void commit(const IsingStep& step) { spins[step.flip_index] *= -1; }
+  void IsingConfiguration::commit(const IsingStep& step) { spins[step.flip_index] *= -1; }
 \endcode
 
 As syntax shugar it would be nice to be able to apply a given step without accessing the ConfigurationType.
 So you must define a \c execute function in the step.
 In most cases this function simply calls the commit function of the associated configuration"
 \code
-  void execute() { configuration->commit(*this); }
+  void IsingStep::execute() { configuration->commit(*this); }
+\endcode
+
+For reasons that will be explained later in the tutorial we include the following functions into the classes to compile:
+\code
+  std::vector<IsingStep> IsingConfiguration::all_steps() const { return std::vector<IsingStep>(); }
+  template <class Archiv> void IsingConfiguration::serialize(Archiv&, const unsigned int&) {}
+  bool IsingStep::is_executable() const { return true; }
+  double IsingStep::selection_probability_factor() const { return 1.0; }
 \endcode
 
 After writting this rather simple classes and functions we are allready able to use the \c mocasinns library.
 Our code file has the following structure:
-\code
-#ifndef ISING_HPP
-#define ISING_HPP
-
-#include <vector>
-
-class IsingConfiguration;
-
-class IsingStep
-{
-public:
-  IsingConfiguration* configuration;
-  unsigned int flip_index;
-
-  IsingStep(IsingConfiguration* config, unsigned int index) : configuration(config), flip_index(index) { }
-
-  int delta_E()
-  {
-    // Calculate the indices of the neighbouring spins using the periodic boundary conditions
-    unsigned int flip_index_lower;
-    if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
-    else flip_index_lower = flip_index - 1;
-    unsigned int flip_index_upper;
-    if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
-    else flip_index_upper = flip_index + 1;
-
-    // Calculate the energy difference
-    return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
-  }
-
-  void execute() { configuration->commit(*this); }
-};
-
-class IsingConfiguration
-{
-public:
-  std::vector<int> spins;
-
-  IsingConfiguration(unsigned int length) : spins(length, 1) { }
-
-  void commit(const IsingStep& step) { spins[step.flip_index] *= -1; }
-
-  int energy()
-  {
-    int result = 0;
-    for (unsigned int i = 0; i < spins.size() - 1; ++i)
-      result += spins[i] * spins[i + 1];
-    result += spins[0]*spins[spins.size() - 1];
-    return result;
-  }
-
-  template <class RandomNumberGenerator>
-  IsingStep propose_step(RandomNumberGenerator* rng) const { return IsingStep(this, rng->random_uint32(0, spins.size() -1); }
-};
-
-#endif
-\endcode
+\include ../examples/simple_ising.hpp
 
 \section tutorial_first_simulation A first Metropolis simulation of the Ising chain
 
@@ -217,10 +188,10 @@ parameters.steps_between_measurements = 10000;
 \endcode
 We set here the number of measurements to 1000 and the number of steps that will be performed before the first measurement and between measurements to 10000 to keep autocorrelations low.
 
-A Metropolis simulation type can now be created by giving a parameters object and an Ising configuration to work on:
+A Metropolis simulation type can now be created by giving a parameters object and a pointer to an Ising configuration to work on:
 \code
 IsingConfiguration configuration(16);
-MetropolisSimulation simulation(parameters, configuration);
+MetropolisSimulation simulation(parameters, &configuration);
 \endcode
 
 Using the created simulation one can now perform single steps by
@@ -233,33 +204,14 @@ std::vector<int> energies = simulation.do_metropolis_simulation(1.0);
 \endcode
 which results in a vector 1000 energies that were measured.
 
-The resulting code for a calculation of the mean energy is then, assuming that the code for \c IsingSystem and \c IsingStep is stored in the fole ising.hpp:
+The resulting code for a calculation of the mean energy is then, assuming that the code for <tt>IsingSystem</tt> and <tt>IsingStep</tt> is stored in the file <tt>simple_ising.hpp</tt>:
+\include ../examples/simple_ising_metropolis.cpp
+
+This code can be compiled with
 \code
-#include <iostream>
-#include "ising.hpp"
-#include <mocasinns/metropolis.hpp>
-
-typedef Mocasinns::Metropolis<IsingSystem, IsingStep, Mocasinns::Random::Boost_MT19937> MetropolisSimulation;
-
-int main()
-{
-  typename MetropolisSimulation::Parameters parameters;
-  parameters.measurement_number = 1000;
-  parameters.relaxation_steps = 10000;
-  parameters.steps_between_measurements = 10000;
-  
-  IsingConfiguration configuration(16);
-  MetropolisSimulation simulation(parameters, configuration);
-  
-  std::vector<int> energies = simulation.do_metropolis_simulation(1.0);
-  
-  double mean_energy = 0.0;
-  for (unsigned int i = 0; i < parameters.measurement_number; ++i)
-    mean_energy += static_cast<double>(energies[i])/parameters_measurement_number;
-  
-  std::cout << "Mean energy: " << mean_energy << std::endl;
-}
+g++ -c -std=c++11 -I../include -o simple_ising_metropolis.o simple_ising_metropolis.cpp -lboost_serialization -o simple_ising_metropolis
 \endcode
+The flag <tt>-I../include</tt> must be replaced with the location of the include files of mocasinns, or the path must be listed in the environment variable <tt>CPLUS_INCLUDE_PATH</tt>
 
 \section tutorial_other_observables Measuring other stuff: Observables and Observators
 
@@ -273,12 +225,12 @@ For measuring the specific magnetization we can define the following Observator,
 struct SpecificMagnetizationObservator
 {
   typedef double observable_type;
-  static observable_type observe(IsingSystem* system)
+  static observable_type observe(IsingConfiguration* system)
   {
     double result = 0;
-    for (unsigned int i = 0; i < system->spins().size(); ++i)
-      result += system->spins()[i];
-    return result/system->spins().size();
+    for (unsigned int i = 0; i < system->spins.size(); ++i)
+      result += system->spins[i];
+    return result/system->spins.size();
   }
 };
 \endcode
@@ -289,50 +241,13 @@ The observator has then to be given as a template parameter to the \c do_metropo
 \endcode
 
 Alltogether the program for measuring the mean specific magnetization and the mean energy is:
-\code
-#include <iostream>
-#include "ising.hpp"
-#include <mocasinns/metropolis.hpp>
+\include ../examples/simple_ising_metropolis_observator.cpp
 
-typedef Mocasinns::Metropolis<IsingSystem, IsingStep, Mocasinns::Random::Boost_MT19937> MetropolisSimulation;
+\section tutorial_additional_functions Additional functions for configurations and steps
 
-struct SpecificMagnetizationObservator
-{
-  typedef double observable_type;
-  static observable_type observe(IsingSystem* system)
-  {
-    double result = 0;
-    for (unsigned int i = 0; i < system->spins().size(); ++i)
-      result += system->spins()[i];
-    return result/system->spins().size();
-  }
-};
+\subsection tutorial_additional_functions_selection_probability_factor Selection probability factor
 
-int main()
-{
-  typename MetropolisSimulation::Parameters parameters;
-  parameters.measurement_number = 1000;
-  parameters.relaxation_steps = 10000;
-  parameters.steps_between_measurements = 10000;
-  
-  IsingConfiguration configuration(16);
-  MetropolisSimulation simulation(parameters, configuration);
-  
-  std::vector<double> specific_magnetizations = simulation.do_metropolis_simulation<SpecificMagnetizationObservator>(1.0);
-  
-  double mean_magnetizations = 0.0;
-  for (unsigned int i = 0; i < parameters.measurement_number; ++i)
-    mean_magnetization += static_cast<double>(specific_magnetizations[i])/parameters_measurement_number;
-  
-  std::cout << "Mean specific magnetization: " << mean_magnetization << std::endl;
-}
-\endcode
-
-\section tutorial_optional_functions Optional additional functions for the step
-
-\subsection tutorial_optional_functions_selection_probability_factor Selection probability factor
-
-In the considered ising spin system the probability for proposing a certain step is constant.
+In the considered Ising spin system the probability for proposing a certain step is constant.
 There are systems for which this is not the case.
 For example one can consider a grand-canonical particle simulation with a step being an random insertion of a particle. 
 Since a particle can only be inserted into a region of space where there is no other particle, the probability for selection a certain insertion step depends on the actual state of the system.
@@ -345,14 +260,14 @@ So one gets
 \f]
 where the ratio \f$ x \f$ depends on the step and is given by the Monte Carlo algorithm used.
 
-As a default behaviour \mocasinns assumes that the ratio of the selection probabilities is 1. 
+Until now we have assumed that this ratio of selection probabilities is 1.0 for all steps, which means that the selection probability for each step is the same.
 If for your system this is not the case, you can define the member function
 \code
 double selection_probability_factor();
 \endcode
 of the Step class that calculates the ratio of the selection probability of the flip it represents and the selection probability of the inverse of the flips it represents.
 
-\subsection tutorial_optional_functions_is_executable Executability of steps
+\subsection tutorial_additional_functions_is_executable Executability of steps
 
 There are situtations where one want to propose steps that are actual not executable, because the would transfer the system in an invalid state.
 If one considers again the example of a grand-canonical particle simulation this would be the case if a particle would be inserted in a region of space where there is allready a particle contained.

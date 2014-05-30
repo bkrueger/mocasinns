@@ -88,7 +88,7 @@ BRIEF_MEMBER_DESC      = YES
 # Note: if both HIDE_UNDOC_MEMBERS and BRIEF_MEMBER_DESC are set to NO, the
 # brief descriptions will be completely suppressed.
 
-REPEAT_BRIEF           = NO
+REPEAT_BRIEF           = YES
 
 # This tag implements a quasi-intelligent brief description abbreviator
 # that is used to form the text in various listings. Each string
@@ -193,7 +193,14 @@ TAB_SIZE               = 8
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES += concept{1}="Type implementing the \c \1 concept. See \ref concept-\1 for details.
+# Alias for linking to concepts
+ALIASES += concept{1}="Type implementing the \c \1 concept. See \ref concept-\1 for details."
+ALIASES += conceptiterator{1}="Iterator on type implementing the \c \1 concept. See \ref concept-\1 for details."
+
+# Alias for generating a section of signal handlers
+ALIASES += signalhandlers="\htmlonly <dl class=\"params\"><dt>Signal handlers</dt><dd><table class=\"params\">\endhtmlonly \latexonly \begin{DoxyParams}{\-Parameters}\endlatexonly"
+ALIASES += signalhandler{2}="\htmlonly <tr><td class=\"paramname\">\1</td><td>\2</td></tr>\endhtmlonly \latexonly {\em \1} & \-\2 \\ \hline \endlatexonly"
+ALIASES += endsignalhandlers="\htmlonly </table></dd></dl> \endhtmlonly \latexonly \end{DoxyParams}\endlatexonly"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
@@ -709,7 +716,7 @@ EXCLUDE_SYMBOLS        = boost::*
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = ../examples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

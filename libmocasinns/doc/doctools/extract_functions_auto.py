@@ -31,8 +31,9 @@ for i in range(0, len(file_lines)):
             for l in range(i + 1,j + 1):
                 sys.stdout.write(file_lines[l])
         elif line == "/*! \\fn AUTO_TEMPLATE_2":
+            function_template_name = file_lines[j + 2].strip()
             function_name = file_lines[j + 3].strip()
-            sys.stdout.write(file_lines[i][:-16] + function_name + "\n")
+            sys.stdout.write(file_lines[i][:-16] + function_template_name + " " + function_name + "\n")
             for l in range(i + 1,j + 1):
                 sys.stdout.write(file_lines[l])
         else:

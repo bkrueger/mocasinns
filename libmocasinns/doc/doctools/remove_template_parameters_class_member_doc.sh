@@ -26,6 +26,10 @@ do
     then
 	for CLASS_FULL in $CLASS ${CLASS}Base ${CLASS}RejectionFree
 	do
+	    # Remove some ugly linebreaks
+	    sed -i ':a;N;$!ba;s@<br class=\"typebreak\"/>\n@<br class=\"typebreak\">@g' $TARGET
+	    # Remove the unnecessary template parameters
+	    sed -i "s@<td class=\"memItemLeft\" align=\"right\" valign=\"top\">\(.*\)${CLASS_FULL}</a><br class=\"typebreak\">\&lt;.*\&gt;@<td class=\"memItemLeft\" align=\"right\" valign=\"top\">\1${CLASS_FULL}</a>\&lt;...\&gt;@g" $TARGET
 	    sed -i "s@<td class=\"memname\">\(.*\)${CLASS_FULL}</a>\&lt;.*\&gt;@<td class=\"memname\">\1${CLASS_FULL}</a>\&lt;...\&gt;@g" $TARGET
 	done
     fi

@@ -19,8 +19,45 @@
 
 namespace Mocasinns
 {
-
-  //! Base class for the two Wang-Landau simulations. Do not use directly, but use Mocasinns::WangLandau or Mocasinns::WangLandauRejectionFree
+  /*!
+   * \brief Base class for the rejection-free and the non-rejection free Wang-Landau algorithm. Do not use this class directly, but \link Mocasinns::WangLandau WangLandau \endlink (standard, not rejection-free) or \link Mocasinns::WangLandauRejectionFree WangLandauRejectionFree \endlink (rejection-free) instead.
+   *
+   * \details The Wang-Landau algorithm is an improvement of entropic sampling and uses the same acceptance probability
+   * \f[
+   *   A(\sigma_1 \rightarrow \sigma_2) = \min\left(1, \frac{g(E(\sigma_1))}{g(E(\sigma_2))} \right)
+   * \f]. 
+   * to sample according to the probability distribution \f$ P(\sigma) = g(E(\sigma))^{-1}\f$.
+   * In contrast to entropic sampling the density of states is not updated after a certain number of steps, but after each step, as well as the incidence counter \f$H(E) \f$. 
+   * If the system has energy $E$ after a step (independent on whether the step has been accepted or not), the incidence counter and the density of states are modified according to:
+   * \f[
+   * \begin{split}
+   *   H(E) &\rightarrow H(E) + 1 \\
+   *   g(E) &\rightarrow f\cdot g(E)
+   * \end{split}
+   * \f]
+   * After a certain number of steps the flatness of the incidence counter \f$\mathrm{flat}(H) \f$ is tested. 
+   * If the flatness is bigger than an user-defined value, the modification factor is lowered by applying
+   * \f[
+   * f_{n+1} = f_n^m\quad m\in [0;1]
+   * \f]
+   * The algorithm stops if \f$f_n\f$ becomes smaller than a final value \f$f_e \f$. 
+   * Commonly one uses the parameters \f$ f_0 = \exp(1) \f$ and \f$ f_e = \exp\left(10^{-8}\right) \f$ and chooses \f$ m=0.5 \f$ which make the recurrsion relation to \f$ f_{n+1} = \sqrt{f_n} \f$.
+   *
+   * As in the entropic sampling algorithm the logarithm of the density of states is stored, and one adds the logarithm of the modification factor to this entropy in each step. 
+   * So also the parameters for the modification factors must be provided in logarithmic form by the user.
+   *
+   * \signalhandlers
+   * \signalhandler{signal_handler_modfac_change,This handler is called if the flatness criterion was reached and the current modification factor will be decreased.}
+   * \signalhandler{signal_handler_sweep, This handler is called after every sweep of \c Parameters::sweep_steps steps.}
+   * \signalhandler{signal_handler_sig...., The check for \c POSIX signals (SIGTERM\, SIGUSR1 and SIGUSR2) is performed after every sweep of \c Parameters::sweep_steps steps.}
+   * \endsignalhandlers
+   *
+   * \tparam ConfigurationType \concept{ConfigurationType}
+   * \tparam StepType \concept{StepType}
+   * \tparam EnergyType \concept{EnergyType}
+   * \tparam HistoType \concept{HistoType}
+   * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
   class WangLandauBase : public Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>
   {

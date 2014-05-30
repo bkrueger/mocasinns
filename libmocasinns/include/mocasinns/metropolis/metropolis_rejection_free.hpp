@@ -14,7 +14,10 @@
 
 namespace Mocasinns
 {
-  //! Class for rejection-free Metropolis-Monte-Carlo simulations
+  /*!
+   * \brief Class for the rejection-free Metropolis algorithm.
+   * \copydetails Mocasinns::MetropolisBase
+   */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
   class MetropolisRejectionFree : public MetropolisBase<ConfigurationType, StepType, RandomNumberGenerator, true>
   {

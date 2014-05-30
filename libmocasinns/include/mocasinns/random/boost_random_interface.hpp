@@ -30,6 +30,13 @@ namespace Mocasinns
 	double_01_distribution = new boost::random::uniform_01<double>();
 	int_distribution = new boost::random::uniform_int_distribution<RandomIntType>();
       }
+      ~BoostRandomInterface()
+      {
+	delete int_distribution;
+	delete double_01_distribution;
+
+	delete rng;
+      }
 
       //! Set the seed of the random number generator
       void set_seed(const RandomIntType& new_seed) { rng->seed(new_seed); }

@@ -25,8 +25,8 @@ namespace ba = boost::accumulators;
 #include "../details/metropolis/vector_accumulator.hpp"
 
 /*! \fn AUTO_TEMPLATE_2
-  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
-  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
+  \tparam Observator \concept{Observator} If no observator is given, a default observator which measures the energy is used.
+  \tparam TemperatureType \concept{InverseTemperatureType}
   \param beta Inverse temperature at which the simulation is performed.
   \returns Vector containing the single measurements performed
 */
@@ -48,9 +48,8 @@ std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<Conf
 }
 
 /*! \fn AUTO_TEMPLATE_2 
-  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
-  \tparam InputIterator Type of the iterator that iterates the different temperatures that will be considered
-  \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
+  \tparam Observator \concept{Observator} If no observator is given, a default observator which measures the energy is used.
+  \tparam InputIterator \conceptiterator{InverseTemperatureType}
   \param beta_begin Iterator pointing to the first inverse temperature that is calculated
   \param beta_end Iterator pointing on position after the last inverse temperature that is calculated
   \returns Vector containing the vectors of measurments performed for each temperature. (First index: inverse temperature, second index: measurment number)
@@ -73,11 +72,11 @@ std::vector<std::vector<typename Observator::observable_type> > Mocasinns::Metro
 }  
 
 /*! \fn AUTO_TEMPLATE_2
- \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
- \tparam Accumulator Class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
- \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
- \param beta Inverse temperature at which the simulation is performed
- \param measurement_accumulator Reference to the accumulator that stores the simulation results
+  \tparam Observator \concept{Observator} If no observator is given, a default observator which measures the energy is used.
+  \tparam TemperatureType \concept{InverseTemperatureType}
+  \tparam Accumulator \concept{Accumulator}
+  \param beta Inverse temperature at which the simulation is performed
+  \param measurement_accumulator Reference to the accumulator that stores the simulation results
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class Accumulator, class TemperatureType>
@@ -110,13 +109,13 @@ void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,reje
 }
 
 /*! \fn AUTO_TEMPLATE_2
- \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
- \tparam AccumulatorIterator Iterator of a container of a class that accepts the observable in operator() and gathers the required informations about the observables (e.g. boost::accumulator)
- \tparam InverseTemperatureIterator  Iterator of a container of a type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
- \param beta_begin Iterator pointing to the first inverse temperature that is calculated
- \param beta_end Iterator pointing on position after the last inverse temperature that is calculated
- \param measurement_accumulator_begin Iterator pointing to the first accumulator that calculates the data for the first inverse temperature.
- \param measurement_accumulator_end Iterator pointing one position after the last accumulator that calculates the data for the last inverse temperature
+  \tparam Observator \concept{Observator} If no observator is given, a default observator which measures the energy is used.
+  \tparam AccumulatorIterator \conceptiterator{Accumulator}
+  \tparam InverseTemperatureIterator \conceptiterator{InverseTemperatureType}
+  \param beta_begin Iterator pointing to the first inverse temperature that is calculated.
+  \param beta_end Iterator pointing on position after the last inverse temperature that is calculated.
+  \param measurement_accumulator_begin Iterator pointing to the first accumulator that gathers the data for the first inverse temperature.
+  \param measurement_accumulator_end Iterator pointing one position after the last accumulator that gathers the data for the last inverse temperature. The number of accumulators must match the number of inverse temperatures.
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>

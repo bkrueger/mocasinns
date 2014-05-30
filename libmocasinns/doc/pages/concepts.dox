@@ -1,0 +1,88 @@
+/*!
+
+\page page_concepts Concepts for user defined types
+
+\section concept-ConfigurationType ConfigurationType
+The two main data types the user must provide for using the generic mocasinns-library are the Configuration that should be sampled and a step between different configurations that can  be used to construct an ergodic Markov chain. The interface a step class must provide is discussed in section \ref concept-StepType.
+
+The configuration must provide the following two functions:
+- <tt>\ref concept-EnergyType energy()</tt>: This function returns the energy of the current state of the configuration. The return value <tt>\ref concept-EnergyType</tt> can be a integer or double variable or a user defined type that provides an interface necessary for the concept energy described in section \ref concept-EnergyType.
+- <tt>\ref concept-StepType propose_step<RNG>(RNG*)</tt>: This function creates a new step that leads from the actual configuration to a new configuration. The random number generator provides functions <tt>RNG::random_double()</tt> for creating a uniformly distributed float random number between 0 and 1 and <tt>RNG::random_int32(int_32_t min, int_32_t max)</tt> for creating a random integer in the interval  (including the boundaries).
+- <tt>void commit(StepType)</tt>: This function makes the changes a step implies on the configuration space.
+
+\section concept-StepType StepType
+A step is the representation of the smallest element in the Markov chain that links to states \f$ \sigma_1 \f$ and \f$ \sigma_2 \f$.
+
+An user-provided implementation of a step must provide the following functions:
+- <tt>\ref concept-EnergyType delta_E();</tt>: This function returns the energy difference that occurs if this ste will be executed. The return value <tt>\ref concept-EnergyType</tt> can be a integer or double variable or a user defined type that provides an interface necessary for the concept energy described in section \ref concept-Energy
+- <tt>void execute();</tt>: It is recommended to let this function call simply the <tt>commit(StepType)</tt> function of the respective configuration. It can be used additionally to keep track whether a step was executed or not (this can be useful if the functionality of the destructor will depend on this fact).
+
+The following functions are optional but will be used by mocasinns if present:
+- <tt>double selection_probability_factor();</tt>: This function returns the quotient of the selection probability of this step and the selection probability of the inverse step \f$ s = S(\sigma_1 \rightarrow \sigma_2) / S(\sigma_2 \rightarrow \sigma_2) \f$. If this function is not implemented, the algorithms suppose that \f$ s = 1.0 \f$, i.e. that every step will be selected with the same probability.
+- <tt>bool executable();</tt>: This functions states whether the step can be executed in principle. This can be used if the proposal methods for steps can suggest steps that would lead to invalid states of the configuration. If this function is not implemented, the algorithms suppose that every step can be executed.
+
+\section concept-EnergyType EnergyType
+
+The concept of an energy is not necessary linked with the usual physical picture of energy. Instead we use energy to quantise some characteristics of a configuration space and a step. We can for example consider the tupel consisting of the usual energy and the magnetization of an Ising system as an energy in the sense of mocasinns.
+
+An energy must provide the following functionality:
+- Add two energies: Two energy objects must be addible using the \f$+\f$ operator. The algorithm need this for adding the current energy of a configuration and the energy difference of a step.
+- Compare two energies: Two energy objects must be comparable using the \f$<\f$-operator. This is used for sorting the energies in the histograms of the reweighting algorithms.
+- Multiply an energy with a temperature: For using in Metropolis-like algorithms, there must be a \f$*\f$-operator defined for the temperature type and the energy type.
+
+As one can see, the build in numerical types of C++ are usable as an energy for mocasinns. The library provides some prototypes for extended energies:
+- \link Mocasinns::EnergyTypes::VectorEnergy <tt>VectorEnergy<T></tt>\endlink: Usual vector of numerical types \c T. Addition and comparison of two vectors is declared component-wise, and there is the possibility to use the same type as temperature and energy and multiply them. The result is the scalar product of the vectors.
+- \link Mocasinns::EnergyTypes::ArrayEnergy <tt>ArrayEnergy<T,N></tt>\endlink: Same as <tt>VectorEnergy<T></tt>, but with fixes size \c N. This reduces the number of size-checks operating with the energy types compared to <tt>VectorEnergy<T></tt>.
+
+\section concept-InverseTempertureType InverseTemperatureType
+
+The concept for inverse temperatures is used only in canonical simulations and strongly related to the \link concept-EnergyType EnergyType concept\endlink. A type of this concept must define a multiplication with the related EnergyType that results in a scalar quantity that can be used in the standard exp function.
+
+If using a simple number as energy, the same type can be used as inverse temperature. If using the energy types \link Mocasinns::EnergyTypes::VectorEnergy <tt>VectorEnergy<T></tt>\endlink or \link Mocasinns::EnergyTypes::ArrayEnergy <tt>ArrayEnergy<T,N></tt>\endlink defined by mocasinns one can use the same types as inverse temperatures.
+
+\section concept-RandomNumberGenerator RandomNumberGenerator
+
+\section concept-ObservableType ObservableType
+
+Observables are results of observations of the configuration space and must provide the following functionality:
+- Add two observables: Two observables must be addible using the \f$ + \f$ operator. The algorithm need this when trying to calculate average values.
+- Compare two observables: Two observables must be comparable using the \f$ < \f$-operator. This will be need e.g. for accumulating observables into a histogram.
+- Multiply an observable and a number or divide and observable by an number: The observable class must define the \f$ * \f$-operator for multiplying a number with an observable and the \f$ / \f$-operator for dividing an observable by an number. This is also needed for calculating averages of observables.
+- Calculate the power and the square root: It must be possible to use the \c pow function with integer exponents for an observable and the \c sqrt function for calculating the square root of an observable. This is also used in calculating averages of observables.
+
+The build in numerical types of C++ fulfill, as in the case of the energy concept, all requirements for beeing used as an observable. The library also provides some prototypes for more complicate observables:
+- \link Mocasinns::Observables::VectorObservable <tt>VectorObservable<T></tt>\endlink: Usual vector of numberical types \c T. All operations are executed component-wise.
+- \link Mocasinns::Observables::ArrayObservable <tt>ArrayObservable<T,N></tt>\endlink: Same as <tt>VectorObservable<T></tt>, but with fixed length \c N.
+
+In future releases of the mocasinns-library there will be a <tt>TupleObservable<T1,...></tt> that can deal with tuples of variables of arbitrary types.
+
+\section concept-Observator Observator
+To extract a certain observable from a configuration space (e.g. the energy or the magnetization of an Ising configuration), the user hast to define an Observator class that must provide the following interface:
+- <tt>typedef ... observable_type</tt>: Type of the observable that is measured and returned by the following function
+- <tt>static observe(ConfigurationType*)</tt>: Function to extract the value of the observable from the given pointer to a configuration space.
+
+Observators are mainly used in Metropolis-like algorithms to perform the measurements of the desired observables.
+
+\section concept-Accumulator Accumulator
+
+\section concept-HistoType HistoType
+
+At present histograms are used to store the density of states and the incidence counter for reweighting simulations. A histogram must provide the usual interface of a <tt>std::map</tt> and additional functionality described below. The mocasinns library provides a template base class <tt>HistoBase</tt> that provides allmost all of the <tt>std::map</tt> interface and all necessary additional functionality. Derived classes must then define the functions <tt>insert()</tt> and <tt>operator[]()</tt>, so one can use different concepts of binning without needing to write a histogram completely new.
+
+The library provides two derived histograms, a \c Histocrete that behaves like a map for storing discrete energy values and a \c Histogram that can be binned using a fixed bin width.
+
+Beside the interface of <tt>std::map</tt> a histogram provided by the users must define the following functions:
+- <tt>bool compatible(const HistoType&)</tt>: Determine whether the histogram has the same parameters and the same x-values as the other histogram.
+- <tt>size_type count_y(const y_value_type&</tt>: Count the bins with given y-value.
+- <tt>double derivative(const_iterator)</tt>: Calculates the derivative at the given position.
+- <tt>double flatness()</tt>: Calculate the flatness of the histgogram (minimal value devided by the average value).
+- <tt>void initialise_empty(const HistoType&)</tt>: Copies the parameters and the x-values of the given histogram, but sets all y-values to the default constructed values.
+- <tt>const_iterator max_x_value()</tt>: Returns an iterator to the bin with the maximal x-value.
+- <tt>const_iterator max_y_value()</tt>: Returns an iterator to the bin with the maximal y-value.
+- <tt>const_iterator min_x_value()</tt>: Returns an iterator to the bin with the minimal x-value.
+- <tt>const_iterator min_y_value()</tt>: Returns an iterator to the bin with the minimal y-value.
+- <tt>void set_all_y_values(const y_value_type&)</tt>: Set the y-value of each existing bin to the given value.
+- <tt>void shift_bin_zero(const_iterator)</tt>: Adds or substracts a value to each bin so that the given bin is shifted to 0.
+- <tt>y_value_type sum()</tt>: Calculates the sum of all y-values.
+
+*/

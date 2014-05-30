@@ -36,9 +36,6 @@ public:
   // Create an Ising configuration with a certain number of spins
   IsingConfiguration(unsigned int length) : spins(length, 1) { }
 
-  // Needed only for the algorithms
-  // std::vector<IsingStep> all_steps() const { return std::vector<IsingStep>(); }
-
   // Apply a given flip to the configuration
   void commit(const IsingStep& step) { spins[step.flip_index] *= -1; }
 
@@ -55,9 +52,6 @@ public:
   // Create a step (spin flip) using a given random number generator
   template <class RandomNumberGenerator>
   IsingStep propose_step(RandomNumberGenerator* rng) { return IsingStep(this, rng->random_uint32(0, spins.size() - 1)); }
-
-  template <class Archiv>
-  void serialize(Archiv&, const unsigned int&) {}
 };
   
 int IsingStep::delta_E()

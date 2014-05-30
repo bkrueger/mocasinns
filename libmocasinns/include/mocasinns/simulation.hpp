@@ -108,7 +108,7 @@ protected:
   //! Method for loading this class (omitted version name to avoid unused parameter warnings)
   template<class Archive> void serialize(Archive & ar, const unsigned int)
   {
-    ar & configuration_space;
+    Details::OptionalMemberFunctions::optional_serialize<ConfigurationType, Archive>(configuration_space, ar);
     ar & rng_seed;
   }
 

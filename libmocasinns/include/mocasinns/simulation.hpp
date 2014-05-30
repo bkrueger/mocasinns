@@ -25,6 +25,8 @@
 
 // Header for the standard random number generator
 #include "random/boost_random.hpp"
+// Header for checking whether the step type exposes certain functions
+#include "details/optional_member_functions.hpp"
 
 namespace Mocasinns
 {
@@ -110,16 +112,21 @@ protected:
     ar & rng_seed;
   }
 
-  template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-  void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
+  template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
+  typename boost::enable_if_c<!function_rejection_free, void>::type // Standard version of the algorithm
+  do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
+
+  template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
+  typename boost::enable_if_c<function_rejection_free, void>::type // Rejection-free version of the algorithm
+  do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);  
 
 private:
   //! Do a number of generic steps using an acceptance probability provided by the actual algorithm
-  template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool step_has_is_executable, bool step_has_selection_probability_factor>
+  template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
   void do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 
   //! Do a number of generic rejection-free steps using the acceptance probability provided by the actual algorithm
-  template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool step_has_is_executable, bool step_has_selection_probability_factor>
+  template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
   void do_generic_steps_rejection_free(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
 
   //! Set the signals for POSIX signals

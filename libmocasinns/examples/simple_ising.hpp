@@ -22,12 +22,6 @@ public:
 
   // Execute the flip
   void execute();
-
-  // Needed only for the algorithms
-  bool is_executable() const { return true; }
-
-  // Needed only for the algorithms
-  double selection_probability_factor() const { return 1.0; }
 };
 
 // Class representing a one-dimensiona chain of ising spins
@@ -43,7 +37,7 @@ public:
   IsingConfiguration(unsigned int length) : spins(length, 1) { }
 
   // Needed only for the algorithms
-  std::vector<IsingStep> all_steps() const { return std::vector<IsingStep>(); }
+  // std::vector<IsingStep> all_steps() const { return std::vector<IsingStep>(); }
 
   // Apply a given flip to the configuration
   void commit(const IsingStep& step) { spins[step.flip_index] *= -1; }

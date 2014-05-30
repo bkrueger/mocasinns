@@ -10,9 +10,6 @@
 
 #include <limits>
 
-#include "../details/optional_concept_checks/step_type_has_is_executable.hpp"
-#include "../details/optional_concept_checks/step_type_has_selection_probability_factor.hpp"
-
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
 void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::register_posix_signal_handler()
 {
@@ -121,25 +118,21 @@ bool Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_f
  * \param acceptance_probability_parameter Some object or quantity that piped to the acceptance probability calculation of the derived algorithm.
  */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
+template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
+typename boost::enable_if_c<!function_rejection_free, void>::type
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
-  // Call the generic step function depending on the rejection free template parameter
-  if (rejection_free)
-  {
-    do_generic_steps_rejection_free<Derived, StepType, AcceptanceProbabilityParameterType, 
-				    Details::OptionalConceptChecks::StepTypeHasIsExecutable<StepType>::value, 
-				    Details::OptionalConceptChecks::StepTypeHasSelectionProbabilityFactor<StepType>::value>
-      (step_number, acceptance_probability_parameter);
-  }
-  else
-  {
-    do_generic_steps<Derived, StepType, AcceptanceProbabilityParameterType, 
-		     Details::OptionalConceptChecks::StepTypeHasIsExecutable<StepType>::value, 
-		     Details::OptionalConceptChecks::StepTypeHasSelectionProbabilityFactor<StepType>::value>
-      (step_number, acceptance_probability_parameter);
-  }
+  do_generic_steps<Derived, StepType, AcceptanceProbabilityParameterType>(step_number, acceptance_probability_parameter);
 }
+ 
+template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
+template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
+typename boost::enable_if_c<function_rejection_free, void>::type
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
+{
+  do_generic_steps_rejection_free<Derived, StepType, AcceptanceProbabilityParameterType>(step_number, acceptance_probability_parameter);
+}
+
 
 /*! \fn AUTO_TEMPLATE_2
  * \details Private function. See do_steps(step_number, acceptance_probability_parameters) for documentation of implementation details and (template) parameters.
@@ -148,7 +141,7 @@ void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_f
  * \tparam STEP_HAS_SELECTION_PROBABILITY_FACTOR Boolean stating whether the StepType associated provides the function selection_probability_factor
  */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
+template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
 void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
   for (StepNumberType i = 0; i < step_number; ++i)
@@ -157,11 +150,10 @@ void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_f
     StepType next_step = this->configuration_space->propose_step(this->rng);
     
     // If the next step is executable, calculate the acceptance probability
-    if (STEP_HAS_IS_EXECUTABLE && next_step.is_executable())
+    if (Details::OptionalMemberFunctions::optional_is_executable<StepType>(next_step))
     {
       // Calculate selection probability factor and acceptance probability
-      double selection_probability_factor = 1.0;
-      if (STEP_HAS_SELECTION_PROBABILITY_FACTOR) selection_probability_factor = next_step.selection_probability_factor();
+      double selection_probability_factor = Details::OptionalMemberFunctions::optional_selection_probability_factor<StepType>(next_step);
       double step_probability(static_cast<Derived*>(this)->acceptance_probability(next_step, acceptance_probability_parameter));
       step_probability /= selection_probability_factor;
 
@@ -186,7 +178,7 @@ void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_f
  * \tparam STEP_HAS_SELECTION_PROBABILITY_FACTOR Boolean stating whether the StepType associated provides the function selection_probability_factor
  */
 template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-template <class Derived, class StepType, class AcceptanceProbabilityParameterType, bool STEP_HAS_IS_EXECUTABLE, bool STEP_HAS_SELECTION_PROBABILITY_FACTOR>
+template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
 void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::do_generic_steps_rejection_free(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter)
 {
   for (StepNumberType i = 0; i < step_number; ++i)
@@ -200,11 +192,10 @@ void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator, rejection_f
     {
       // If the step is executable, calculate the acceptance probability
       // If the step is not executable, the acceptance probability remains 0
-      if (STEP_HAS_IS_EXECUTABLE && all_steps[s].is_executable())
+      if (Details::OptionalMemberFunctions::optional_is_executable<StepType>(all_steps[s]))
       {
 	// Calculate selection probability factor and acceptance probability
-	double selection_probability_factor = 1.0;
-	if (STEP_HAS_SELECTION_PROBABILITY_FACTOR) selection_probability_factor = all_steps[s].selection_probability_factor();
+	double selection_probability_factor = Details::OptionalMemberFunctions::optional_selection_probability_factor<StepType>(all_steps[s]);
 	double step_probability(static_cast<Derived*>(this)->acceptance_probability(all_steps[s], acceptance_probability_parameter));
 	step_probability /= selection_probability_factor;
 

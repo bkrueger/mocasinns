@@ -148,7 +148,7 @@ namespace Mocasinns
     template<class TemperaturType = double>
     void do_metropolis_steps(const StepNumberType& number, const TemperaturType& beta = 0.0)
     {
-      this->template do_steps<this_type, StepType>(number, beta);
+      this->template do_steps<this_type, StepType, rejection_free>(number, beta);
     }
     
     //! Execute a Metropolis Monte-Carlo simulation at given inverse temperature

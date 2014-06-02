@@ -105,10 +105,22 @@ protected:
 
   //! Member variable for boost serialization
   friend class boost::serialization::access;
-  //! Method for loading this class (omitted version name to avoid unused parameter warnings)
-  template<class Archive> void serialize(Archive & ar, const unsigned int)
+  //! Method for serializing the class
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
   {
-    Details::OptionalMemberFunctions::optional_serialize<ConfigurationType, Archive>(*configuration_space, ar);
+    serialize_generic<ConfigurationType, Archive>(ar, version);
+  }
+
+  template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
+  void serialize_generic(Archive & ar, const unsigned int)
+  {
+    ar & configuration_space;
+    ar & rng_seed;
+  }
+  template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<!Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
+  void serialize_generic(Archive & ar, const unsigned int)
+  {
     ar & rng_seed;
   }
 

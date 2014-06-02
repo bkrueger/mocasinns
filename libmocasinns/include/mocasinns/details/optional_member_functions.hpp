@@ -46,15 +46,6 @@ namespace Mocasinns
       optional_selection_probability_factor(StepType&) { return 1.0; }
       //! /endcond
 
-      //! /cond
-      template <class ConfigurationType, class Archive>
-      static typename boost::enable_if_c<has_function_is_serializable<ConfigurationType, bool>::value, void>::type
-      optional_serialize(ConfigurationType& configuration, Archive& ar) { if (configuration.is_serializable()) ar & configuration; }
-      template <class ConfigurationType, class Archive>
-      static typename boost::enable_if_c<!has_function_is_serializable<ConfigurationType, bool>::value, void>::type
-      optional_serialize(ConfigurationType&,  Archive&) { }
-      //! /endcond
-
       // Code only visible for doxygen
       // Doxygen cannot deal with the enable-if structure
       #ifdef MOCASINNS_DOXYGEN_DOCUMENTATION
@@ -69,10 +60,6 @@ namespace Mocasinns
       //! Checks whether the given StepType has the (static) member function <tt>double selection_probability_factor()</tt>. If this is the case, the optional function returns the value of this (static) member function, otherwise it returns 1.0.
       template <class StepType> 
       double optional_selection_probability_factor(StepType& step);
-
-      //! Checks whether the given StepType has the (static) member function <tt>bool is_serializable()</tt>. If this is the case, and the function returns true, the given configuration is serialized into the given archive, otherwise nothing happens.
-      template <class ConfigurationType, class Archive> 
-      bool optional_is_serializable(ConfigurationType& configuration, Archive& ar);
       #endif
     };
   }

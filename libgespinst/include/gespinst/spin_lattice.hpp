@@ -86,6 +86,9 @@ public:
   //! Get the extension of the lattice in the specified direction. Returns 0 if there is no such direction
   unsigned int extension(unsigned int dim) const;
 
+  //! Static function to specify that the class is serializable
+  static bool is_serializable() { return true; }
+
   //! Magnetization of the lattice (sum over all spin values)
   double magnetization() const;
 

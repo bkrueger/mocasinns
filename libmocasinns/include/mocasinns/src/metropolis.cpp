@@ -32,7 +32,7 @@ namespace ba = boost::accumulators;
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
+std::vector<typename Observator::observable_type> Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(const TemperatureType& beta)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -56,7 +56,7 @@ std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<Conf
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class InputIterator>
-std::vector<std::vector<typename Observator::observable_type> > Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
+std::vector<std::vector<typename Observator::observable_type> > Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::do_metropolis_simulation(InputIterator first_beta, InputIterator last_beta)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -80,7 +80,7 @@ std::vector<std::vector<typename Observator::observable_type> > Mocasinns::Metro
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class Accumulator, class TemperatureType>
-void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
+void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(const TemperatureType& beta, Accumulator& measurement_accumulator)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -119,7 +119,7 @@ void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,reje
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
-void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
+void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejection_free>::do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end)
 {  
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -156,7 +156,7 @@ void Mocasinns::MetropolisBase<ConfigurationType,Step,RandomNumberGenerator,reje
 */									
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
+std::vector<typename Observator::observable_type> Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::autocorrelation_function(const TemperatureType& beta, unsigned int maximal_time, unsigned int simulation_time_factor)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -219,7 +219,7 @@ std::vector<typename Observator::observable_type> Mocasinns::MetropolisBase<Conf
  */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
 template<class Observator, class TemperatureType>
-typename Observator::observable_type Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
+typename Observator::observable_type Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::integrated_autocorrelation_time(const TemperatureType& beta, unsigned int maximal_time, unsigned int considered_time_factor)
 {
   // Check the concept of the observator
   BOOST_CONCEPT_ASSERT((Concepts::ObservatorConcept<Observator,ConfigurationType>));
@@ -240,26 +240,26 @@ typename Observator::observable_type Mocasinns::MetropolisBase<ConfigurationType
 }
 
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
+void Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
   input_archive >> (*this);
 }
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
+void Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::load_serialize(const char* filename)
 {
   std::ifstream input_filestream(filename);
   load_serialize(input_filestream);
   input_filestream.close();
 }
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
+void Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(std::ostream& output_stream) const
 {
   boost::archive::text_oarchive output_archive(output_stream);
   output_archive << (*this);
 }
 template <class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::MetropolisBase<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
+void Mocasinns::Metropolis<ConfigurationType, Step, RandomNumberGenerator, rejection_free>::save_serialize(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_serialize(output_filestream);

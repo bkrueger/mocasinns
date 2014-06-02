@@ -188,7 +188,7 @@ namespace Mocasinns
     step_parameters.total_energy = this->configuration_space->energy();
     
     // Call the generic method
-    this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType>(number, step_parameters);
+    this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType, false>(number, step_parameters);
   }
 
   /*!

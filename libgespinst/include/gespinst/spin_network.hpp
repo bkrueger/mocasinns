@@ -60,6 +60,9 @@ namespace Gespinst
     //! Calculate the energy of this lattice
     double energy() const;
 
+    //! Static function to specify that the class is serializable
+    static bool is_serializable() { return true; }
+
     //! Magnetization of the lattice (sum over all spin values)
     double magnetization() const;
 

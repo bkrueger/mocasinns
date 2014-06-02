@@ -3,8 +3,9 @@
 namespace Mocasinns
 {
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
-	    template<class,class,class,template<class,class> class,class> class AlgorithmType>
-  void MulticanonicalCounting<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, AlgorithmType>::set_log_density_of_states(const HistoType<EnergyType, double>& value)
+	    template<class,class,class,template<class,class> class,class,bool> class AlgorithmType,
+	    bool rejection_free>
+  void MulticanonicalCounting<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, AlgorithmType, rejection_free>::set_log_density_of_states(const HistoType<EnergyType, double>& value)
   {
     // Typedefs for extended and normal histogram types
     typedef HistoType<ExtendedEnergyType, double> ExtendedHistoType;
@@ -28,8 +29,9 @@ namespace Mocasinns
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
-	    template<class,class,class,template<class,class> class,class> class AlgorithmType>
-  HistoType<EnergyType, double> MulticanonicalCounting<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, AlgorithmType>::get_log_density_of_states() const
+	    template<class,class,class,template<class,class> class,class,bool> class AlgorithmType,
+	    bool rejection_free>
+  HistoType<EnergyType, double> MulticanonicalCounting<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, AlgorithmType,rejection_free>::get_log_density_of_states() const
   {
     // Typedefs for extended and normal histogram types
     typedef HistoType<ExtendedEnergyType, double> ExtendedHistoType;
@@ -62,8 +64,9 @@ namespace Mocasinns
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
-	    template<class,class,class,template<class,class> class,class> class AlgorithmType>
-  double MulticanonicalCounting<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, AlgorithmType>::number_of_states() const
+	    template<class,class,class,template<class,class> class,class,bool> class AlgorithmType,
+	    bool rejection_free>
+  double MulticanonicalCounting<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, AlgorithmType,rejection_free>::number_of_states() const
   {
     // Get the density of states
     typedef HistoType<EnergyType, double> DosType;

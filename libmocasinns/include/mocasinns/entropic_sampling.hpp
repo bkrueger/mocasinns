@@ -20,7 +20,7 @@
 namespace Mocasinns
 {
   //! Class for Metropolis-Monte-Carlo simulations
-  template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
+  template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free = false>
   class EntropicSampling : public Simulation<ConfigurationType, RandomNumberGenerator>
   {
     // Check the configuration concept
@@ -115,9 +115,16 @@ namespace Mocasinns
     }
   };
 
+  // Typedef for Wang Landau rejection-free.
+  // Checks for C++11 support for template typedef
+  #ifndef BOOST_NO_CXX11_TEMPLATE_ALIASES
+  template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator> 
+  using EntropicSamplingRejectionFree = EntropicSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, true>;
+  #endif
+
   //! Struct for dealing with the parameters of a Wang-Landau-simulation
-  template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
-  struct EntropicSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters
+  template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+  struct EntropicSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free>::Parameters
   {
   public:
     //! Energy value that is used as a reference point for the binning

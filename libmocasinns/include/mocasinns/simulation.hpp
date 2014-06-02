@@ -32,7 +32,7 @@ namespace Mocasinns
 {
 
 //! Base class for all Simulations in MoCaSinns
-template <class ConfigurationType, class RandomNumberGenerator = Random::Boost_MT19937, bool rejection_free = false>
+template <class ConfigurationType, class RandomNumberGenerator = Random::Boost_MT19937>
 class Simulation
 {
 public:
@@ -108,34 +108,26 @@ protected:
   //! Method for loading this class (omitted version name to avoid unused parameter warnings)
   template<class Archive> void serialize(Archive & ar, const unsigned int)
   {
-    Details::OptionalMemberFunctions::optional_serialize<ConfigurationType, Archive>(configuration_space, ar);
+    Details::OptionalMemberFunctions::optional_serialize<ConfigurationType, Archive>(*configuration_space, ar);
     ar & rng_seed;
   }
 
-  template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
-  typename boost::enable_if_c<!function_rejection_free, void>::type // Standard version of the algorithm
+  template <class Derived, class StepType, bool rejection_free, class AcceptanceProbabilityParameterType>
+  typename boost::enable_if_c<!rejection_free, void>::type // Standard version of the algorithm
   do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 
-  template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
-  typename boost::enable_if_c<function_rejection_free, void>::type // Rejection-free version of the algorithm
+  template <class Derived, class StepType, bool rejection_free, class AcceptanceProbabilityParameterType>
+  typename boost::enable_if_c<rejection_free, void>::type // Rejection-free version of the algorithm
   do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);  
 
 private:
-  //! Do a number of generic steps using an acceptance probability provided by the actual algorithm
-  template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-  void do_generic_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
-
-  //! Do a number of generic rejection-free steps using the acceptance probability provided by the actual algorithm
-  template <class Derived, class StepType, class AcceptanceProbabilityParameterType>
-  void do_generic_steps_rejection_free(const StepNumberType& step_number, AcceptanceProbabilityParameterType acceptance_probability_parameter);
-
   //! Set the signals for POSIX signals
   void register_posix_signal_handler();
 };
 
 // Initialisation of the static member signal_number_caught
-  template <class ConfigurationType, class RandomNumberGenerator, bool rejection_free>
-  volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator, rejection_free>::signal_number_caught = 0;
+  template <class ConfigurationType, class RandomNumberGenerator>
+  volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator>::signal_number_caught = 0;
 
 } // of namespace Mocasinns
 

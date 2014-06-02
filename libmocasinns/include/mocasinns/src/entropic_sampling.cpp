@@ -12,8 +12,8 @@
 namespace Mocasinns
 {
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>
 ::Parameters::Parameters() :
   binning_reference(0), 
   binning_width(1), 
@@ -25,9 +25,9 @@ EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGen
   sweep_steps(1000),
   prototype_histo()
 {}
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 template <class OtherParametersType>
-EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::Parameters::Parameters(const OtherParametersType& other) :
+EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::Parameters::Parameters(const OtherParametersType& other) :
   binning_reference(other.binning_reference), 
   binning_width(other.binning_width), 
   energy_cutoff_lower(other.energy_cutoff_lower),
@@ -38,8 +38,8 @@ EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGen
   sweep_steps(other.sweep_steps),
   prototype_histo(other.prototype_histo)
 {}
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>
 ::Parameters::operator==(const Parameters& rhs) const
 {
   return ((binning_reference == rhs.binning_reference) &&
@@ -51,27 +51,27 @@ bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 	  (flatness == rhs.flatness) &&
 	  (sweep_steps == rhs.sweep_steps));
 }
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>
 ::Parameters::operator!=(const Parameters& rhs) const
 {
   return !operator==(rhs);
 }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::EntropicSampling()
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::EntropicSampling()
   : Simulation<ConfigurationType, RandomNumberGenerator>(static_cast<ConfigurationType*>(0)), simulation_parameters(Parameters()) { }
   
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::EntropicSampling(const Parameters& params) 
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::EntropicSampling(const Parameters& params) 
   : Simulation<ConfigurationType, RandomNumberGenerator>(static_cast<ConfigurationType*>(0)), simulation_parameters(params) { } 
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::EntropicSampling(const Parameters& params, ConfigurationType* initial_configuration) 
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::EntropicSampling(const Parameters& params, ConfigurationType* initial_configuration) 
   : Simulation<ConfigurationType, RandomNumberGenerator>(initial_configuration), simulation_parameters(params) { } 
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Calculate the energy difference of the step
   step_parameters.delta_E = step_to_execute.delta_E();
@@ -86,8 +86,8 @@ double EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNu
   return exp(log_density_of_states[step_parameters.total_energy] - log_density_of_states[total_energy_after_step]);
 }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Increment the total energy
   step_parameters.total_energy += step_parameters.delta_E;
@@ -95,26 +95,26 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
   incidence_counter[step_parameters.total_energy] += time;
 }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, double, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::handle_rejected_step(StepType&, double, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
 {
   // Update the histograms
   incidence_counter[step_parameters.total_energy]++;
 }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_entropic_sampling_steps(const StepNumberType& number)
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_steps(const StepNumberType& number)
 {
   // Variable to track the energy
   Details::Multicanonical::StepParameter<EnergyType> step_parameters;
   step_parameters.total_energy = this->configuration_space->energy();
 
   // Call the generic function of Simulation
-  this->template do_steps<EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>, StepType>(number, step_parameters);
+  this->template do_steps<EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>, StepType, rejection_free>(number, step_parameters);
 }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_entropic_sampling_simulation()
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_simulation()
 {
   double flatness_current = 0.0;
 
@@ -144,35 +144,35 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
   }
 }
 
-// template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-// void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::initialise_with_parameters()
+// template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+// void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::initialise_with_parameters()
 // {
 //   // Set the binnings of the density of states and the incidence counter
 //   log_density_of_states.initialise_empty(simulation_parameters.prototype_histo);
 //   incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
 // }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::load_serialize(std::istream& input_stream)
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
   input_archive >> (*this);
 }
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::load_serialize(const char* filename)
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(const char* filename)
 {
   std::ifstream input_filestream(filename);
   load_serialize(input_filestream);
   input_filestream.close();
 }
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::save_serialize(std::ostream& output_stream) const
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(std::ostream& output_stream) const
 {
   boost::archive::text_oarchive output_archive(output_stream);
   output_archive << (*this);
 }
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::save_serialize(const char* filename) const
+template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(const char* filename) const
 {
   std::ofstream output_filestream(filename);
   save_serialize(output_filestream);

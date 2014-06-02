@@ -31,6 +31,7 @@ public:
   void setUp();
   void tearDown();
 
+  void test_optional_member_functions();
   void test_serialize();
 };
 

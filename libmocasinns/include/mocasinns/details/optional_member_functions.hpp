@@ -3,47 +3,77 @@
 
 // Header for conditional compile based on template parameters
 #include <boost/utility/enable_if.hpp>
-#include <boost/tti/has_member_function.hpp>
+#include <boost/tti/has_function.hpp>
+#include <boost/tti/has_data.hpp>
 
 namespace Mocasinns
 {
   namespace Details
   {
-    BOOST_TTI_HAS_MEMBER_FUNCTION(is_executable)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(selection_probability_factor)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(serialize)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(load)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(save)
+    BOOST_TTI_HAS_FUNCTION(is_executable)
+    BOOST_TTI_HAS_FUNCTION(selection_probability_factor)
+    BOOST_TTI_HAS_FUNCTION(is_serializable)
 
     //! Class that provides function for checking whether a type given as function template parameter has a certain member function. If the member function exists, the member function is called, otherwise a default value will be returned
     class OptionalMemberFunctions
     {
     public:
-      template <class StepType>
-      static typename boost::enable_if_c<has_member_function_is_executable<StepType, bool>::value, bool>::type
-      optional_is_executable(StepType& step) { return step.is_executable(); }
-      
-      template <class StepType>
-      static typename boost::enable_if_c<!has_member_function_is_executable<StepType, bool>::value, bool>::type
-      optional_is_executable(StepType& step) { return true; }
-      
-      template <class StepType>
-      static typename boost::enable_if_c<has_member_function_selection_probability_factor<StepType, double>::value, double>::type
-      optional_selection_probability_factor(StepType& step) { return step.selection_probability_factor(); }
-      
-      template <class StepType>
-      static typename boost::enable_if_c<!has_member_function_selection_probability_factor<StepType, double>::value, double>::type
-      optional_selection_probability_factor(StepType& step) { return 1.0; }
 
+      //! /cond
+      template <class StepType>
+      static typename boost::enable_if_c<has_function_is_executable<StepType, bool>::value, bool>::type
+      optional_is_executable(StepType& step) { return step.is_executable(); }
+      template <class StepType>
+      static typename boost::enable_if_c<!has_function_is_executable<StepType, bool>::value, bool>::type
+      optional_is_executable(StepType&) { return true; }
+      //! /endcond
+
+      //! /cond
+      template <class ConfigurationType>
+      static typename boost::enable_if_c<has_function_is_serializable<ConfigurationType, bool>::value, bool>::type
+      optional_is_serializable(ConfigurationType& configuration) { return configuration.is_serializable; }
+      template <class ConfigurationType>
+      static typename boost::enable_if_c<!has_function_is_serializable<ConfigurationType, bool>::value, bool>::type
+      optional_is_serializable(ConfigurationType&) { return false; }
+      //! /endcond
+
+      //! /cond
+      template <class StepType>
+      static typename boost::enable_if_c<has_function_selection_probability_factor<StepType, double>::value, double>::type
+      optional_selection_probability_factor(StepType& step) { return step.selection_probability_factor(); }
+      template <class StepType>
+      static typename boost::enable_if_c<!has_function_selection_probability_factor<StepType, double>::value, double>::type
+      optional_selection_probability_factor(StepType&) { return 1.0; }
+      //! /endcond
+
+      //! /cond
       template <class ConfigurationType, class Archive>
-      static typename boost::enable_if_c<has_member_function_serialize<ConfigurationType, void>::value || 
-					 (has_member_function_load<ConfigurationType, void>::value && has_member_function_load<ConfigurationType, void>::value), void>::type
-      optional_serialize(ConfigurationType* configuration, Archive& ar) { ar & configuration; }
-    
+      static typename boost::enable_if_c<has_function_is_serializable<ConfigurationType, bool>::value, void>::type
+      optional_serialize(ConfigurationType& configuration, Archive& ar) { if (configuration.is_serializable()) ar & configuration; }
       template <class ConfigurationType, class Archive>
-      static typename boost::enable_if_c<!(has_member_function_serialize<ConfigurationType, void>::value || 
-					   (has_member_function_load<ConfigurationType, void>::value && has_member_function_load<ConfigurationType, void>::value)), void>::type
-      optional_serialize(ConfigurationType* configuration, Archive& ar) { }
+      static typename boost::enable_if_c<!has_function_is_serializable<ConfigurationType, bool>::value, void>::type
+      optional_serialize(ConfigurationType&,  Archive&) { }
+      //! /endcond
+
+      // Code only visible for doxygen
+      // Doxygen cannot deal with the enable-if structure
+      #ifdef MOCASINNS_DOXYGEN_DOCUMENTATION
+      //! Checks whether the given StepType has the (static) member function <tt>bool is_executable()</tt>. If this is the case, the optional function returns the value of this (static) member function, otherwise it returns true.
+      template <class StepType> 
+      bool optional_is_executable(StepType& step);
+
+      //! Checks whether the given StepType has the (static) member function <tt>bool is_serializable()</tt>. If this is the case, the optional function returns the value of this (static) member function, otherwise it returns false.
+      template <class ConfigurationType> 
+      bool optional_is_serializable(ConfigurationType& configuration);
+
+      //! Checks whether the given StepType has the (static) member function <tt>double selection_probability_factor()</tt>. If this is the case, the optional function returns the value of this (static) member function, otherwise it returns 1.0.
+      template <class StepType> 
+      double optional_selection_probability_factor(StepType& step);
+
+      //! Checks whether the given StepType has the (static) member function <tt>bool is_serializable()</tt>. If this is the case, and the function returns true, the given configuration is serialized into the given archive, otherwise nothing happens.
+      template <class ConfigurationType, class Archive> 
+      bool optional_is_serializable(ConfigurationType& configuration, Archive& ar);
+      #endif
     };
   }
 }

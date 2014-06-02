@@ -20,12 +20,13 @@ namespace Mocasinns
 {
   
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator,
-	    template<class,class,class,template<class,class> class,class> class AlgorithmType>
+	    template<class,class,class,template<class,class> class,class,bool> class AlgorithmType,
+	    bool rejection_free = false>
   class MulticanonicalCounting
     : public AlgorithmType<Details::Multicanonical::ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType>,
 			   Details::Multicanonical::StepTypeExtended<ConfigurationType, StepType, EnergyType>,
 			   Details::Multicanonical::EnergyTypeExtended<EnergyType>,
-			   HistoType, RandomNumberGenerator>
+			   HistoType, RandomNumberGenerator, rejection_free>
   {
   public:
     // Typedef for the extensions
@@ -33,11 +34,11 @@ namespace Mocasinns
     typedef Details::Multicanonical::ConfigurationTypeExtended<ConfigurationType, StepType, EnergyType> ExtendedConfigurationType;
     typedef Details::Multicanonical::StepTypeExtended<ConfigurationType, StepType, EnergyType> ExtendedStepType;
     // Typedef for the base class
-    typedef AlgorithmType<ExtendedConfigurationType, ExtendedStepType, ExtendedEnergyType, HistoType, RandomNumberGenerator> Base;
+    typedef AlgorithmType<ExtendedConfigurationType, ExtendedStepType, ExtendedEnergyType, HistoType, RandomNumberGenerator, rejection_free> Base;
     // Typedef for the extended parameters
     typedef typename Base::Parameters ParametersExtendedType;
     // Typedef for the original algorithm
-    typedef AlgorithmType<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator> OriginalAlgorithmType;
+    typedef AlgorithmType<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free> OriginalAlgorithmType;
     // Typedef for the original parameters
     typedef typename OriginalAlgorithmType::Parameters ParametersOriginalType;
 

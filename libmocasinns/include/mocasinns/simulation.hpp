@@ -103,27 +103,6 @@ protected:
   //! Bool that indicates whether the simulation is terminating
   bool is_terminating;
 
-  //! Member variable for boost serialization
-  friend class boost::serialization::access;
-  //! Method for serializing the class
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version)
-  {
-    serialize_generic<ConfigurationType, Archive>(ar, version);
-  }
-
-  template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
-  void serialize_generic(Archive & ar, const unsigned int)
-  {
-    ar & configuration_space;
-    ar & rng_seed;
-  }
-  template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<!Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
-  void serialize_generic(Archive & ar, const unsigned int)
-  {
-    ar & rng_seed;
-  }
-
   //! \cond
   template <class Derived, class StepType, bool rejection_free, class AcceptanceProbabilityParameterType>
   typename boost::enable_if_c<!rejection_free, void>::type // Standard version of the algorithm
@@ -168,6 +147,27 @@ protected:
 #endif
 
 private:
+  //! Member variable for boost serialization
+  friend class boost::serialization::access;
+  //! Method for serializing the class
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    serialize_generic<ConfigurationType, Archive>(ar, version);
+  }
+
+  template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
+  void serialize_generic(Archive & ar, const unsigned int)
+  {
+    ar & configuration_space;
+    ar & rng_seed;
+  }
+  template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<!Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
+  void serialize_generic(Archive & ar, const unsigned int)
+  {
+    ar & rng_seed;
+  }
+
   //! Set the signals for POSIX signals
   void register_posix_signal_handler();
 };

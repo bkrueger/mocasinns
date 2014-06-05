@@ -37,7 +37,6 @@ public:
 
   void test_do_metropolis_steps();
   void test_do_metropolis_simulation();
-  void test_integrated_autocorrelation_time();
 };
 
 #endif

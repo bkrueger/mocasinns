@@ -106,12 +106,3 @@ void TestMetropolis::test_do_metropolis_simulation()
   // Test the results
   CPPUNIT_ASSERT_DOUBLES_EQUAL(ba::mean(acc), sum/result_vector.size(), 0.15);
 }
-
-void TestMetropolis::test_integrated_autocorrelation_time()
-{
-  // Call the method for a simple observable
-  double int_auto_time = test_simulation->integrated_autocorrelation_time<ObserveIsingEnergy>(0.0, 100, 5);
-
-  // Call the method for a more complicated observable
-  Observables::VectorObservable<double> int_auto_time_vec = test_simulation->integrated_autocorrelation_time<ObserveIsingEnergyMagnetization>(0.0, 100, 5);
-}

@@ -1,0 +1,91 @@
+#include "test_tuple_addable.hpp"
+
+CppUnit::Test* TestTupleAddable::suite()
+{
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestObservables/TestTupleAddable");
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestTupleAddable>("TestObservables/TestTupleAddable: test_constructor", &TestTupleAddable::test_constructor) );
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestTupleAddable>("TestObservables/TestTupleAddable: test_operator_add", &TestTupleAddable::test_operator_add) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestTupleAddable>("TestObservables/TestTupleAddable: test_operator_substract", &TestTupleAddable::test_operator_substract) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestTupleAddable>("TestObservables/TestTupleAddable: test_operator_multiply", &TestTupleAddable::test_operator_multiply) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestTupleAddable>("TestObservables/TestTupleAddable: test_operator_divide", &TestTupleAddable::test_operator_divide) );
+
+  return suite_of_tests;
+}
+
+void TestTupleAddable::setUp()
+{
+  std::tuple<double,int,double> init_tuple;
+  std::get<0>(init_tuple) = 1.0;
+  std::get<1>(init_tuple) = 2;
+  std::get<2>(init_tuple) = -2.0;
+  tuple_addable = new TupleAddable<double,int,double>(init_tuple);
+}
+
+void TestTupleAddable::tearDown()
+{
+  delete tuple_addable;
+}
+
+void TestTupleAddable::test_constructor()
+{
+  // Test the allready constructed TupleAddables
+  CPPUNIT_ASSERT_EQUAL(1.0, std::get<0>(*tuple_addable));
+  CPPUNIT_ASSERT_EQUAL(2, std::get<1>(*tuple_addable));
+  CPPUNIT_ASSERT_EQUAL(-2.0, std::get<2>(*tuple_addable));
+}
+
+void TestTupleAddable::test_operator_add()
+{
+  // Test adding for TupleAddable<double>
+  TupleAddable<double,int,double> new_tuple_addable;
+  std::get<0>(new_tuple_addable) = 2.3;
+  std::get<1>(new_tuple_addable) = -1;
+  std::get<2>(new_tuple_addable) = 4.1;
+  TupleAddable<double,int,double> added_tuple_addable = (*tuple_addable) + new_tuple_addable;
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(3.3, std::get<0>(added_tuple_addable), 1e-6);
+  CPPUNIT_ASSERT_EQUAL(1, std::get<1>(added_tuple_addable));
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(2.1, std::get<2>(added_tuple_addable), 1e-6);
+  // Test adding a scalar
+  TupleAddable<double,int,double> scalar_added_tuple_addable = added_tuple_addable + 2.0;
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(5.3, std::get<0>(scalar_added_tuple_addable), 1e-6);
+  CPPUNIT_ASSERT_EQUAL(4, std::get<1>(scalar_added_tuple_addable));
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.1, std::get<2>(scalar_added_tuple_addable), 1e-6);
+}
+void TestTupleAddable::test_operator_substract()
+{
+  // // Test substracting for TupleAddable<double>
+  // TupleAddable<double,3> new_tuple_addable;
+  // new_tuple_addable[0] = 2.3;
+  // new_tuple_addable[1] = -0.5;
+  // new_tuple_addable[2] = 4.1;
+  // TupleAddable<double,3> substracted_tuple_addable = (*tuple_addable) - new_tuple_addable;
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.3, substracted_tuple_addable[0], 1e-6);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0, substracted_tuple_addable[1], 1e-6);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-6.1, substracted_tuple_addable[2], 1e-6);
+  // // Test substracting a scalar
+  // TupleAddable<double,3> scalar_substracted_tuple_addable = substracted_tuple_addable - 2.0;
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-3.3, scalar_substracted_tuple_addable[0], 1e-6);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0, scalar_substracted_tuple_addable[1], 1e-6);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-8.1, scalar_substracted_tuple_addable[2], 1e-6);
+}
+void TestTupleAddable::test_operator_multiply()
+{
+  // // Test scalar multiplication for TupleAddable<double>
+  // TupleAddable<double,3> multiplied_tuple_addable_1 = (*tuple_addable) * 2.0;
+  // TupleAddable<double,3> multiplied_tuple_addable_2 = 2.0 * (*tuple_addable);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, multiplied_tuple_addable_1[0], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, multiplied_tuple_addable_1[1], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-4.0, multiplied_tuple_addable_1[2], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, multiplied_tuple_addable_2[0], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0, multiplied_tuple_addable_2[1], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-4.0, multiplied_tuple_addable_2[2], 1e-4);
+}
+void TestTupleAddable::test_operator_divide()
+{
+  // // Test scalar division for TupleAddable<double>
+  // TupleAddable<double,3> divided_tuple_addable = (*tuple_addable) / 2.0;
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, divided_tuple_addable[0], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(1.25, divided_tuple_addable[1], 1e-4);
+  // CPPUNIT_ASSERT_DOUBLES_EQUAL(-1.0, divided_tuple_addable[2], 1e-4);
+}

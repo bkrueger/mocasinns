@@ -272,7 +272,7 @@ of the Step class that calculates the ratio of the selection probability of the 
 There are situtations where one want to propose steps that are actual not executable, because the would transfer the system in an invalid state.
 If one considers again the example of a grand-canonical particle simulation this would be the case if a particle would be inserted in a region of space where there is allready a particle contained.
 
-As a default behaviour \mocasinns assumes that every step is executable.
+As a default behaviour mocasinns assumes that every step is executable.
 If your system proposes steps which lead the system to an invalid state, you have to define a member function of the step
 \code
 bool is_executable()

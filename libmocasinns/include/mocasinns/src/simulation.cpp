@@ -58,9 +58,9 @@ void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::initialise
   }
 }
 
-  /*! \fn 
-   * \param signal_number Enum for the type of the signals
-   */
+/*!
+ * \param signal_number Enum for the type of the signals
+ */
 template <class ConfigurationType, class RandomNumberGenerator>
 void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::handle_posix_signal(int signal_number)
 {

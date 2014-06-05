@@ -50,8 +50,8 @@ std::vector<typename Observator::observable_type> Mocasinns::Metropolis<Configur
 /*! \fn AUTO_TEMPLATE_2 
   \tparam Observator \concept{Observator} If no observator is given, a default observator which measures the energy is used.
   \tparam InputIterator \conceptiterator{InverseTemperatureType}
-  \param beta_begin Iterator pointing to the first inverse temperature that is calculated
-  \param beta_end Iterator pointing on position after the last inverse temperature that is calculated
+  \param first_beta Iterator pointing to the first inverse temperature that is calculated
+  \param last_beta Iterator pointing on position after the last inverse temperature that is calculated
   \returns Vector containing the vectors of measurments performed for each temperature. (First index: inverse temperature, second index: measurment number)
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator, bool rejection_free>

@@ -21,7 +21,7 @@
 namespace Mocasinns
 {
   /*!
-   * \brief Base class for the rejection-free and the non-rejection free Wang-Landau algorithm. Do not use this class directly, but \link Mocasinns::WangLandau WangLandau \endlink (standard, not rejection-free) or \link Mocasinns::WangLandauRejectionFree WangLandauRejectionFree \endlink (rejection-free) instead.
+   * \brief Class for the Wang-Landau algorithm
    *
    * \details The Wang-Landau algorithm is an improvement of entropic sampling and uses the same acceptance probability
    * \f[
@@ -160,7 +160,6 @@ namespace Mocasinns
     //! Set the class properties that depend on the parameters, this function can be called each time the parameters will be updated
     void initialise_with_parameters();
     
-    //! Member variable for boost serialization
     friend class boost::serialization::access;
     //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
     template<class Archive> void serialize(Archive & ar, const unsigned int)

@@ -162,7 +162,6 @@ namespace Mocasinns
     bool operator!=(const Parameters& rhs) const;
   
   private:
-    //! Member variable for boost serialization
     friend class boost::serialization::access;
     //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
     template<class Archive> void serialize(Archive & ar, const unsigned int)

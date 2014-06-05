@@ -1,5 +1,5 @@
 /**
- * \file metropolis_base.hpp
+ * \file metropolis.hpp
  * \brief Contains the declaration of the base class of the two Metropolis algorithms (normal and rejection free)
  * 
  * Do not include the file, but include <mocasinns/metropolis.hpp>
@@ -25,10 +25,10 @@
 namespace Mocasinns
 {
   /*!
-   * \brief Base class for the rejection-free and the non-rejection free Metropolis algorithm. Do not use this class directly, but \link Mocasinns::Metropolis Metropolis \endlink (standard, not rejection-free) or \link Mocasinns::MetropolisRejectionFree MetropolisRejectionFree \endlink (rejection-free) instead.
+   * \brief Class for the Metropolis algorithm
    *
    * \details The Metropolis algorithm was the first Monte-Carlo algorithm to be applied to a physical system (system of hard discs). 
-   * It chooses the probabilites $P(\sigma)$ of the state $\sigma$ according to its Boltzmann probability
+   * It chooses the probabilites \f$ P(\sigma) \f$ of the state $\sigma$ according to its Boltzmann probability
    * \f[
    *    P_{\mathrm{Metropolis}} = \exp\left( -\beta E[\sigma] \right)
    * \f]

@@ -34,7 +34,7 @@ As one can see, the build in numerical types of C++ are usable as an energy for 
 - \link Mocasinns::EnergyTypes::VectorEnergy <tt>VectorEnergy<T></tt>\endlink: Usual vector of numerical types \c T. Addition and comparison of two vectors is declared component-wise, and there is the possibility to use the same type as temperature and energy and multiply them. The result is the scalar product of the vectors.
 - \link Mocasinns::EnergyTypes::ArrayEnergy <tt>ArrayEnergy<T,N></tt>\endlink: Same as <tt>VectorEnergy<T></tt>, but with fixes size \c N. This reduces the number of size-checks operating with the energy types compared to <tt>VectorEnergy<T></tt>.
 
-\section concept-InverseTempertureType InverseTemperatureType
+\section concept-InverseTemperatureType InverseTemperatureType
 
 The concept for inverse temperatures is used only in canonical simulations and strongly related to the \link concept-EnergyType EnergyType concept\endlink. A type of this concept must define a multiplication with the related EnergyType that results in a scalar quantity that can be used in the standard exp function.
 

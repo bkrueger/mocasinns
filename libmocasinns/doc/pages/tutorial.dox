@@ -167,7 +167,7 @@ For reasons that will be explained later in the tutorial we include the followin
 
 After writting this rather simple classes and functions we are allready able to use the \c mocasinns library.
 Our code file has the following structure:
-\include ../examples/simple_ising.hpp
+\include simple_ising.hpp
 
 \section tutorial_first_simulation A first Metropolis simulation of the Ising chain
 
@@ -205,7 +205,7 @@ std::vector<int> energies = simulation.do_metropolis_simulation(1.0);
 which results in a vector 1000 energies that were measured.
 
 The resulting code for a calculation of the mean energy is then, assuming that the code for <tt>IsingSystem</tt> and <tt>IsingStep</tt> is stored in the file <tt>simple_ising.hpp</tt>:
-\include ../examples/simple_ising_metropolis.cpp
+\include simple_ising_metropolis.cpp
 
 This code can be compiled with
 \code
@@ -241,7 +241,7 @@ The observator has then to be given as a template parameter to the \c do_metropo
 \endcode
 
 Alltogether the program for measuring the mean specific magnetization and the mean energy is:
-\include ../examples/simple_ising_metropolis_observator.cpp
+\include simple_ising_metropolis_observator.cpp
 
 \section tutorial_additional_functions Additional functions for configurations and steps
 

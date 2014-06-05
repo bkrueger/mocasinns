@@ -91,32 +91,6 @@ bool Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::check_for_
   }
 }
 
-/*! \fn AUTO_TEMPLATE_2
- * \details Executes a number of steps using the acceptance_probability, the handle_executed_step and the handle_rejected_step functions of the derived algorithm. It can be specified whether the used step type provides the member function is_executable (otherwise the algorithm does not test the executability and executes every step) and selection_probaility_factor (otherwise the algorithm assumes that the ratio of selection probabilities is allways 1.0).
- * 
- * If the simulation is not rejection-free (specified by the template parameter of the class), one step is executed in the following way (by calling the function do_steps_generic):
- * -# The step will be proposed using the random number generator of the simulation
- * -# If the StepType provides the function is_executable and the current step is not executable, the handle_rejected_step function of the derived algorithm is executed and the next step will be proposed. Otherwise the current step will be examined further as following:
- * -# If the StepType provides the function selection_probability_factor, it is calculated for the current step.
- * -# The acceptance probability of the step is calculated using the acceptance_probability function of the Dervied algorithm. Afterwards it is devided by the selection probability ratio if applicable.
- * -# A random number is generated that deterimines whether the step will be executed. According to the outcome of the random number the step is executed and the handle_executed_step function of the Derived algorithm is called, otherwise the handle_rejected_step function of the Derived algorithm is called.
- *
- * If the simulation is rejection-free (specified by the template parameter of the class), one step is executed in the following way (by calling the function do_steps_generic_rejection_free)
- * -# All possible steps of the current configurations are proposed using the ConfigurationType::all_steps() function.
- * -# For each step it is determined whether it is executable (if the StepType does not provide an is_executable function, this is automatically assumed). If this is not the case, the acceptance probability of the step is set to 0.0
- * -# If the StepType provides the function selection_probability_factor, it is calculated for the current step.
- * -# The acceptance probability of the step is calculated using the acceptance_probability function of the Dervied algorithm. Afterwards it is devided by the selection probability ratio if applicable.
- * -# After the exception probabilities of all steps were calculated, the step to execute is determined by randomly choosing an step weighted with their acceptance probability, and the time that a non-rejection free algorithm would spent in the actual state is calculated by inverting the sum of all acceptance probabilities.
- * -# The acceptance probability of the step that will be executed is calculated again to get the acceptance_probability_parameter right
- * -# If the calculated time is infinite (this is the case if all acceptance probabilities are 0), the step is rejected and the handle_rejected_step of the Derived algorithm is called
- * -# If there is a finite time the step is executed and the handle_executed_step function of the Derived algorithm is called with the time as parameter.
- *
- * \tparam Derived Type of the derived algorithm
- * \tparam StepType Type of the steps proposed by the ConfigurationType
- * \tparam AcceptanceProbabilityParameterType Type of the data that is piped to the acceptance probability calculation of the derived algorithm
- * \param step_number Number of steps to propose (= number of executed steps + number of rejected steps)
- * \param acceptance_probability_parameter Some object or quantity that piped to the acceptance probability calculation of the derived algorithm.
- */
 template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
 typename boost::enable_if_c<!function_rejection_free, void>::type

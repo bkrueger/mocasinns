@@ -102,7 +102,6 @@ namespace Mocasinns
     //! Current value of the flatness of the incidence counter
     double flatness_current;
     
-    //! Member variable for boost serialization
     friend class boost::serialization::access;
     //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
     template<class Archive> void serialize(Archive & ar, const unsigned int)

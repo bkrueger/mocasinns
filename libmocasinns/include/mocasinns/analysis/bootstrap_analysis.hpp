@@ -44,6 +44,7 @@ namespace Mocasinns
 	\param measurement_end Iterator to the end of the measurments
 	\param resampling_size Number of measurments to take into account for every bootstrap calculation
 	\param resampling_number Number of resampling sets
+	\param observable_functor Functor of the observable
 
 	\returns Pair of Observables, the first entry is the mean of the observables and the second entry is the error of the mean of the observables.
       */

@@ -14,7 +14,7 @@ The configuration must provide the following two functions:
 A step is the representation of the smallest element in the Markov chain that links to states \f$ \sigma_1 \f$ and \f$ \sigma_2 \f$.
 
 An user-provided implementation of a step must provide the following functions:
-- <tt>\ref concept-EnergyType delta_E();</tt>: This function returns the energy difference that occurs if this ste will be executed. The return value <tt>\ref concept-EnergyType</tt> can be a integer or double variable or a user defined type that provides an interface necessary for the concept energy described in section \ref concept-Energy
+- <tt>\ref concept-EnergyType delta_E();</tt>: This function returns the energy difference that occurs if this ste will be executed. The return value <tt>\ref concept-EnergyType</tt> can be a integer or double variable or a user defined type that provides an interface necessary for the concept energy described in section \ref concept-EnergyType
 - <tt>void execute();</tt>: It is recommended to let this function call simply the <tt>commit(StepType)</tt> function of the respective configuration. It can be used additionally to keep track whether a step was executed or not (this can be useful if the functionality of the destructor will depend on this fact).
 
 The following functions are optional but will be used by mocasinns if present:
@@ -36,7 +36,7 @@ As one can see, the build in numerical types of C++ are usable as an energy for 
 
 \section concept-InverseTemperatureType InverseTemperatureType
 
-The concept for inverse temperatures is used only in canonical simulations and strongly related to the \link concept-EnergyType EnergyType concept\endlink. A type of this concept must define a multiplication with the related EnergyType that results in a scalar quantity that can be used in the standard exp function.
+The concept for inverse temperatures is used only in canonical simulations and strongly related to the \ref concept-EnergyType. A type of this concept must define a multiplication with the related EnergyType that results in a scalar quantity that can be used in the standard exp function.
 
 If using a simple number as energy, the same type can be used as inverse temperature. If using the energy types \link Mocasinns::EnergyTypes::VectorEnergy <tt>VectorEnergy<T></tt>\endlink or \link Mocasinns::EnergyTypes::ArrayEnergy <tt>ArrayEnergy<T,N></tt>\endlink defined by mocasinns one can use the same types as inverse temperatures.
 

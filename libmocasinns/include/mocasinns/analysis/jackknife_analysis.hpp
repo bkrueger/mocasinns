@@ -36,6 +36,7 @@ namespace Mocasinns
 	\param measurement_begin Iterator to the begin of the measurements
 	\param measurement_end Iterator to the end of the measurments
 	\param bin_size Number of successive measurements to gather in one jackknife bin (default value 1)
+	\param observable_functor Functor of the observable
 
 	\returns std::pair of Observables, the first entry is the mean of the observables and the second entry is the error of the mean of the observables.
       */

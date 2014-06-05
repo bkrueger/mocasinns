@@ -123,9 +123,9 @@ namespace Mocasinns
     //! Calculate the acceptance probability of a step
     double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle an accepted step
-    void handle_executed_step(StepType& executed_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
+    void handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     //! Handle a rejected step
-    void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
+    void handle_rejected_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
     //! Do a given number of wang-landau steps
     void do_wang_landau_steps(const uint32_t& number);
@@ -249,7 +249,6 @@ namespace Mocasinns
     }
     
   private:
-    //! Member variable for boost serialization
     friend class boost::serialization::access;
     //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
     template<class Archive> void serialize(Archive & ar, const unsigned int)
@@ -290,7 +289,6 @@ namespace Mocasinns
     //! Operator for calling the SimulationDump function
     /*!
      * \param simulation Pointer to the simulation that should be dumped
-     * \param outstream Output stream where the information is written in
      */
     void operator()(Simulation<ConfigurationType,RandomNumberGenerator>* simulation)
     {

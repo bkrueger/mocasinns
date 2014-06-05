@@ -48,7 +48,7 @@ namespace Mocasinns
 
       // Code only visible for doxygen
       // Doxygen cannot deal with the enable-if structure
-      #ifdef MOCASINNS_DOXYGEN_DOCUMENTATION
+#ifdef MOCASINNS_DOXYGEN_DOCUMENTATION
       //! Checks whether the given StepType has the (static) member function <tt>bool is_executable()</tt>. If this is the case, the optional function returns the value of this (static) member function, otherwise it returns true.
       template <class StepType> 
       bool optional_is_executable(StepType& step);
@@ -60,7 +60,7 @@ namespace Mocasinns
       //! Checks whether the given StepType has the (static) member function <tt>double selection_probability_factor()</tt>. If this is the case, the optional function returns the value of this (static) member function, otherwise it returns 1.0.
       template <class StepType> 
       double optional_selection_probability_factor(StepType& step);
-      #endif
+#endif
     };
   }
 }

@@ -97,7 +97,7 @@ double Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Ran
  *
  * If a new energy bin that was not encountered before is found, it is set to the minimum of all other density of states energy bins.
  *
- * \param step_to_execute Step of which the acceptance probability will be calculated
+ * \param time Specifies the time the algorithm has been in the previous state if doing a rejection free algorithm
  * \param step_parameters Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
  */
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
@@ -121,7 +121,7 @@ void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Rando
 /*! \fn AUTO_TEMPLATE_1
  * \details Increase the incidence histogram at the current energy of the system.
  *
- * \param step_to_execute Step of which the acceptance probability will be calculated
+ * \param time Specifies the time the algorithm has been in the previous state if doing a rejection free algorithm
  * \param step_parameters Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
  */
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>

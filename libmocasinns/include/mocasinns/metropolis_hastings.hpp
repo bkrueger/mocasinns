@@ -82,9 +82,8 @@ namespace Mocasinns
     
     //! Calculate the acceptance probability for a given step, must be implemented to use Simulation::do_steps
     /*!
-      \tparam TemperatureType Type of the temperatures
       \param step_to_execute Step of which the acceptance probability should be calculated
-      \param beta Temperature at which the step is done
+      \param acceptance_probability_parameters Parameters used for calculating the energy difference
     */
     template <class AcceptanceProbabilityParameters>
     inline double acceptance_probability(StepType& step_to_execute, AcceptanceProbabilityParameters& acceptance_probability_parameters)
@@ -96,6 +95,9 @@ namespace Mocasinns
     //! Handle an executed step (do nothing, must be implemented to use Simulation::do_steps)
     template <class AcceptanceProbabilityParameters>
     inline void handle_executed_step(StepType&, double, AcceptanceProbabilityParameters& acceptance_probability_parameters) 
+    /*!
+      \param acceptance_probability_parameters Parameters used for calculating the energy difference
+    */
     {
       acceptance_probability_parameters.actual_energy += acceptance_probability_parameters.delta_E;
     }
@@ -107,7 +109,7 @@ namespace Mocasinns
     /*!
       \details This function is just syntax sugar and calls the Simulation::do_steps() function
       \param number Number of Metropolis-Hastings steps that will be performed
-      \param acceptance_probability_functor Class object that defines a "double operator(EnergyType delta_E, EnergyType actual_energy)" returning the acceptance probability of the step.
+      \param acceptance_probability_parameters Class object that defines a "double operator(EnergyType delta_E, EnergyType actual_energy)" returning the acceptance probability of the step.
     */
     template<class AcceptanceProbabilityParameters>
     void do_metropolis_hastings_steps(const StepNumberType& number, AcceptanceProbabilityParameters& acceptance_probability_parameters)

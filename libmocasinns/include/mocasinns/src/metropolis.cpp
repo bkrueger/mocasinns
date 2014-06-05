@@ -148,7 +148,7 @@ void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejectio
   \f]
   where \f$ N \f$ is the parameters simulation_time_factor and s is the parameter maximal_time (the time indices are allways measured in units of the system size). Before taking the measurements the number of relaxation steps set in the parameters are taken.
 
-  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef \::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed
   \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size
@@ -211,7 +211,7 @@ std::vector<typename Observator::observable_type> Mocasinns::Metropolis<Configur
   \f]
   where \f$ N \f$ denotes the maximal considered time.
 
-  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
+  \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of an arbitrary observable. The class must contain a typedef \::observable_type classifying the return type of the functor.
   \tparam TemperatureType Type of the inverse temperature, there must be an operator* defined this class and the energy type of the configuration.
   \param beta Inverse temperature at which the simulation is performed
   \param maximal_time Maximal time for the correlation function and size of the returned vector, in units of ConfigurationType::system_size

@@ -40,17 +40,17 @@ namespace Mocasinns
 
       //! Set the seed of the random number generator
       void set_seed(const RandomIntType& new_seed) { rng->seed(new_seed); }
-      //! Return the minimal integer that is created by ::random_uint32()
+      //! Return the minimal integer that is created by \::random_uint32()
       RandomIntType get_int_min() const { return int_distribution->min(); }
-      //! Return the maximal integer that is created by ::random_uint32()
+      //! Return the maximal integer that is created by \::random_uint32()
       RandomIntType get_int_max() const { return int_distribution->max(); }
-      //! Set the maximal integer that is created by ::random_uint32(), the minimal integer is set to 0
+      //! Set the maximal integer that is created by \::random_uint32(), the minimal integer is set to 0
       void set_int_max(const RandomIntType& int_max)
       {
 	delete int_distribution;
 	int_distribution = new boost::random::uniform_int_distribution<RandomIntType>(0, int_max);
       }
-      //! Set the range of intergers that is created by ::random_uint32()
+      //! Set the range of intergers that is created by \::random_uint32()
       void set_int_range(const RandomIntType& int_min, const RandomIntType& int_max)
       {
 	delete int_distribution;

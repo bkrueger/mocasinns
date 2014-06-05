@@ -28,7 +28,7 @@ namespace Mocasinns
    * \brief Class for the Metropolis algorithm
    *
    * \details The Metropolis algorithm was the first Monte-Carlo algorithm to be applied to a physical system (system of hard discs). 
-   * It chooses the probabilites \f$ P(\sigma) \f$ of the state $\sigma$ according to its Boltzmann probability
+   * It chooses the probabilites \f$ P(\sigma) \f$ of the state \f$ \sigma \f$ according to its Boltzmann probability
    * \f[
    *    P_{\mathrm{Metropolis}} = \exp\left( -\beta E[\sigma] \right)
    * \f]

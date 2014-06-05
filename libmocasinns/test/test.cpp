@@ -19,10 +19,6 @@
 #include "test_parallel_tempering.hpp"
 #include "test_wang_landau.hpp"
 #include "test_optimal_ensemble_sampling.hpp"
-#include "test_details/test_multicanonical/test_energy_type_extended.hpp"
-#include "test_details/test_multicanonical/test_configuration_type_extended.hpp"
-#include "test_details/test_multicanonical/test_step_type_extended.hpp"
-#include "test_multicanonical_counting.hpp"
 #include "test_accumulators/test_histogram_accumulator.hpp"
 #include "test_accumulators/test_file_accumulator.hpp"
 #include "test_histograms/test_binnings.hpp"
@@ -35,8 +31,8 @@
 #include "test_energy_types/test_array_energy.hpp"
 #include "test_observables/test_array_observable.hpp"
 #include "test_observables/test_histogram_observable.hpp"
-#include "test_analysis/test_jackknife_analysis.hpp"
-#include "test_analysis/test_bootstrap_analysis.hpp"
+// #include "test_analysis/test_jackknife_analysis.hpp"
+// #include "test_analysis/test_bootstrap_analysis.hpp"
 #include "test_details/test_stl_extensions/test_vector_addable.hpp"
 #include "test_details/test_stl_extensions/test_array_addable.hpp"
 // #include "test_details/test_stl_extensions/test_tuple_addable.hpp"
@@ -68,13 +64,6 @@ int main(int argc, char *argv[])
     runner.addTest(TestWangLandau::suite());
   if (test_all || test_name == "OptimalEnsembleSampling")
     runner.addTest(TestOptimalEnsembleSampling::suite());
-  if (test_all || test_name == "MulticanonicalCounting")
-  {
-    runner.addTest(TestEnergyTypeExtended::suite());
-    runner.addTest(TestConfigurationTypeExtended::suite());
-    runner.addTest(TestStepTypeExtended::suite());
-    runner.addTest(TestMulticanonicalCounting::suite());
-  }
   if (test_all || test_name == "Accumulators")
   {
     runner.addTest(TestFileAccumulator::suite());
@@ -94,8 +83,8 @@ int main(int argc, char *argv[])
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
     runner.addTest(TestHistogramObservable::suite());
-    runner.addTest(TestJackknifeAnalysis::suite());
-    runner.addTest(TestBootstrapAnalysis::suite());
+    // runner.addTest(TestJackknifeAnalysis::suite());
+    // runner.addTest(TestBootstrapAnalysis::suite());
   }
   if (test_all || test_name == "EnergyTypes")
   {

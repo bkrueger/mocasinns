@@ -1,0 +1,102 @@
+#include "test_wang_landau_counting_configuration_type_extended.hpp"
+
+CppUnit::Test* TestWangLandauCounting_ConfigurationTypeExtended::suite()
+{
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestWangLandauCounting_ConfigurationTypeExtended");
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_constructor", &TestWangLandauCounting_ConfigurationTypeExtended::test_constructor) );
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_constructor", &TestWangLandauCounting_ConfigurationTypeExtended::test_constructor) );
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_get_reference_configuration", &TestWangLandauCounting_ConfigurationTypeExtended::test_get_reference_configuration) );    
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_get_reference_configuration_energy", &TestWangLandauCounting_ConfigurationTypeExtended::test_get_reference_configuration_energy) );
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_get_is_reference_configuration", &TestWangLandauCounting_ConfigurationTypeExtended::test_get_is_reference_configuration) );        
+
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_energy", &TestWangLandauCounting_ConfigurationTypeExtended::test_energy) );  
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestWangLandauCounting_ConfigurationTypeExtended>("TestWangLandauCounting_ConfigurationTypeExtended: test_propose_step", &TestWangLandauCounting_ConfigurationTypeExtended::test_propose_step) ); 
+
+  return suite_of_tests;
+}
+
+void TestWangLandauCounting_ConfigurationTypeExtended::setUp()
+{
+  // Set the size vector
+  std::vector<unsigned int> size_1d;
+  size_1d.push_back(4);
+  // Create the indices
+  index_type_1d index_0, index_1, index_2, index_3;
+  index_0[0] = 0; index_1[0] = 1; index_2[0] = 2; index_3[0] = 3;
+
+  // Create some normal configurations
+  test_config_1 = new ConfigurationType(size_1d);
+  test_config_2 = new ConfigurationType(size_1d);
+  test_reference_1 = new ConfigurationType(size_1d);
+  test_reference_2 = new ConfigurationType(size_1d);
+  // Assign values to the configurations
+  test_config_1->set_spin(index_0, IsingSpin(1));
+  test_config_1->set_spin(index_1, IsingSpin(-1));
+  test_config_1->set_spin(index_2, IsingSpin(1));
+  test_config_1->set_spin(index_3, IsingSpin(-1));
+  test_config_2->set_spin(index_0, IsingSpin(1));
+  test_config_2->set_spin(index_1, IsingSpin(1));
+  test_config_2->set_spin(index_2, IsingSpin(-1));
+  test_config_2->set_spin(index_3, IsingSpin(-1));
+  test_reference_1->set_spin(index_0, IsingSpin(1));
+  test_reference_1->set_spin(index_1, IsingSpin(-1));
+  test_reference_1->set_spin(index_2, IsingSpin(1));
+  test_reference_1->set_spin(index_3, IsingSpin(-1));
+  test_reference_2->set_spin(index_0, IsingSpin(1));
+  test_reference_2->set_spin(index_1, IsingSpin(1));
+  test_reference_2->set_spin(index_2, IsingSpin(-1));
+  test_reference_2->set_spin(index_3, IsingSpin(1));
+
+  // Create the extended configs
+  test_extended_config_1 = new ExtendedConfigType(test_config_1);
+  test_extended_config_2 = new ExtendedConfigType(test_config_2, test_reference_2);
+}
+void TestWangLandauCounting_ConfigurationTypeExtended::tearDown()
+{
+  delete test_config_1;
+  delete test_config_2;
+  delete test_reference_1;
+  delete test_reference_2;
+
+  delete test_extended_config_1;
+  delete test_extended_config_2;
+}
+
+void TestWangLandauCounting_ConfigurationTypeExtended::test_constructor()
+{
+  
+}
+
+void TestWangLandauCounting_ConfigurationTypeExtended::test_get_reference_configuration()
+{
+  CPPUNIT_ASSERT(*(test_extended_config_1->get_reference_configuration()) ==
+		 *test_reference_1);
+  CPPUNIT_ASSERT(*(test_extended_config_2->get_reference_configuration()) ==
+		 *test_reference_2);
+}
+void TestWangLandauCounting_ConfigurationTypeExtended::test_get_reference_configuration_energy()
+{
+  CPPUNIT_ASSERT_EQUAL(4, test_extended_config_1->get_reference_configuration_energy());
+  CPPUNIT_ASSERT_EQUAL(0, test_extended_config_2->get_reference_configuration_energy());
+}
+void TestWangLandauCounting_ConfigurationTypeExtended::test_get_is_reference_configuration()
+{
+  CPPUNIT_ASSERT(test_extended_config_1->get_is_reference_configuration());
+  CPPUNIT_ASSERT(!test_extended_config_2->get_is_reference_configuration());
+}
+
+void TestWangLandauCounting_ConfigurationTypeExtended::test_energy()
+{
+  EnergyTypeExtended<int> energy_1(4, 1);
+  CPPUNIT_ASSERT(test_extended_config_1->energy() == energy_1);
+  EnergyTypeExtended<int> energy_2(0, 0);
+  CPPUNIT_ASSERT(test_extended_config_2->energy() == energy_2);
+}
+void TestWangLandauCounting_ConfigurationTypeExtended::test_propose_step()
+{
+}
+
+

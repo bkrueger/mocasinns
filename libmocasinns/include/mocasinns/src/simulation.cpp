@@ -224,47 +224,36 @@ Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::~Simulation()
   delete rng;
 }
 
-/*! \fn AUTO_TEMPLATE_1
- * \details Uses the functionality of boost::serialization.
- * \param input_stream Stream from which the simulation will be loaded.
- */
 template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::load_serialize(std::istream& input_stream)
+template <class Algorithm> 
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::load_serialize(Algorithm& simulation, std::istream& input_stream)
 {
   boost::archive::text_iarchive input_archive(input_stream);
-  input_archive >> (*this);
+  input_archive >> simulation;
 }
-/*! \fn AUTO_TEMPLATE_1
- * \details Uses the functionality of boost::serialization.
- * \param filename Filename of the stored simulation
- */
 template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::load_serialize(const char* filename)
+template <class Algorithm> 
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::load_serialize(Algorithm& simulation, const char* filename)
 {
   std::ifstream input_filestream(filename);
-  load_serialize(input_filestream);
+  load_serialize(simulation, input_filestream);
   input_filestream.close();
 }
-/*! \fn AUTO_TEMPLATE_1
- * \details Uses the functionality of boost::serialization.
- * \param output_stream Stream to which the simulation will be written
- */
 template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::save_serialize(std::ostream& output_stream) const
+template <class Algorithm> 
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::save_serialize(const Algorithm& simulation, std::ostream& output_stream)
 {
   boost::archive::text_oarchive output_archive(output_stream);
-  output_archive << (*this);
+  output_archive << simulation;
 }
-/*! \fn AUTO_TEMPLATE_1
- * \details Uses the functionality of boost::serialization.
- * \param filename Filename of the stored simulation
- */
 template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::save_serialize(const char* filename) const
+template <class Algorithm> 
+void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::save_serialize(const Algorithm& simulation, const char* filename)
 {
   std::ofstream output_filestream(filename);
-  save_serialize(output_filestream);
+  save_serialize(simulation, output_filestream);
   output_filestream.close();
 }
+
 
 #endif

@@ -91,33 +91,6 @@ void MetropolisHastings<ConfigurationType,Step,RandomNumberGenerator>::do_metrop
   }
 }
 
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void MetropolisHastings<ConfigurationType, Step, RandomNumberGenerator>::load_serialize(std::istream& input_stream)
-{
-  boost::archive::text_iarchive input_archive(input_stream);
-  input_archive >> (*this);
-}
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void MetropolisHastings<ConfigurationType, Step, RandomNumberGenerator>::load_serialize(const char* filename)
-{
-  std::ifstream input_filestream(filename);
-  load_serialize(input_filestream);
-  input_filestream.close();
-}
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void MetropolisHastings<ConfigurationType, Step, RandomNumberGenerator>::save_serialize(std::ostream& output_stream) const
-{
-  boost::archive::text_oarchive output_archive(output_stream);
-  output_archive << (*this);
-}
-template <class ConfigurationType, class Step, class RandomNumberGenerator>
-void MetropolisHastings<ConfigurationType, Step, RandomNumberGenerator>::save_serialize(const char* filename) const
-{
-  std::ofstream output_filestream(filename);
-  save_serialize(output_filestream);
-  output_filestream.close();
-}
-
 } // of namespace Mocasinns
 
 #endif

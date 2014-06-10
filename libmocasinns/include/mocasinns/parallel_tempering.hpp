@@ -37,6 +37,8 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
   public:
+    // Typedef for the base class
+    typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     //! Typedef of this class
     typedef ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator> this_type;
     //! Typedef for a metropolis simulation with the same template paramters
@@ -48,7 +50,7 @@ namespace Mocasinns
     //! Type of the inverse temperature histograms
     typedef std::vector<unsigned int> InverseTemperatureHistogram;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef typename Base::StepNumberType StepNumberType;
     typedef uint32_t MeasurementNumberType;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
@@ -126,14 +128,14 @@ namespace Mocasinns
     //! Reset the inverse temperature histograms
     void inverse_temperature_histograms_reset();
 
-    //! Load the data of the Metropolis simulation from a serialization stream
-    virtual void load_serialize(std::istream& input_stream);
-    //! Load the data of the Metropolis simulation from a serialization file
-    virtual void load_serialize(const char* filename);
-    //! Save the data of the Metropolis simulation to a serialization stream
-    virtual void save_serialize(std::ostream& output_stream) const;
-    //! Save the data of the Metropolis simulation to a serialization file
-    virtual void save_serialize(const char* filename) const;
+    //! Load the data of the Parallel Tempering simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
+    //! Load the data of the Parallel Tempering simulation from a serialization file
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
+    //! Save the data of the Parallel Tempering simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
+    //! Save the data of the Parallel Tempering simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
 
   private:
     //! Member variable storing the parameters of the simulation

@@ -32,8 +32,10 @@ class MetropolisParallel : public Simulation<ConfigurationType, RandomNumberGene
   BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
 public:
+  // Typedef for the base class
+  typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
   // Typedefs for integers
-  typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+  typedef typename Base::StepNumberType StepNumberType;
   typedef uint32_t RunNumberType;
 
   // Forward declaration of the parameters used for a parallel Metropolis Simulation
@@ -73,14 +75,14 @@ public:
   template<class Observator, class AccumulatorIterator, class InverseTemperatureIterator>
   void do_parallel_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end);
 
-  //! Load the data of the Metropolis simulation from a serialization stream
-  virtual void load_serialize(std::istream& input_stream);
-  //! Load the data of the Metropolis simulation from a serialization file
-  virtual void load_serialize(const char* filename);
-  //! Save the data of the Metropolis simulation to a serialization stream
-  virtual void save_serialize(std::ostream& output_stream) const;
-  //! Save the data of the Metropolis simulation to a serialization file
-  virtual void save_serialize(const char* filename) const;
+    //! Load the data of the Parallel Metropolis simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
+    //! Load the data of the Parallel Metropolis simulation from a serialization file
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
+    //! Save the data of the Parallel Metropolis simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
+    //! Save the data of the Parallel Metropolis simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
 
 private:
   Parameters simulation_parameters;

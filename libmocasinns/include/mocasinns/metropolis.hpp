@@ -69,10 +69,12 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
     
   public:
+    // Typedef for the base class
+    typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     //! Typedef of this class
     typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator, rejection_free> this_type;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef typename Base::StepNumberType StepNumberType;
     typedef uint32_t MeasurementNumberType;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
@@ -166,13 +168,13 @@ namespace Mocasinns
     void do_metropolis_simulation(InverseTemperatureIterator beta_begin, InverseTemperatureIterator beta_end, AccumulatorIterator measurement_accumulator_begin, AccumulatorIterator measurement_accumulator_end);
         
     //! Load the data of the Metropolis simulation from a serialization stream
-    virtual void load_serialize(std::istream& input_stream);
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
     //! Load the data of the Metropolis simulation from a serialization file
-    virtual void load_serialize(const char* filename);
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
     //! Save the data of the Metropolis simulation to a serialization stream
-    virtual void save_serialize(std::ostream& output_stream) const;
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
     //! Save the data of the Metropolis simulation to a serialization file
-    virtual void save_serialize(const char* filename) const;
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
     
   private:
     //! Member variable storing the parameters of the simulation

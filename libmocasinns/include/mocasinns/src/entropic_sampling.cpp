@@ -152,33 +152,6 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 //   incidence_counter.initialise_empty(simulation_parameters.prototype_histo);
 // }
 
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(std::istream& input_stream)
-{
-  boost::archive::text_iarchive input_archive(input_stream);
-  input_archive >> (*this);
-}
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::load_serialize(const char* filename)
-{
-  std::ifstream input_filestream(filename);
-  load_serialize(input_filestream);
-  input_filestream.close();
-}
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(std::ostream& output_stream) const
-{
-  boost::archive::text_oarchive output_archive(output_stream);
-  output_archive << (*this);
-}
-template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::save_serialize(const char* filename) const
-{
-  std::ofstream output_filestream(filename);
-  save_serialize(output_filestream);
-  output_filestream.close();
-}
-
 } // of namespace Mocasinns
 
 #endif

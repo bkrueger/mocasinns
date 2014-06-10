@@ -125,15 +125,14 @@ namespace Mocasinns
     template<class Observator = DefaultObservator, class Accumulator, class AcceptanceProbabilityFunctor>
     void do_metropolis_hastings_simulation(const AcceptanceProbabilityFunctor& acceptance_probability_functor, Accumulator& measurement_accumulator);
 
-    //! Load the data of the Metropolis simulation from a serialization stream
-    virtual void load_serialize(std::istream& input_stream);
-    //! Load the data of the Metropolis simulation from a serialization file
-    virtual void load_serialize(const char* filename);
-    //! Save the data of the Metropolis simulation to a serialization stream
-    virtual void save_serialize(std::ostream& output_stream) const;
-    //! Save the data of the Metropolis simulation to a serialization file
-    virtual void save_serialize(const char* filename) const;
-    
+    //! Load the data of the Metropolis-Hastings simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
+    //! Load the data of the Metropolis-Hastings simulation from a serialization file
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
+    //! Save the data of the Metropolis-Hastings simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
+    //! Save the data of the Metropolis-Hastings simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }    
   private:
     //! Member variable storing the parameters of the simulation
     Parameters simulation_parameters;

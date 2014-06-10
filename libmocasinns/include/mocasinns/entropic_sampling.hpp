@@ -35,8 +35,10 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
   public:
+    // Typedef for the base class
+    typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef typename Base::StepNumberType StepNumberType;
     typedef double IncidenceCounterYValueType;
 
     // Forward declaration of the parameters for the entropic sampling simulation
@@ -81,14 +83,14 @@ namespace Mocasinns
     //! Do a complete entropic sampling simulation until the desired flatness is reached
     void do_entropic_sampling_simulation();
     
-    //! Load the data of the entropic sampling simulation from a serialization stream
-    virtual void load_serialize(std::istream& input_stream);
-    //! Load the data of the entropic sampling simulation from a serialization file
-    virtual void load_serialize(const char* filename);
-    //! Save the data of the entropic sampling simulation to a serialization stream
-    virtual void save_serialize(std::ostream& output_stream) const;
-    //! Save the data of the entropic sampling simulation to a serialization file
-    virtual void save_serialize(const char* filename) const;
+    //! Load the data of the Entropic Sampling simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
+    //! Load the data of the Entropic Sampling simulation from a serialization file
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
+    //! Save the data of the Entropic Sampling simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
+    //! Save the data of the Entropic Sampling simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
     
   private:
     //! Parameters of the simulation

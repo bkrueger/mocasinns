@@ -36,12 +36,14 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
   public:
+    // Typedef for the base class
+    typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     //! Typedef of this class
     typedef SerialTempering<ConfigurationType, StepType, RandomNumberGenerator> this_type;
     //! Typedef for a metropolis simulation with the same template paramters
     typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> MetropolisType;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef typename Base::StepNumberType StepNumberType;
     typedef uint32_t MeasurementNumberType;
     //! Type of the default observable
     typedef typename MetropolisType::DefaultObservator DefaultObservator;
@@ -91,14 +93,14 @@ namespace Mocasinns
     void do_serial_tempering_simulation(AccumulatorIterator measurement_accumulators_begin, AccumulatorIterator measurement_accumulators_end,
 					TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
 
-    //! Load the data of the Metropolis simulation from a serialization stream
-    virtual void load_serialize(std::istream& input_stream);
-    //! Load the data of the Metropolis simulation from a serialization file
-    virtual void load_serialize(const char* filename);
-    //! Save the data of the Metropolis simulation to a serialization stream
-    virtual void save_serialize(std::ostream& output_stream) const;
-    //! Save the data of the Metropolis simulation to a serialization file
-    virtual void save_serialize(const char* filename) const;
+    //! Load the data of the Serial Tempering simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
+    //! Load the data of the Serial Tempering simulation from a serialization file
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
+    //! Save the data of the Serial Tempering simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
+    //! Save the data of the Serial Tempering simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
 
   private:
     //! Member variable storing the parameters of the simulation

@@ -74,8 +74,10 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
     
   public:
+    // Typedef for the base class
+    typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
+    typedef typename Base::StepNumberType StepNumberType;
     typedef double IncidenceCounterYValueType;
 
     // Forward declaration of the parameters for the WangLandau-Simulation
@@ -136,10 +138,14 @@ namespace Mocasinns
     //! Do a complete wang-landau simulation using a 1/t change in the modification factor until the final modifcation factor is reached
     void do_wang_landau_simulation_1_t(unsigned int monte_carlo_time_unit);
     
-    virtual void load_serialize(std::istream& input_stream);
-    virtual void load_serialize(const char* filename);
-    virtual void save_serialize(std::ostream& output_stream) const;
-    virtual void save_serialize(const char* filename) const;
+    //! Load the data of the Wang-Landau simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
+    //! Load the data of the Wang-Landau simulation from a serialization file
+    virtual void load_serialize(const char* filename) { Base::load_serialize(*this, filename); }
+    //! Save the data of the Wang-Landau simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
+    //! Save the data of the Wang-Landau simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
     
   protected:
     //! Histogram for the estimation of the density of states

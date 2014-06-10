@@ -66,14 +66,14 @@ public:
   //! Set-Accesspr for the path and name of the dumped file
   void set_dump_filename(const std::string& value) { dump_filename = value; }
 
-  //! Load the data of the simulation from a serialization stream
-  virtual void load_serialize(std::istream& input_stream);
-  //! Load the data of the simulation from a serialization file
-  virtual void load_serialize(const char* filename);
-  //! Save the data of the simulation to a serialization stream
-  virtual void save_serialize(std::ostream& output_stream) const;
-  //! Save the data of the simulation to a serialization file
-  virtual void save_serialize(const char* filename) const;
+    //! Load the data of the simulation from a serialization stream
+    virtual void load_serialize(std::istream& input_stream) { load_serialize(*this, input_stream); }
+    //! Load the data of the simulation from a serialization file
+    virtual void load_serialize(const char* filename) { load_serialize(*this, filename); }
+    //! Save the data of the simulation to a serialization stream
+    virtual void save_serialize(std::ostream& output_stream) const { save_serialize(*this, output_stream); }
+    //! Save the data of the simulation to a serialization file
+    virtual void save_serialize(const char* filename) const { save_serialize(*this, filename); }
 
 protected:
   //! Pointer to the RandomNumberGenerator used in the Simulation
@@ -146,6 +146,15 @@ protected:
   void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 #endif
 
+  //! Load a serialized simulation from a stream
+  template <class Algorithm> static void load_serialize(Algorithm& simulation, std::istream& input_stream);
+  //! Load a serialized simulation from a file
+  template <class Algorithm> static void load_serialize(Algorithm& simulation, const char* filename);
+  //! Save a simulation to a stream using serialization
+  template <class Algorithm> static void save_serialize(const Algorithm& simulation, std::ostream& output_stream);
+  //! Save a simulation to a file using serialization
+  template <class Algorithm> static void save_serialize(const Algorithm& simulation, const char* filename);
+
 private:
   //! Member variable for boost serialization
   friend class boost::serialization::access;
@@ -175,6 +184,7 @@ private:
 // Initialisation of the static member signal_number_caught
   template <class ConfigurationType, class RandomNumberGenerator>
   volatile sig_atomic_t Simulation<ConfigurationType, RandomNumberGenerator>::signal_number_caught = 0;
+
 
 } // of namespace Mocasinns
 

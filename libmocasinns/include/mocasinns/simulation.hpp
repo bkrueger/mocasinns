@@ -66,14 +66,14 @@ public:
   //! Set-Accesspr for the path and name of the dumped file
   void set_dump_filename(const std::string& value) { dump_filename = value; }
 
-    //! Load the data of the simulation from a serialization stream
-    virtual void load_serialize(std::istream& input_stream) { load_serialize(*this, input_stream); }
-    //! Load the data of the simulation from a serialization file
-    virtual void load_serialize(const char* filename) { load_serialize(*this, filename); }
-    //! Save the data of the simulation to a serialization stream
-    virtual void save_serialize(std::ostream& output_stream) const { save_serialize(*this, output_stream); }
-    //! Save the data of the simulation to a serialization file
-    virtual void save_serialize(const char* filename) const { save_serialize(*this, filename); }
+  //! Load the data of the simulation from a serialization stream
+  virtual void load_serialize(std::istream& input_stream) { load_serialize(*this, input_stream); }
+  //! Load the data of the simulation from a serialization file
+  virtual void load_serialize(const char* filename) { load_serialize(*this, filename); }
+  //! Save the data of the simulation to a serialization stream
+  virtual void save_serialize(std::ostream& output_stream) const { save_serialize(*this, output_stream); }
+  //! Save the data of the simulation to a serialization file
+  virtual void save_serialize(const char* filename) const { save_serialize(*this, filename); }
 
 protected:
   //! Pointer to the RandomNumberGenerator used in the Simulation
@@ -85,13 +85,6 @@ protected:
 
   //! Path and filename of the dumps of the simulation
   std::string dump_filename;
-
-  //! Rename the dump file to a temporary file
-  void move_dump_file();
-  //! Delete renamed dump file
-  void remove_temporary_dump_file();
-  //! Initialise a random dump file name
-  void initialise_dump_file_random();
 
   //! Variable that notices user and environment signals
   static volatile sig_atomic_t signal_number_caught;

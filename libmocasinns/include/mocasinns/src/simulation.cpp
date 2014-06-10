@@ -19,45 +19,6 @@ void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::register_p
   signal(SIGUSR2, handle_posix_signal);
 }
 
-template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::move_dump_file()
-{
-  std::stringstream command_builder;
-  command_builder << "mv ";
-  command_builder << dump_filename << " ";
-  command_builder << dump_filename << ".tmp";
-  system(command_builder.str().c_str());
-}
-template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::remove_temporary_dump_file()
-{
-  std::stringstream command_builder;
-  command_builder << "rm ";
-  command_builder << dump_filename << ".tmp";
-  system(command_builder.str().c_str());
-}
-template <class ConfigurationType, class RandomNumberGenerator>
-void Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::initialise_dump_file_random()
-{
-  // Try as long as the dump file name does not exist
-  bool file_exists = true;
-  while (file_exists)
-  {
-    char letters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    rng->set_int_max(61);
-    std::stringstream ss;
-    for (int i = 0; i < 16; i++)
-      ss << letters[rng->random_uint32()];
-
-    ss << ".dat";
-    dump_filename = ss.str();
-
-    // Determine whether the file exists
-    std::ifstream test_file(dump_filename.c_str());
-    if (!test_file) file_exists = false;
-  }
-}
-
 /*!
  * \param signal_number Enum for the type of the signals
  */
@@ -200,7 +161,6 @@ Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::Simulation()
   rng = new RandomNumberGenerator();
   rng->set_seed(rng_seed);
   configuration_space = new ConfigurationType();
-  initialise_dump_file_random();
   register_posix_signal_handler();
 }
 
@@ -214,7 +174,6 @@ Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::Simulation(Conf
   rng = new RandomNumberGenerator();
   rng->set_seed(rng_seed);
   configuration_space = new_configuration;
-  initialise_dump_file_random();
   register_posix_signal_handler();
 }
 

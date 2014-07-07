@@ -1,9 +1,6 @@
 #ifndef MOCASINNS_ANALYSIS_JACKKNIFE_ANALYSIS_HPP
 #define MOCASINNS_ANALYSIS_JACKKNIFE_ANALYSIS_HPP
 
-// Standard observable functions
-#include "observable_functors.hpp"
-
 // Boost accumulator
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -22,12 +19,12 @@ namespace Mocasinns
       \tparam Observable Type of the observables that should be jackknifed, must be able to calculate a pow with integers and a sqrt
       \tparam FunctionOfObservables Functor that has a 1) static operator() that takes two Iterators and calculating a function of observables (e.g. the variance or the specific heat) and has 2) a type return_type typedefed that indicates the return type of the functor.
     */
-    template <class Observable, class FunctionOfObservables = MeanOfObservables<Observable> >
+    template <class Observable>
     class JackknifeAnalysis
     {
     public:
       //! Type of the analysis result
-      typedef std::pair<typename FunctionOfObservables::return_type, typename FunctionOfObservables::return_type> result_type;
+      typedef std::pair<Observable, Observable> result_type;
 
       /*! 
 	\brief Do the analyis
@@ -41,14 +38,14 @@ namespace Mocasinns
 	\returns std::pair of Observables, the first entry is the mean of the observables and the second entry is the error of the mean of the observables.
       */
       template <class InputIterator>
-      static result_type analyse(InputIterator measurement_begin, InputIterator measurement_end, unsigned int bin_size = 1, FunctionOfObservables observable_functor = FunctionOfObservables())
+      static result_type analyse(InputIterator measurement_begin, InputIterator measurement_end, Observable (*function_of_observable)(Observable) = identity, unsigned int bin_size = 1)
       {
 	// Calculate the size of the samples and the number of bins
 	int measurement_size = std::distance(measurement_begin, measurement_end);
 	unsigned int bin_number = measurement_size / bin_size;
 
 	// Define the accumulator accumulating the jackknife bins
-	ba::accumulator_set<typename FunctionOfObservables::return_type, ba::stats<ba::tag::mean, ba::tag::variance> > jackknife_accumulator;
+	ba::accumulator_set<Observable, ba::stats<ba::tag::mean, ba::tag::variance> > jackknife_accumulator;
 
 	// Accumulate the jackknife values
 	for (unsigned int jackknife_bin = 0; jackknife_bin < bin_number; ++jackknife_bin)
@@ -56,24 +53,26 @@ namespace Mocasinns
 	  unsigned int jackknife_bin_begin = jackknife_bin * bin_size; // First value not to take into account
 	  unsigned int jackknife_bin_end = jackknife_bin_begin + bin_size; // Last value not to take into account
 
-	  // Define a vector for the observables to take into account
-	  std::vector<Observable> observables_used;
-	  observables_used.reserve(bin_size * (bin_number - 1));
-	  
-	  // Fill the vector
+	  // Define a accumulator for accumulating all observables except in the special bin
+	  ba::accumulator_set<Observable, ba::stats<ba::tag::mean> > temp_accumulator;
+	  // Accumulate
 	  unsigned int counter = 0;
-	  for (InputIterator it = measurement_begin; it != measurement_end; ++it)	  {
-	    if (counter < jackknife_bin_begin || counter >= jackknife_bin_end) observables_used.push_back(*it);
+	  for (InputIterator it = measurement_begin; it != measurement_end; ++it)	  
+	  {
+	    if (counter < jackknife_bin_begin || counter >= jackknife_bin_end) temp_accumulator(*it);
 	    counter++;
 	  }
-	  
+
 	  // Calculate the observable and push back to the jackknife accumulator
-	  jackknife_accumulator(observable_functor(observables_used.begin(), observables_used.end()));
+	  jackknife_accumulator(function_of_observable(ba::mean(temp_accumulator)));
 	}
 
 	// Make a pair and return it
 	return result_type(ba::mean(jackknife_accumulator), sqrt((bin_number - 1)*ba::variance(jackknife_accumulator)));
       }
+
+    private:
+      static Observable identity(Observable x) { return x; }
     };
   }
 }

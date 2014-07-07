@@ -4,9 +4,6 @@
 // Standard libraries
 #include <algorithm>
 
-// Standard observable functions
-#include "observable_functors.hpp"
-
 // Random number generator
 #include "../random/boost_random.hpp"
 
@@ -17,6 +14,8 @@
 #include <boost/accumulators/statistics/variance.hpp>
 // Boost iterator
 #include <boost/iterator/permutation_iterator.hpp>
+
+namespace ba = boost::accumulators;
 
 namespace Mocasinns
 {
@@ -30,12 +29,12 @@ namespace Mocasinns
       \tparam FunctionOfObservables Functor that has a 1) static operator() that takes two Iterators and calculating a function of observables (e.g. the variance or the specific heat) and has 2) a type return_type typedefed that indicates the return type of the functor.
       \tparam RandomNumberGenerator Class of the random number generator
     */
-    template <class Observable, class FunctionOfObservables = MeanOfObservables<Observable>, class RandomNumberGenerator = Random::Boost_MT19937>
+    template <class Observable, class RandomNumberGenerator = Random::Boost_MT19937>
     class BootstrapAnalysis
     {
     public:
       //! Type of the analysis result
-      typedef std::pair<typename FunctionOfObservables::return_type, typename FunctionOfObservables::return_type> result_type;
+      typedef std::pair<Observable, Observable> result_type;
 
       /*! 
 	\brief Do the analyis
@@ -49,13 +48,13 @@ namespace Mocasinns
 	\returns Pair of Observables, the first entry is the mean of the observables and the second entry is the error of the mean of the observables.
       */
       template <class InputIterator>
-      static result_type analyse(InputIterator measurement_begin, InputIterator measurement_end, unsigned int resampling_size, unsigned int resampling_number, FunctionOfObservables observable_functor = FunctionOfObservables())
+      static result_type analyse(InputIterator measurement_begin, InputIterator measurement_end, unsigned int resampling_size, unsigned int resampling_number, Observable (*function_of_observable)(Observable) = identity)
       {
 	int measurement_size = std::distance(measurement_begin, measurement_end);
 	RandomNumberGenerator rnd;
 
 	// Define the accumulator accumulating the single bootstrap resamplings
-	ba::accumulator_set<typename FunctionOfObservables::return_type, ba::stats<ba::tag::mean, ba::tag::variance> > bootstrap_accumulator;
+	ba::accumulator_set<Observable, ba::stats<ba::tag::mean, ba::tag::variance> > bootstrap_accumulator;
 
 	for (unsigned int res = 0; res < resampling_number; ++res)
 	{
@@ -72,11 +71,20 @@ namespace Mocasinns
 	  permutation_it permutation_begin = boost::make_permutation_iterator(measurement_begin, resampling_indizes.begin());
 	  permutation_it permutation_end = boost::make_permutation_iterator(measurement_begin, resampling_indizes.end());
 
-	  bootstrap_accumulator(observable_functor(permutation_begin, permutation_end));
+	  // Define a accumulator for accumulating all observables except in the special bin
+	  ba::accumulator_set<Observable, ba::stats<ba::tag::mean> > temp_accumulator;
+	  // Accumulate
+	  for (permutation_it it = permutation_begin; it != permutation_end; ++it) temp_accumulator(*it);
+
+	  // Calculate the observable and push back to the boostrap accumulator
+	  bootstrap_accumulator(function_of_observable(ba::mean(temp_accumulator)));
 	}
 
 	return result_type(ba::mean(bootstrap_accumulator), sqrt(resampling_number*ba::variance(bootstrap_accumulator)));
       }
+
+    private:
+      static Observable identity(Observable x) { return x; }
     };
   }
 }

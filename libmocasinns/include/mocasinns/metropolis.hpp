@@ -1,8 +1,6 @@
 /**
  * \file metropolis.hpp
- * \brief Contains the declaration of the base class of the two Metropolis algorithms (normal and rejection free)
- * 
- * Do not include the file, but include <mocasinns/metropolis.hpp>
+ * \brief Contains the class for doing Metropolis simulations
  * 
  * \author Benedikt Krüger
  * \author Johannes Knauf

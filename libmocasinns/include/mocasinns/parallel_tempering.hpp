@@ -26,6 +26,32 @@
 namespace Mocasinns
 {
   //! Class for parallel tempering simulations
+  /*!
+   * The parallel tempering (or replica exchange) Monte Carlo is an extension of the Metropolis algorithm to overcome local energy barriers. 
+   * The basic principle is to perform \f$N\f$ independent Metropolis simulations at inverse temperatures \f$\beta_1 < \dots < \beta_N\f$ in parallel, each on a seperate copy of the system (replica), and to exchange two inverse temperatures \f$\beta_i\f$ and \f$\beta_j\f$ after a certain number of flips with the acceptance probability
+   * \f[
+   * A(\beta_i \leftrightarrow \beta_2) = 
+   * \begin{cases}
+   * 1 & \text{if }\Delta \beta \cdot \Delta E \geq 0 \			\
+   * \exp\left(\Delta \beta \cdot \Delta E\right) & \text{if }\Delta \beta \cdot \Delta E < 0
+   * \end{cases}
+   * \f]
+   * where \f$\Delta \beta = \beta_{i+1} - \beta_i\f$ is the difference between the two neighbouring inverse temperatures and \f$\Delta E = E_{i+1} - E_i\f$ is the difference between the two replicas with the respective energies.
+   * This choice ensures that the detailed balance condition also holds for the replica exchanges.
+   *
+   * In the <tt>mocasinns</tt> framework there are two different algorithms for doing parallel tempering simulations: 
+   * - <tt>SerialTempering</tt> for doing parallel tempering on a single core, so that the Metropolis simulations for the different inverse temperatures are executed one after another
+   * - <tt>ParallelTempering</tt> for parallel tempering on multiple cores, where the single Metropolis simulations are executed in parallel using OpenMP.
+   * 
+   * An important problem for the parallel tempering algorithm is how to choose the inverse temperatures \f$\beta_i\f$.
+   * If the chosen temperature range is to wide, the acceptance probabilities \ref{eq:parallel_tempering_swap_acceptance} approach 0 and one gets basically independent Metropolis simulations which cannot escape local energy minima.
+   * If the chosen temperature range is to small, computation time is wasted since simulations with neighbouring inverse temperatures produce basically the same information.
+   * Especially if there are phase transitions present in the system at certain inverse temperatures, the range around these critical temperatures must be sampled mor accuratly as far away from the cricitcal regions.
+   *
+   * \tparam ConfigurationType \concept{ConfigurationType}
+   * \tparam StepType \concept{StepType}
+   * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
   class ParallelTempering : public Simulation<ConfigurationType, RandomNumberGenerator>
   {

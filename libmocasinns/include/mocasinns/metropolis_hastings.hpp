@@ -23,7 +23,32 @@
 
 namespace Mocasinns
 {
-  //! Class for Metropolis-Hastings-Monte-Carlo simulations
+  /*!
+   * \brief Class for the Metropolis-Hastings algorithm
+   *
+   * \details The Metropolis-Hastings algorithm is a generalization of the Metropolis algorithm and can be used for sampling arbitrary distributions \f$ P(E(\sigma)) \f$. 
+   * The Metropolis-Hastings-choice of the acceptance probabilities is:
+   * \f[
+   *    A(\sigma_1 \rightarrow \sigma_2) = 
+   *    \begin{cases}
+   *       1 & \text{if }\beta \Delta E \leq -\ln(s) \\
+   *       \frac{1}{s}\cdot \exp\left(-\beta \Delta E \right) & \text{if } \beta \Delta E > -\ln(s)
+   *    \end{cases}
+   * \f]
+   *
+   * To perform a metropolis simulation, use one of the \c Metropolis::do_metropolis_simulation() function.
+   * All of them take as an optional template argument an <tt>Observator</tt> that must fulfill the \ref concept-Observator "Observator concept".
+   * If no such template parameter is specified, the algorithm observes the energy of the system.
+   * There are the following overrides:
+   * - <tt>do_metropolis_simulation<Observator>(TemperatureType inverse_temperature)</tt>: Do a Metropolis simulation for a single temperature and return a vector of the observables measured by the <tt>Observator</tt>.
+   * - <tt>do_metropolis_simulation<Observator>(Iterator inverse_temperatures_begin, Iterator inverse_temperatures_end)</tt>: Do a Metropolis simulation for a range of given temperatures and return a vector of vectors of the observables measured by the <tt>Observator</tt>. The outer vector is for the different temperatures, the inner vector for the different measurements.
+   * - <tt>do_metropolis_simulation<Observator>(TemperatureType inverse_temperature, Accumulator& measurement_accumulator)</tt>: Do a Metropolis simulation for a single temperature and accumulate the measured observables in a given accumulator (that fulfills the \ref concept-Accumulator "Accumulator concept"). This can be used e.g. for calculating the mean and the variance of the observables without storing the single measurement results.
+   * - <tt>do_metropolis_simulation<Observator>(TemperatureType inverse_temperature, Accumulator& measurement_accumulator)</tt>: Do a Metropolis simulation for a single temperature and accumulate the measured observables in a given accumulator (that fulfills the \ref concept-Accumulator "Accumulator concept"). This can be used e.g. for calculating the mean and the variance of the observables without storing the single measurement results.
+   *
+   * \tparam ConfigurationType \concept{ConfigurationType}
+   * \tparam StepType \concept{StepType}
+   * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
   class MetropolisHastings : public Simulation<ConfigurationType, RandomNumberGenerator>
   {

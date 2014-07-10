@@ -27,9 +27,9 @@ done
 
 # Remove template parameters from the html documentation overview that blow it up unneccessary
 echo "Removing unnecessary template parameters from file html/annotated.html"
-doctools/remove_template_parameters_overview.sh -H html/annotated.html
+doctools/remove_template_parameters_overview_all.sh -H html/annotated.html
 echo "Removing unnecessary template parameters from file html/hierarchy.html"
-doctools/remove_template_parameters_overview.sh -H html/hierarchy.html
+doctools/remove_template_parameters_overview_all.sh -H html/hierarchy.html
 find ./html -name "functions*.html" | while read FUNCTIONS_HTML
 do
     echo "Removing unnecessary template parameters from file $FUNCTIONS_HTML"
@@ -42,45 +42,58 @@ done
 #echo "Removing unnecessary template parameters from file latex/hierarchy.tex"
 #doctools/remove_template_parameters_overview.sh -l latex/hierarchy.tex
 
+# Define a list of files where to work on the member documentation except from the algorithm classes
+ADDITIONAL_FILES=""
+ADDITIONAL_FILES="$ADDITIONAL_FILES html/classMocasinns_1_1Details_1_1ParallelTempering_1_1InverseTemperatureOptimizationBase.html"
+ADDITIONAL_FILES="$ADDITIONAL_FILES html/classMocasinns_1_1Details_1_1ParallelTempering_1_1InverseTemperatureOptimizationEqualAcceptanceProbabilities.html"
+ADDITIONAL_FILES="$ADDITIONAL_FILES html/classMocasinns_1_1Details_1_1ParallelTempering_1_1InverseTemperatureOptimizationKatzgraber.html"
+
 # Remove template parameters from detailed member descriptions
 for CLASS in $(doctools/algorithm_classes.sh -H)
 do
-    for CLASS_FULL in $CLASS ${CLASS}Base ${CLASS}RejectionFree
-    do
-	FILENAME="html/classMocasinns_1_1${CLASS_FULL}.html"
-	if [ -f $FILENAME ];
-	then
-	    echo "Removing unnecessary template parameters in member documentation from file $FILENAME"
-	    doctools/remove_template_parameters_class_member_doc.sh -H $FILENAME
-	fi
-    done
+    FILENAME="html/classMocasinns_1_1${CLASS}.html"
+    if [ -f $FILENAME ];
+    then
+	echo "Removing unnecessary template parameters in member documentation from file $FILENAME"
+	doctools/remove_template_parameters_class_member_doc.sh -H $FILENAME
+    fi
+done
+for FILENAME in $ADDITIONAL_FILES
+do
+    if [ -f $FILENAME ];
+    then
+	echo "Removing unnecessary template parameters in member documentation from file $FILENAME"
+	doctools/remove_template_parameters_class_member_doc_all.sh $FILENAME
+    fi
 done
 
 # Remove template parameters from detailed member descriptions
 #for CLASS in $(doctools/algorithm_classes.sh -l)
 #do
-#    for CLASS_FULL in "$CLASS" "${CLASS}\\\-Base" "${CLASS}\\\-Rejection\\\-Free"
-#    do
-#	CLASS_FILENAME=$(echo ${CLASS_FULL} | sed 's@\\\\-@@g')
+#	CLASS_FILENAME=$(echo ${CLASS} | sed 's@\\\\-@@g')
 #	FILENAME="latex/classMocasinns_1_1${CLASS_FILENAME}.tex"
 #	if [ -f $FILENAME ];
 #	then
 #	    echo "Removing unnecessary template parameters in member documentation from file $FILENAME"
 #	    doctools/remove_template_parameters_class_member_doc.sh -l $FILENAME
 #	fi
-#    done
 #done
 
 # Remove protected functions and members from the classes
 for CLASS in $(doctools/algorithm_classes_user.sh -H)
 do
-    for CLASS_FULL in $CLASS ${CLASS}Base ${CLASS}RejectionFree
-    do
-	FILENAME="html/classMocasinns_1_1${CLASS_FULL}.html"
-	if [ -f $FILENAME ];
-	then
-	    echo "Removing protected members and functions in documentation file $FILENAME"
-	    doctools/remove_protected.sh $FILENAME
-	fi
-    done
+    FILENAME="html/classMocasinns_1_1${CLASS}.html"
+    if [ -f $FILENAME ];
+    then
+	echo "Removing protected members and functions in documentation file $FILENAME"
+	doctools/remove_protected.sh $FILENAME
+    fi
+done
+for FILENAME in $ADDITIONAL_FILES
+do
+    if [ -f $FILENAME ];
+    then
+	echo "Removing protected members and functions in documentation file $FILENAME"
+	doctools/remove_protected.sh $FILENAME
+    fi
 done

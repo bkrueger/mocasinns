@@ -7,6 +7,13 @@ filename_input = sys.argv[1]
 with open(filename_input, "r") as f:
     file_lines = f.readlines()
 
+# Make a list of strings that indicate that the function is protected
+protected_indicator_strings = []
+protected_indicator_strings.append("<code> [protected, inherited]</code>")
+protected_indicator_strings.append("<code> [static, protected, inherited]</code>")
+protected_indicator_strings.append("<code> [inline, protected, inherited]</code>")
+protected_indicator_strings.append("<code> [inline, protected]</code>")
+
 i = 0
 while i < len(file_lines):
     line = file_lines[i].strip()
@@ -18,7 +25,7 @@ while i < len(file_lines):
         j = i + 1
         while j < len(file_lines) - 1 and not closing_divs_found:
             # Test whether the word "protected" is there in the right format
-            if "<code> [protected, inherited]</code>" in file_lines[j + 1] or "<code> [static, protected, inherited]</code>" in file_lines[j + 1]:
+            if [s in file_lines[j + 1] for s in protected_indicator_strings].count(True) >= 1:
                 protected_found = True;
 
             # Look for two closing divs in this line and in the next line

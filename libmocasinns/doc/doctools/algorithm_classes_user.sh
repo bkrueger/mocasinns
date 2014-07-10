@@ -7,10 +7,10 @@
 while getopts ":Hlu" opt; do
     case "${opt}" in
         H)
-	    echo "Metropolis MetropolisHastings MetropolisParallel ParallelTempering SerialTempering EntropicSampling WangLandau OptimalEnsembleSampling MulticanonicalCounting"	    
+	    echo "ConfigurationTest Metropolis MetropolisHastings MetropolisParallel ParallelTempering SerialTempering EntropicSampling WangLandau OptimalEnsembleSampling MulticanonicalCounting"	    
             ;;
         l)
-	    echo "Metropolis Metropolis\\\-Hastings Metropolis\\\-Parallel Parallel\\\-Tempering Serial\\\-Tempering Entropic\\\-Sampling Wang\\\-Landau OptimalEnsemble\\\-Sampling Multicanonical\\\-Counting"
+	    echo "Configuration\\\-Test Metropolis Metropolis\\\-Hastings Metropolis\\\-Parallel Parallel\\\-Tempering Serial\\\-Tempering Entropic\\\-Sampling Wang\\\-Landau OptimalEnsemble\\\-Sampling Multicanonical\\\-Counting"
             ;;
     esac
 done

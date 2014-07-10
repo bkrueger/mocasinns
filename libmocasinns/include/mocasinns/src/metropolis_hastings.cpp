@@ -28,7 +28,11 @@ namespace Mocasinns
  
 /*!
   \tparam Observator Class with static function Observator::observe(ConfigurationType*) taking a pointer to the simulation and returning the value of a arbitrary observable. The class must contain a typedef ::observable_type classifying the return type of the functor.
-  \param acceptance_probability_functor Class object that defines a "double operator(EnergyType delta_E, EnergyType actual_energy)" returning the acceptance probability of the step.
+  \tparam AcceptanceProbabilityFunctor Class that defines "double operator()(EnergyType delta_E, EnergyType actual_energy)" returning the acceptance probability of a step with energy difference delta_e and actual_energy being the energy of the state before the step. If \f$P(E(\omega))\f$ is the probability distribution to be sampled, the class must return 
+  \f[
+    A(\omega_1 \rightarrow \omega_2) = \frac{P(E(\omega_1) + \Delta E(\omega_1 \rightarrow \omega_2)}{P(E(\omega_1)}
+  \f]
+  \param acceptance_probability_functor Object of type AcceptanceProbabilityFunctor that is used to calculate the acceptance probability.
   \returns Vector containing the single measurements performed
 */
 template<class ConfigurationType, class Step, class RandomNumberGenerator>

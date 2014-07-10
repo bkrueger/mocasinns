@@ -91,7 +91,7 @@ namespace Mocasinns
 
 	  // Fill the vector with the resampling indices
 	  for (unsigned int i = 0; i < observables_size; ++i)
-	    resampling_indizes[i] = rnd.random_uint32(0, observables_size - 1);    
+	    resampling_indizes[i] = rnd.random_int32(0, observables_size - 1);    
 	  std::sort(resampling_indizes.begin(), resampling_indizes.end());
 
 	  // Use the boost::permutation_iterator to iterate over the selected subset

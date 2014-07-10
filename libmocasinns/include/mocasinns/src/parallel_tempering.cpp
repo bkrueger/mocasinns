@@ -15,7 +15,7 @@
 
 namespace Mocasinns
 {
-/*!
+  /*!
     \tparam ConfigurationPointerIterator Iterator of a range of pointers to configurations to work on
     \param params Parameters of the simulation
     \param configuration_pointers_begin Begin of the range of pointers to configurations to work on
@@ -111,7 +111,7 @@ namespace Mocasinns
     check_temperature_range(inverse_temperatures_begin, inverse_temperatures_end);
 
     // Select randomly the index of the temperatures to exchange
-    unsigned int exchange_index = this->rng->random_uint32(1, metropolis_simulations.size() - 1);
+    unsigned int exchange_index = this->rng->random_int32(1, metropolis_simulations.size() - 1);
 
     // Get the temperatures of the exchange indices
     TemperatureTypeIterator inverse_temperature_iterator_1 = inverse_temperatures_begin;

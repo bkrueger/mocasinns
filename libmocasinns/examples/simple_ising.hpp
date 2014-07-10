@@ -51,7 +51,7 @@ public:
 
   // Create a step (spin flip) using a given random number generator
   template <class RandomNumberGenerator>
-  IsingStep propose_step(RandomNumberGenerator* rng) { return IsingStep(this, rng->random_uint32(0, spins.size() - 1)); }
+  IsingStep propose_step(RandomNumberGenerator* rng) { return IsingStep(this, rng->random_int32(0, spins.size() - 1)); }
 };
   
 int IsingStep::delta_E()

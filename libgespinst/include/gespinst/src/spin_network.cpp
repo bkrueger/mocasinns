@@ -128,7 +128,7 @@ namespace Gespinst
   SpinNetworkStep<SpinType, ContainerType> SpinNetwork<SpinType, ContainerType>::propose_step(RandomNumberGenerator* rng)
   {
     // Use a random index
-    unsigned int index = rng->random_uint32(0, spins.size() - 1);
+    unsigned int index = rng->random_int32(0, spins.size() - 1);
     
     // Create a step and return the step
     return SpinNetworkStep<SpinType, ContainerType>(this, // Pointer to the lattice of the step

@@ -20,7 +20,7 @@ namespace Mocasinns
     {
     public:
       //! Typedef for the integer type
-      typedef uint32_t RandomIntType;
+      typedef int32_t RandomIntType;
 
       BoostRandomInterface()
       {
@@ -40,17 +40,17 @@ namespace Mocasinns
 
       //! Set the seed of the random number generator
       void set_seed(const RandomIntType& new_seed) { rng->seed(new_seed); }
-      //! Return the minimal integer that is created by \::random_uint32()
+      //! Return the minimal integer that is created by \::random_int32()
       RandomIntType get_int_min() const { return int_distribution->min(); }
-      //! Return the maximal integer that is created by \::random_uint32()
+      //! Return the maximal integer that is created by \::random_int32()
       RandomIntType get_int_max() const { return int_distribution->max(); }
-      //! Set the maximal integer that is created by \::random_uint32(), the minimal integer is set to 0
+      //! Set the maximal integer that is created by \::random_int32(), the minimal integer is set to 0
       void set_int_max(const RandomIntType& int_max)
       {
 	delete int_distribution;
 	int_distribution = new boost::random::uniform_int_distribution<RandomIntType>(0, int_max);
       }
-      //! Set the range of intergers that is created by \::random_uint32()
+      //! Set the range of intergers that is created by \::random_int32()
       void set_int_range(const RandomIntType& int_min, const RandomIntType& int_max)
       {
 	delete int_distribution;
@@ -63,12 +63,12 @@ namespace Mocasinns
 	return (*double_01_distribution)(*rng);
       }
       //! Create an uniformly distributed integer in the range [min, max], where min and max are set by the respective accessor functions
-      RandomIntType random_uint32()
+      RandomIntType random_int32()
       {
 	return (*int_distribution)(*rng);
       }
       //! Create an uniformly distributed integer in the range [min, max], where min and max are given as parameters
-      RandomIntType random_uint32(const RandomIntType& min, const RandomIntType& max)
+      RandomIntType random_int32(const RandomIntType& min, const RandomIntType& max)
       {
 	boost::random::uniform_int_distribution<RandomIntType> temp_distribution(min, max);
 	return temp_distribution(*rng);

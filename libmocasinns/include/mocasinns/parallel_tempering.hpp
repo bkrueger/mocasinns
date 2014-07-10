@@ -203,7 +203,7 @@ namespace Mocasinns
     
     Parameters() : SerialTempering<ConfigurationType, StepType, RandomNumberGenerator>::Parameters(), process_number(2) { }
   };
-
+}
 #include "src/parallel_tempering.cpp"
 
 #endif

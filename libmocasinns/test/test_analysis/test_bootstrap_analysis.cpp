@@ -27,8 +27,9 @@ void TestBootstrapAnalysis::test_analyse_doubles()
   boost::random::normal_distribution<> dist(0.0, 1.0);
 
   // Create a vector and calculate a lot of normal random variables and calculate the exponential
-  std::vector<double> exponential_results(10000, 0.0);
-  for (unsigned int i = 0; i < 10000; ++i)
+  unsigned int samples = 10000;
+  std::vector<double> exponential_results(samples, 0.0);
+  for (unsigned int i = 0; i < samples; ++i)
   {
     exponential_results[i] = exp(dist(rng));
   }
@@ -38,7 +39,7 @@ void TestBootstrapAnalysis::test_analyse_doubles()
   
   // For the results see 03.04.13 - 01
   CPPUNIT_ASSERT_DOUBLES_EQUAL(exp(0.5), bootstrap_result.first, 0.05);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(sqrt(exp(1.0)*(exp(1.0)-1)) / sqrt(10000), bootstrap_result.second, 0.01);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(sqrt(exp(1.0)*(exp(1.0)-1)) / sqrt(samples), bootstrap_result.second, 0.01);
 }
 
 void TestBootstrapAnalysis::test_analyse_vector_observables()

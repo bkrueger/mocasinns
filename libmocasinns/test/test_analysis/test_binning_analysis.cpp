@@ -1,5 +1,7 @@
 #include "test_binning_analysis.hpp"
 
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
@@ -45,6 +47,26 @@ void TestBinningAnalysis::test_analyse_doubles()
   compare_mean_error += (1.0/3.0)*pow((compare_mean_vector[2] - compare_mean), 2);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(result_mean.first, compare_mean, 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(result_mean.second, sqrt(0.5*compare_mean_error), 1e-4);
+
+  ///////////////////////////////////
+  // Test using a big distribution //
+    // Create a random number generator
+  boost::random::mt19937 rng;
+  // Create a normal distribution
+  boost::random::normal_distribution<> dist(0.0, 1.0);
+
+  // Create a vector and calculate a lot of normal random variables and calculate the exponential
+  unsigned int samples = 10000;
+  std::vector<double> exponential_results(samples, 0.0);
+  for (unsigned int i = 0; i < samples; ++i)
+    exponential_results[i] = exp(dist(rng));
+
+  // Do a bootstrap analysis
+  std::pair<double, double> binning_result = BinningAnalysis<double>::analyse(exponential_results.begin(), exponential_results.end(), 100);
+  
+  // For the results see 03.04.13 - 01
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(exp(0.5), binning_result.first, 0.05);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(sqrt(exp(1.0)*(exp(1.0)-1)) / sqrt(samples), binning_result.second, 0.01);
 }
 
 void TestBinningAnalysis::test_analyse_vector_observables()
@@ -70,7 +92,7 @@ void TestBinningAnalysis::test_analyse_vector_observables()
   values[4][0] = 1.0;
   values[4][1] = 2.5;
 
-  // Calculate mean and error of mean with jackknife
+  // Calculate mean and error of mean with binning
   std::pair<VectorObservable<double>, VectorObservable<double> > result_mean = BinningAnalysis<VectorObservable<double> >::analyse(values.begin(), values.end(), 2);
   std::vector<VectorObservable<double> > compare_mean_vector(3, VectorObservable<double>(2, 0.0));
   compare_mean_vector[0] = 0.5*(values[0] + values[1]);

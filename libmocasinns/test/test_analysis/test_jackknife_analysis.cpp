@@ -1,5 +1,7 @@
 #include "test_jackknife_analysis.hpp"
 
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
@@ -96,6 +98,26 @@ void TestJackknifeAnalysis::test_analyse_doubles()
   compare_stddev_error += 0.2*pow((compare_stddev_vector[4] - compare_stddev), 2);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(result_stddev.first, compare_stddev, 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(result_stddev.second, sqrt(4*compare_stddev_error), 1e-4);
+
+  ///////////////////////////////////
+  // Test using a big distribution //
+    // Create a random number generator
+  boost::random::mt19937 rng;
+  // Create a normal distribution
+  boost::random::normal_distribution<> dist(0.0, 1.0);
+
+  // Create a vector and calculate a lot of normal random variables and calculate the exponential
+  unsigned int samples = 1000;
+  std::vector<double> exponential_results(samples, 0.0);
+  for (unsigned int i = 0; i < samples; ++i)
+    exponential_results[i] = exp(dist(rng));
+
+  // Do a bootstrap analysis
+  std::pair<double, double> jackknife_result = JackknifeAnalysis<double>::analyse(exponential_results.begin(), exponential_results.end());
+  
+  // For the results see 03.04.13 - 01
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(exp(0.5), jackknife_result.first, 0.05);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(sqrt(exp(1.0)*(exp(1.0)-1)) / sqrt(samples), jackknife_result.second, 0.01);
 }
 
 void TestJackknifeAnalysis::test_analyse_vector_observables()

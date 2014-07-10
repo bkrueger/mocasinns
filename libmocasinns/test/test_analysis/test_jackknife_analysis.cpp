@@ -33,6 +33,7 @@ void TestJackknifeAnalysis::test_analyse_doubles()
 
   // Calculate mean and error of mean with jackknife
   std::pair<double, double> result_mean = JackknifeAnalysis<double>::analyse(values.begin(), values.end());
+  std::pair<double, double> result_binning_mean = JackknifeBinnedAnalysis<double>::analyse(values.begin(), values.end(), 1);
   std::vector<double> compare_mean_vector(5, 0.0);
   compare_mean_vector[0] = 0.25*(values[1] + values[2] + values[3] + values[4]);
   compare_mean_vector[1] = 0.25*(values[0] + values[2] + values[3] + values[4]);
@@ -48,6 +49,53 @@ void TestJackknifeAnalysis::test_analyse_doubles()
   compare_mean_error += 0.2*pow((compare_mean_vector[4] - compare_mean), 2);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(result_mean.first, compare_mean, 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(result_mean.second, sqrt(4*compare_mean_error), 1e-4);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(result_binning_mean.first, compare_mean, 1e-4);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(result_binning_mean.second, sqrt(4*compare_mean_error), 1e-4);
+
+  // Calculate variance and error of variance using jackknife
+  std::pair<double, double> result_variance = JackknifeAnalysis<double>::analyse(values.begin(), values.end(),
+										 AnalysisHelper<double>::identity,
+										 AnalysisHelper<double>::observable_range_variance);
+  std::vector<double> compare_variance_vector(5, 0.0);
+  compare_variance_vector[0] = 0.25*(pow(values[1] - compare_mean_vector[0], 2) + pow(values[2] - compare_mean_vector[0], 2) +
+				     pow(values[3] - compare_mean_vector[0], 2) + pow(values[4] - compare_mean_vector[0], 2));
+  compare_variance_vector[1] = 0.25*(pow(values[0] - compare_mean_vector[1], 2) + pow(values[2] - compare_mean_vector[1], 2) +
+				     pow(values[3] - compare_mean_vector[1], 2) + pow(values[4] - compare_mean_vector[1], 2));
+  compare_variance_vector[2] = 0.25*(pow(values[0] - compare_mean_vector[2], 2) + pow(values[1] - compare_mean_vector[2], 2) +
+				     pow(values[3] - compare_mean_vector[2], 2) + pow(values[4] - compare_mean_vector[2], 2));
+  compare_variance_vector[3] = 0.25*(pow(values[0] - compare_mean_vector[3], 2) + pow(values[1] - compare_mean_vector[3], 2) +
+				     pow(values[2] - compare_mean_vector[3], 2) + pow(values[4] - compare_mean_vector[3], 2));
+  compare_variance_vector[4] = 0.25*(pow(values[0] - compare_mean_vector[4], 2) + pow(values[1] - compare_mean_vector[4], 2) +
+				     pow(values[2] - compare_mean_vector[4], 2) + pow(values[3] - compare_mean_vector[4], 2));
+  double compare_variance = 0.2*(compare_variance_vector[0] + compare_variance_vector[1] + compare_variance_vector[2] + compare_variance_vector[3] + compare_variance_vector[4]);
+  double compare_variance_error = 0.0;
+  compare_variance_error += 0.2*pow((compare_variance_vector[0] - compare_variance), 2);
+  compare_variance_error += 0.2*pow((compare_variance_vector[1] - compare_variance), 2);
+  compare_variance_error += 0.2*pow((compare_variance_vector[2] - compare_variance), 2);
+  compare_variance_error += 0.2*pow((compare_variance_vector[3] - compare_variance), 2);
+  compare_variance_error += 0.2*pow((compare_variance_vector[4] - compare_variance), 2);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(result_variance.first, compare_variance, 1e-4);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(result_variance.second, sqrt(4*compare_variance_error), 1e-4);
+
+  // Calculate standard deviation and error of standard deviation using jackknife
+  std::pair<double, double> result_stddev = JackknifeAnalysis<double>::analyse(values.begin(), values.end(),
+									       AnalysisHelper<double>::identity,
+									       AnalysisHelper<double>::observable_range_standard_deviation);
+  std::vector<double> compare_stddev_vector(5, 0.0);
+  compare_stddev_vector[0] = sqrt(compare_variance_vector[0]);
+  compare_stddev_vector[1] = sqrt(compare_variance_vector[1]);
+  compare_stddev_vector[2] = sqrt(compare_variance_vector[2]);
+  compare_stddev_vector[3] = sqrt(compare_variance_vector[3]);
+  compare_stddev_vector[4] = sqrt(compare_variance_vector[4]);
+  double compare_stddev = 0.2*(compare_stddev_vector[0] + compare_stddev_vector[1] + compare_stddev_vector[2] + compare_stddev_vector[3] + compare_stddev_vector[4]);
+  double compare_stddev_error = 0.0;
+  compare_stddev_error += 0.2*pow((compare_stddev_vector[0] - compare_stddev), 2);
+  compare_stddev_error += 0.2*pow((compare_stddev_vector[1] - compare_stddev), 2);
+  compare_stddev_error += 0.2*pow((compare_stddev_vector[2] - compare_stddev), 2);
+  compare_stddev_error += 0.2*pow((compare_stddev_vector[3] - compare_stddev), 2);
+  compare_stddev_error += 0.2*pow((compare_stddev_vector[4] - compare_stddev), 2);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(result_stddev.first, compare_stddev, 1e-4);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(result_stddev.second, sqrt(4*compare_stddev_error), 1e-4);
 }
 
 void TestJackknifeAnalysis::test_analyse_vector_observables()

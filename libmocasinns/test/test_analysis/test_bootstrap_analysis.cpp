@@ -34,7 +34,7 @@ void TestBootstrapAnalysis::test_analyse_doubles()
   }
 
   // Do a bootstrap analysis
-  std::pair<double, double> bootstrap_result = BootstrapAnalysis<double>::analyse(exponential_results.begin(), exponential_results.end(), 10000, 10000);
+  std::pair<double, double> bootstrap_result = BootstrapAnalysis<double>::analyse(exponential_results.begin(), exponential_results.end(), 10000);
   
   // For the results see 03.04.13 - 01
   CPPUNIT_ASSERT_DOUBLES_EQUAL(exp(0.5), bootstrap_result.first, 0.05);

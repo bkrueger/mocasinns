@@ -38,7 +38,7 @@ void TestBootstrapAnalysis::test_analyse_doubles()
   
   // For the results see 03.04.13 - 01
   CPPUNIT_ASSERT_DOUBLES_EQUAL(exp(0.5), bootstrap_result.first, 0.05);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(sqrt(exp(1.0)*(exp(1.0)-1)), bootstrap_result.second, 0.1);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(sqrt(exp(1.0)*(exp(1.0)-1)) / sqrt(10000), bootstrap_result.second, 0.01);
 }
 
 void TestBootstrapAnalysis::test_analyse_vector_observables()

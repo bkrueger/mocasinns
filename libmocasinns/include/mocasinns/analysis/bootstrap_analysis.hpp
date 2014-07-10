@@ -103,7 +103,7 @@ namespace Mocasinns
 	  bootstrap_accumulator(function_of_observable(observables_reduce(permutation_begin, permutation_end)));
 	}
 
-	return result_type(ba::mean(bootstrap_accumulator), sqrt(resampling_number*ba::variance(bootstrap_accumulator)));
+	return result_type(ba::mean(bootstrap_accumulator), sqrt(ba::variance(bootstrap_accumulator)));
       }
     };
   }

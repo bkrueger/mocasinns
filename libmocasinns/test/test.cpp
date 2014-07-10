@@ -31,10 +31,13 @@
 #include "test_energy_types/test_array_energy.hpp"
 #include "test_observables/test_array_observable.hpp"
 #include "test_observables/test_histogram_observable.hpp"
+#include "test_analysis/test_binning_analysis.hpp"
 #include "test_analysis/test_jackknife_analysis.hpp"
 #include "test_analysis/test_bootstrap_analysis.hpp"
+#include "test_analysis/test_autocorrelation.hpp"
 #include "test_details/test_stl_extensions/test_vector_addable.hpp"
 #include "test_details/test_stl_extensions/test_array_addable.hpp"
+#include "test_details/test_parallel_tempering/test_inverse_temperature_optimization.hpp"
 // #include "test_details/test_stl_extensions/test_tuple_addable.hpp"
 
 bool read_test_name(int argc, char *argv[], std::string& test_name);
@@ -59,7 +62,10 @@ int main(int argc, char *argv[])
   if (test_all || test_name == "SerialTempering")
     runner.addTest(TestSerialTempering::suite());
   if (test_all || test_name == "ParallelTempering")
-    runner.addTest(TestParallelTempering::suite());
+  {
+    //    runner.addTest(TestParallelTempering::suite());
+    runner.addTest(TestInverseTemperatureOptimization::suite());
+  }
   if (test_all || test_name == "WangLandau")
     runner.addTest(TestWangLandau::suite());
   if (test_all || test_name == "OptimalEnsembleSampling")
@@ -83,8 +89,10 @@ int main(int argc, char *argv[])
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
     runner.addTest(TestHistogramObservable::suite());
+    runner.addTest(TestBinningAnalysis::suite());
     runner.addTest(TestJackknifeAnalysis::suite());
     runner.addTest(TestBootstrapAnalysis::suite());
+    runner.addTest(TestAutocorrelation::suite());
   }
   if (test_all || test_name == "EnergyTypes")
   {

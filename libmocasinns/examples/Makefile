@@ -1,4 +1,4 @@
-PROGRAMS=simple_ising_metropolis simple_ising_metropolis_observator simple_ising_analysis simple_ising_parallel_tempering
+PROGRAMS=simple_ising_metropolis simple_ising_metropolis_observator simple_ising_analysis simple_ising_parallel_tempering simple_ising_parallel_tempering_temp_optimization
 
 all: $(PROGRAMS)
 
@@ -13,6 +13,9 @@ simple_ising_analysis: simple_ising.hpp simple_ising_analysis.cpp
 
 simple_ising_parallel_tempering: simple_ising.hpp simple_ising_parallel_tempering.cpp
 	g++ -std=c++11 -I../include simple_ising_parallel_tempering.cpp -lboost_serialization -fopenmp -o simple_ising_parallel_tempering
+
+simple_ising_parallel_tempering_temp_optimization: simple_ising.hpp simple_ising_parallel_tempering_temp_optimization.cpp
+	g++ -std=c++11 -I../include simple_ising_parallel_tempering_temp_optimization.cpp -lboost_serialization -fopenmp -o simple_ising_parallel_tempering_temp_optimization
 
 clean:
 	rm $(PROGRAMS)

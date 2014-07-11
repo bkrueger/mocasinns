@@ -135,7 +135,7 @@ namespace Mocasinns
     //! Execute a Metropolis Monte-Carlo simulation (inverse temperatures must be provided as parameters). Returns a vector of a vector, the first index corresponds to the temperature index and the second index corresponds to the measurement number
     template<class Observator = DefaultObservator, class TemperatureTypeIterator>
     std::vector<std::vector<typename Observator::observable_type> > do_parallel_tempering_simulation(TemperatureTypeIterator inverse_temperatures_begin, 
-    												   TemperatureTypeIterator inverse_temperatures_end);
+												     TemperatureTypeIterator inverse_temperatures_end);
    
     //! Execute a Metropolis Monte-Carlo simulation with an accumulator for storing the measurements results (inverse temperatures must be provided as parameters). Copies the accumulators and returns a vector of these accumulators.
     template<class Observator = DefaultObservator, class Accumulator, class TemperatureTypeIterator>

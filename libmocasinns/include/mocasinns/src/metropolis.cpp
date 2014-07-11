@@ -23,6 +23,7 @@
 namespace ba = boost::accumulators;
 
 #include "../details/metropolis/vector_accumulator.hpp"
+#include "../exceptions/iterator_range_exception.hpp"
 
 /*! \fn AUTO_TEMPLATE_2
   \tparam Observator \concept{Observator} If no observator is given, a default observator which measures the energy is used.
@@ -127,6 +128,10 @@ void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejectio
   BOOST_CONCEPT_ASSERT((Concepts::ObservableConcept<typename Observator::observable_type>));
   // Check the concept of the accumulator
   BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<typename std::iterator_traits<AccumulatorIterator>::value_type, typename Observator::observable_type>));
+
+  // Check that the number of inverse temperatures and the number of accumulators matches
+  if (std::distance(beta_begin, beta_end) != std::distance(measurement_accumulator_begin, measurement_accumulator_end))
+    throw Exceptions::IteratorRangeException("The range of given inverse temperatures and accumulators must have the same size.")
 
   InverseTemperatureIterator beta_iterator = beta_begin;
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;

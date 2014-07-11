@@ -12,6 +12,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "../../exceptions/histos_not_compatible_exception.hpp"
+
 namespace Mocasinns
 {
 namespace Histograms
@@ -110,7 +112,7 @@ template<class x_value_type, class y_value_type, class Derived>
 template<class ArbitraryDerived>
 Derived& HistoBase<x_value_type, y_value_type, Derived>::operator*=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs)
 {
-  if (!compatible(rhs)) throw ExceptionNonCompatible();
+  if (!compatible(rhs)) throw Exceptions::HistosNotCompatibleException("Two histograms must have the same x_values in order to multiply them.");
 
   for (typename HistoBase<x_value_type,y_value_type,ArbitraryDerived>::const_iterator it = rhs.begin(); it != rhs.end(); it++)
   {
@@ -122,7 +124,7 @@ template<class x_value_type, class y_value_type, class Derived>
 template<class ArbitraryDerived>
 Derived& HistoBase<x_value_type, y_value_type, Derived>::operator/=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs)
 {
-  if (!compatible(rhs)) throw ExceptionNonCompatible();
+  if (!compatible(rhs)) throw Exceptions::HistosNotCompatibleException("Two histograms must have the same x_values in order to divide them.");
 
   for (typename HistoBase<x_value_type,y_value_type,ArbitraryDerived>::const_iterator it = rhs.begin(); it != rhs.end(); it++)
   {

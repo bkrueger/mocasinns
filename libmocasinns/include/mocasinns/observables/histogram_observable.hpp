@@ -6,17 +6,12 @@
 
 #include <boost/accumulators/numeric/functional_fwd.hpp>
 
+#include "../exceptions/histos_not_compatible_exception.hpp"
+
 namespace Mocasinns
 {
   namespace Observables
   {
-    class XValuesDoNotMatchException : public std::invalid_argument
-    {
-    public:
-      XValuesDoNotMatchException() : std::invalid_argument("The x-values of the HistogramObservables do not match. Cannot do arithmetic operations.") {}
-    };
-
-
     //! Class representing the histogram of an observable as new observable.
     /*!
       \tparam Histo Class template for a histogram, use e.g. the histograms defined in Mocasinns::Histograms. The first template parameter coresponds to the type of the x-values, the second template parameteres corresponds to the type of the y-values of the histogram.
@@ -77,7 +72,7 @@ namespace Mocasinns
       //! Operator for adding another HistogramObservable with this HistogramObservable
       HistogramObservable& operator+=(const HistogramObservable<Histo, x_value_type, y_value_type> rhs)
       {
-	if (x_values_match(rhs) == false) throw XValuesDoNotMatchException();
+	if (x_values_match(rhs) == false) throw Exceptions::HistosNotCompatibleException("The x-values of the histos have to match in order to add two histos");
                                                 
 	typename HistoType::iterator this_it = this->begin();
 	typename HistoType::const_iterator other_it = rhs.begin();
@@ -91,7 +86,7 @@ namespace Mocasinns
       //! Operator for dividing another HistogramObservable from this HistogramObservable
       HistogramObservable& operator-=(const HistogramObservable<Histo, x_value_type, y_value_type> rhs)
       {
-	if (x_values_match(rhs) == false) throw XValuesDoNotMatchException();
+	if (x_values_match(rhs) == false) throw Exceptions::HistosNotCompatibleException("The x-values of the histos have to match in order to substract two histos");
 
 	typename HistoType::iterator this_it = this->begin();
 	typename HistoType::const_iterator other_it = rhs.begin();
@@ -105,7 +100,7 @@ namespace Mocasinns
       //! Operator for multiplying the HistogramObservable with another HistogramObservable
       HistogramObservable& operator*=(const HistogramObservable<Histo, x_value_type, y_value_type> rhs)
       {
-	if (x_values_match(rhs) == false) throw XValuesDoNotMatchException();
+	if (x_values_match(rhs) == false) throw Exceptions::HistosNotCompatibleException("The x-values of the histos have to match in order to multiply two histos");
 
 	typename HistoType::iterator this_it = this->begin();
 	typename HistoType::const_iterator other_it = rhs.begin();
@@ -119,7 +114,7 @@ namespace Mocasinns
       //! Operator for dividing the HistogramObservable by another HistogramObservable
       HistogramObservable& operator/=(const HistogramObservable<Histo, x_value_type, y_value_type> rhs)
       {
-	if (x_values_match(rhs) == false) throw XValuesDoNotMatchException();
+	if (x_values_match(rhs) == false) throw Exceptions::HistosNotCompatibleException("The x-values of the histos have to match in order to divide two histos");
 
 	typename HistoType::iterator this_it = this->begin();
 	typename HistoType::const_iterator other_it = rhs.begin();

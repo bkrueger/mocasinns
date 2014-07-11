@@ -13,6 +13,8 @@
 #include <iterator>
 #include <omp.h>
 
+#include "../exceptions/iterator_range_exception.hpp"
+
 namespace Mocasinns
 {
   /*!
@@ -279,7 +281,8 @@ namespace Mocasinns
   void ParallelTempering<ConfigurationType, StepType, RandomNumberGenerator>::check_temperature_range(TemperatureTypeIterator inverse_temperatures_begin, 
 												    TemperatureTypeIterator inverse_temperatures_end)
   {
-    assert(std::distance(inverse_temperatures_begin, inverse_temperatures_end) == static_cast<int>(metropolis_simulations.size()));
+    if (std::distance(inverse_temperatures_begin, inverse_temperatures_end) != static_cast<int>(metropolis_simulations.size()))
+      throw Exceptions::IteratorRangeException("The given range of inverse temperatures must have the same length as the number of configurations given in the constructor.");
   }
 }
 #endif

@@ -1,5 +1,7 @@
 #include "test_histogram_observable.hpp"
 
+#include <mocasinns/exceptions/histos_not_compatible_exception.hpp>
+
 CppUnit::Test* TestHistogramObservable::suite()
 {
   CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestObservables/TestHistogramObservable");
@@ -43,7 +45,7 @@ void TestHistogramObservable::test_operator_add()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, result[4], 1e-4);
 
   // Test that the operator throws if using not valid histograms
-  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 + histogram_observable_double_3, XValuesDoNotMatchException);
+  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 + histogram_observable_double_3, Mocasinns::Exceptions::HistosNotCompatibleException);
 }
 
 void TestHistogramObservable::test_operator_substract()
@@ -56,7 +58,7 @@ void TestHistogramObservable::test_operator_substract()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-4.5, result[4], 1e-4);
 
   // Test that the operator throws if using not valid histograms
-  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 - histogram_observable_double_3, XValuesDoNotMatchException);
+  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 - histogram_observable_double_3, Mocasinns::Exceptions::HistosNotCompatibleException);
 }
 
 void TestHistogramObservable::test_operator_multiply()
@@ -69,7 +71,7 @@ void TestHistogramObservable::test_operator_multiply()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-5.0, result[4], 1e-4);
 
   // Test that the operator throws if using not valid histograms
-  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 * histogram_observable_double_3, XValuesDoNotMatchException);
+  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 * histogram_observable_double_3, Mocasinns::Exceptions::HistosNotCompatibleException);
 }
 void TestHistogramObservable::test_operator_divide()
 {
@@ -81,7 +83,7 @@ void TestHistogramObservable::test_operator_divide()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.8, result[4], 1e-4);
 
   // Test that the operator throws if using not valid histograms
-  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 / histogram_observable_double_3, XValuesDoNotMatchException);
+  CPPUNIT_ASSERT_THROW(result = histogram_observable_double_1 / histogram_observable_double_3, Mocasinns::Exceptions::HistosNotCompatibleException);
 }
 void TestHistogramObservable::test_pow()
 {

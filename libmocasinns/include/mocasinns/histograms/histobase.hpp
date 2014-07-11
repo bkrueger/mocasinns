@@ -54,9 +54,6 @@ protected:
   }
 
 public:
-  //! Exception class for arithmetic operations with not-compatible histograms
-  class ExceptionNonCompatible;
-  
   // Typedefs for iterator
   typedef typename histobase_container::key_type key_type;
   typedef typename histobase_container::mapped_type mapped_type;
@@ -229,13 +226,6 @@ public:
   //! Save the data of the histocrete to a csv file
   void save_csv(const char* filename) const;
 };
-
-  template<class x_value_type, class y_value_type, class Derived>
-  class HistoBase<x_value_type,y_value_type,Derived>::ExceptionNonCompatible : public std::out_of_range
-  {
-  public:
-    ExceptionNonCompatible() : std::out_of_range("Arithmetic calculation with non-compatible histograms.") {}
-  };
 
   //! Adds a scalar and a HistoBase
   template<class x_value_type, class y_value_type, class Derived>

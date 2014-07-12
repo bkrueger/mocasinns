@@ -1,5 +1,5 @@
 // Example program for calculating the mean energy of an Ising chain. Compile using
-// g++ -std=c++11 -I../include simple_ising_metropolis_observator.cpp -lboost_serialization -o simple_ising_metropolis_observator
+// g++ -std=c++11 -I../include observables.cpp -lboost_serialization -o observables
 
 #include <iostream>
 #include "simple_ising.hpp"

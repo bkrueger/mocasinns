@@ -1,5 +1,5 @@
 // Example program for calculating the density of states of an Ising chain using the Wang-Landau algorithm
-// g++ -std=c++11 -I../include simple_ising_wang_landau.cpp -lboost_serialization -o simple_ising_wang_landau
+// g++ -std=c++11 -I../include wang_landau.cpp -lboost_serialization -o wang_landau
 
 #include <iostream>
 #include "simple_ising.hpp"

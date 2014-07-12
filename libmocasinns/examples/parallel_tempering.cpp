@@ -1,15 +1,13 @@
 // Example program for calculating the mean energy of an Ising chain using parallel tempering. Compile using
-// g++ -std=c++11 -I../include simple_ising_parallel_tempering_temp_optimization.cpp -lboost_serialization -fopenmp -o simple_ising_parallel_tempering_temp_optimization
+// g++ -std=c++11 -I../include parallel_tempering.cpp -lboost_serialization -fopenmp -o parallel_tempering
 
 #include <iostream>
 #include "simple_ising.hpp"
 
 #include <mocasinns/parallel_tempering.hpp>
-#include <mocasinns/details/parallel_tempering/inverse_temperature_optimization_equal_acceptance_probabilities.hpp>
 #include <mocasinns/random/boost_random.hpp>
 
 typedef Mocasinns::ParallelTempering<IsingConfiguration, IsingStep, Mocasinns::Random::Boost_MT19937> ParallelTemperingSimulation;
-typedef Mocasinns::Details::ParallelTempering::InverseTemperatureOptimizationEqualAcceptanceProbabilities<ParallelTemperingSimulation, double, Mocasinns::Details::ParallelTempering::WeightWorstAcceptance> InverseTemperatureOptimizationType;
 
 int main()
 {
@@ -25,12 +23,9 @@ int main()
   ParallelTemperingSimulation simulation(parameters, configurations.begin(), configurations.end());
   
   std::vector<double> inverse_temperatures;
-  inverse_temperatures.push_back(-0.35); inverse_temperatures.push_back(-0.25); inverse_temperatures.push_back(-0.15); inverse_temperatures.push_back(-0.05); 
-  inverse_temperatures.push_back(0.05); inverse_temperatures.push_back(0.15); inverse_temperatures.push_back(0.25); inverse_temperatures.push_back(0.35); 
-
-  InverseTemperatureOptimizationType inverse_temperature_optimization(&simulation, 100);
-  inverse_temperature_optimization.optimize(inverse_temperatures.begin(), inverse_temperatures.end());
-
+  inverse_temperatures.push_back(-0.7); inverse_temperatures.push_back(-0.5); inverse_temperatures.push_back(-0.3); inverse_temperatures.push_back(-0.1); 
+  inverse_temperatures.push_back(0.1); inverse_temperatures.push_back(0.3); inverse_temperatures.push_back(0.5); inverse_temperatures.push_back(0.7); 
+  
   std::vector<std::vector<int> > energies = simulation.do_parallel_tempering_simulation(inverse_temperatures.begin(), inverse_temperatures.end());
   
   std::vector<double> mean_energies(inverse_temperatures.size(), 0.0);

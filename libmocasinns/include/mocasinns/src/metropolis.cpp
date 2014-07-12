@@ -131,7 +131,7 @@ void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejectio
 
   // Check that the number of inverse temperatures and the number of accumulators matches
   if (std::distance(beta_begin, beta_end) != std::distance(measurement_accumulator_begin, measurement_accumulator_end))
-    throw Exceptions::IteratorRangeException("The range of given inverse temperatures and accumulators must have the same size.")
+    throw Exceptions::IteratorRangeException("The range of given inverse temperatures and accumulators must have the same size.");
 
   InverseTemperatureIterator beta_iterator = beta_begin;
   AccumulatorIterator measurement_accumulator_iterator = measurement_accumulator_begin;

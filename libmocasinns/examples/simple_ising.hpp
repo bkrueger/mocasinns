@@ -58,14 +58,14 @@ int IsingStep::delta_E()
 {
   // Calculate the indices of the neighbouring spins using the periodic boundary conditions
   unsigned int flip_index_lower;
-  if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
+  if (flip_index == 0) flip_index_lower = configuration->spins.size() - 1;
   else flip_index_lower = flip_index - 1;
   unsigned int flip_index_upper;
-  if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
+  if (flip_index == configuration->spins.size() - 1) flip_index_upper = 0;
   else flip_index_upper = flip_index + 1;
   
     // Calculate the energy difference
-  return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
+  return -2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
 }
 
 void IsingStep::execute() { configuration->commit(*this); }

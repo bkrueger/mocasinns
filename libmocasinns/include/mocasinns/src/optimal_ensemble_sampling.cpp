@@ -197,6 +197,9 @@ namespace Mocasinns
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_optimal_ensemble_sampling_simulation()
   {
+    // Log the start of the simulation
+    this->simulation_start_log();
+
     // Create the fraction histogram
     HistoType<EnergyType, double> fraction_histogram;
 

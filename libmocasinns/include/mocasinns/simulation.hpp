@@ -12,9 +12,10 @@
 
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <cstdlib>
 #include <csignal>
-#include <fstream>
+#include <ctime>
 
 // Header for the serialization of the class
 #include <boost/archive/text_oarchive.hpp>
@@ -66,6 +67,9 @@ public:
   //! Set-Accesspr for the path and name of the dumped file
   void set_dump_filename(const std::string& value) { dump_filename = value; }
 
+  //! Calculate the real time (in seconds) that passed since the start of the simulation
+  int simulation_time_real() const { return time(NULL) - simulation_start; }
+
   //! Load the data of the simulation from a serialization stream
   virtual void load_serialize(std::istream& input_stream) { load_serialize(*this, input_stream); }
   //! Load the data of the simulation from a serialization file
@@ -82,6 +86,9 @@ protected:
   ConfigurationType* configuration_space;
   //! Seed that is used in the simulation
   int rng_seed;
+
+  //! Time of the simulation start
+  time_t simulation_start;
 
   //! Path and filename of the dumps of the simulation
   std::string dump_filename;
@@ -139,6 +146,9 @@ protected:
   void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 #endif
 
+  //! Function to log the simulation start, stores the time of start of the simulation
+  void simulation_start_log() { simulation_start = time(NULL); }
+
   //! Load a serialized simulation from a stream
   template <class Algorithm> static void load_serialize(Algorithm& simulation, std::istream& input_stream);
   //! Load a serialized simulation from a file
@@ -163,11 +173,13 @@ private:
   {
     ar & configuration_space;
     ar & rng_seed;
+    ar & simulation_start;
   }
   template<class ConfigurationTypeFunction, class Archive, typename boost::enable_if_c<!Details::has_function_is_serializable<ConfigurationTypeFunction, bool>::value, bool>::type = false>
   void serialize_generic(Archive & ar, const unsigned int)
   {
     ar & rng_seed;
+    ar & simulation_start;
   }
 
   //! Set the signals for POSIX signals

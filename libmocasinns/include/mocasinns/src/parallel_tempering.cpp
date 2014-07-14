@@ -215,6 +215,9 @@ namespace Mocasinns
 				   TemperatureTypeIterator inverse_temperatures_begin, 
 				   TemperatureTypeIterator inverse_temperatures_end)
   {
+    // Log the start of the simulation
+    this->simulation_start_log();
+
     // Check the range of temperatures
     check_temperature_range(inverse_temperatures_begin, inverse_temperatures_end);
     // Assert that the size of the measurment accumulators matches the size of the inverse temperatures

@@ -101,6 +101,9 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_simulation()
 {
+  // Log the start of the simulation
+  this->simulation_start_log();
+
   double flatness_current = 0.0;
 
   while (flatness_current < simulation_parameters.flatness)

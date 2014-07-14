@@ -69,6 +69,9 @@ void MetropolisHastings<ConfigurationType,Step,RandomNumberGenerator>::do_metrop
   // Check the concept of the accumulator
   BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<Accumulator, typename Observator::observable_type>));
 
+  // Log the start of the simulation
+  this->simulation_start_log();
+
   // Create the Acceptance probability parameter
   typedef BOOST_TYPEOF(&ConfigurationType::energy) energy_function_type;
   typedef typename boost::function_types::result_type<energy_function_type>::type EnergyType;

@@ -90,6 +90,9 @@ void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejectio
   // Check the concept of the accumulator
   BOOST_CONCEPT_ASSERT((Concepts::AccumulatorConcept<Accumulator, typename Observator::observable_type>));
 
+  // Log the start of the simulation
+  this->simulation_start_log();
+
  // Perform the relaxation steps
   do_metropolis_steps(simulation_parameters.relaxation_steps, beta);
   

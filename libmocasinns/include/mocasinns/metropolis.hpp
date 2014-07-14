@@ -173,7 +173,7 @@ namespace Mocasinns
     virtual void save_serialize(std::ostream& output_stream) const { Base::save_serialize(*this, output_stream); }
     //! Save the data of the Metropolis simulation to a serialization file
     virtual void save_serialize(const char* filename) const { Base::save_serialize(*this, filename); }
-    
+
   private:
     //! Member variable storing the parameters of the simulation
     Parameters simulation_parameters;

@@ -185,6 +185,9 @@ void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Rando
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation()
 {
+  // Log the start of the simulation
+  this->simulation_start_log();
+
   while (modification_factor_current > simulation_parameters.modification_factor_final)
   {
     // Do steps until the flatness criterion is reached
@@ -217,6 +220,9 @@ void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Rando
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation_1_t(unsigned int monte_carlo_time_unit)
 {
+  // Log the start of the simulation
+  this->simulation_start_log();
+
   // Set the sweep counter to 0
   sweep_counter = 0;
 

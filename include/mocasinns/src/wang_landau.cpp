@@ -106,11 +106,14 @@ void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Rando
   // Increment the total energy
   step_parameters.total_energy += step_parameters.delta_E;
   
-  // If the according bin does not exist in the density of states, initialise the density of states with the minimum dos + the current modification factor
+  // If the according bin does not exist in the density of states, initialise the density of states with the minimum dos + the current modification factor, then reset the incidence counter to accelerate the relaxation process
   // If the according bin does exist, add the current modification factor to the density of states
   typename HistoType<EnergyType, double>::iterator update_position = log_density_of_states.find(step_parameters.total_energy);
   if (update_position == log_density_of_states.end())
+  {
     log_density_of_states.insert(std::pair<EnergyType, double>(step_parameters.total_energy, log_density_of_states.min_y_value()->second + modification_factor_current*time));
+    incidence_counter.set_all_y_values(0.0);
+  }
   else
     update_position->second += std::min(1.0, modification_factor_current*time);
   

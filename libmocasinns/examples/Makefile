@@ -1,12 +1,15 @@
-PROGRAMS=metropolis observables analysis parallel_tempering inverse_temperature_optimization entropic_sampling wang_landau
+PROGRAMS=metropolis observables signal_handlers analysis parallel_tempering inverse_temperature_optimization entropic_sampling wang_landau
 
 all: $(PROGRAMS)
 
 metropolis: simple_ising.hpp metropolis.cpp
 	g++ -std=c++11 -I../include metropolis.cpp -lboost_serialization -o metropolis
 
-observables:
+observables: simple_ising.hpp observables.cpp
 	g++ -std=c++11 -I../include observables.cpp -lboost_serialization -o observables
+
+signal_handlers: simple_ising.hpp signal_handlers.cpp
+	g++ -std=c++11 -I../include signal_handlers.cpp -lboost_serialization -o signal_handlers
 
 analysis: simple_ising.hpp analysis.cpp
 	g++ -std=c++11 -I../include analysis.cpp -lboost_serialization -o analysis

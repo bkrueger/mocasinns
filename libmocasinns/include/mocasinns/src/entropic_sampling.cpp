@@ -17,7 +17,7 @@ EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGen
 ::Parameters::Parameters() :
   Base(),
   flatness(0.9),
-  sweep_steps(1000),
+  sweep_steps(10000),
   prototype_histo()
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>

@@ -15,25 +15,15 @@ namespace Mocasinns
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>
 ::Parameters::Parameters() :
-  binning_reference(0), 
-  binning_width(1), 
-  energy_cutoff_lower(0),
-  energy_cutoff_upper(0), 
-  use_energy_cutoff_lower(false),
-  use_energy_cutoff_upper(false),
-  flatness(0.95),
+  Base(),
+  flatness(0.9),
   sweep_steps(1000),
   prototype_histo()
 {}
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 template <class OtherParametersType>
 EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::Parameters::Parameters(const OtherParametersType& other) :
-  binning_reference(other.binning_reference), 
-  binning_width(other.binning_width), 
-  energy_cutoff_lower(other.energy_cutoff_lower),
-  energy_cutoff_upper(other.energy_cutoff_upper),
-  use_energy_cutoff_lower(other.use_energy_cutoff_lower),
-  use_energy_cutoff_upper(other.use_energy_cutoff_upper),
+  Base(other),
   flatness(other.flatness),
   sweep_steps(other.sweep_steps),
   prototype_histo(other.prototype_histo)
@@ -42,12 +32,7 @@ template <class ConfigurationType, class StepType, class EnergyType, template <c
 bool EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>
 ::Parameters::operator==(const Parameters& rhs) const
 {
-  return ((binning_reference == rhs.binning_reference) &&
-	  (binning_width == rhs.binning_width) &&
-	  (energy_cutoff_lower == rhs.energy_cutoff_lower) &&
-	  (energy_cutoff_upper == rhs.energy_cutoff_upper) &&
-	  (use_energy_cutoff_lower == rhs.use_energy_cutoff_lower) &&
-	  (use_energy_cutoff_upper == rhs.use_energy_cutoff_upper) &&
+  return ((static_cast<Base>(*this) == static_cast<Base>(rhs)) &&
 	  (flatness == rhs.flatness) &&
 	  (sweep_steps == rhs.sweep_steps));
 }

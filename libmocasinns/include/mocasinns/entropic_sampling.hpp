@@ -13,6 +13,7 @@
 #include "simulation.hpp"
 #include "concepts/concepts.hpp"
 #include "details/multicanonical/step_parameter.hpp"
+#include "details/multicanonical/parameters_multicanonical.hpp"
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
@@ -126,22 +127,12 @@ namespace Mocasinns
   //! Struct for dealing with the parameters of a Wang-Landau-simulation
   template<class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
   struct EntropicSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator, rejection_free>::Parameters
+    : public Details::Multicanonical::ParametersMulticanonical<EnergyType>
   {
-  public:
-    //! Energy value that is used as a reference point for the binning
-    EnergyType binning_reference;
-    //! Energy value range that is comprehended in one bin
-    EnergyType binning_width;
-    
-    //! Value of the minimal energy cutoff
-    EnergyType energy_cutoff_lower;
-    //! Value of the maximal energy cutoff
-    EnergyType energy_cutoff_upper;
-    //! Flag indicating whether to use the minimal energy cutoff, default value is false
-    bool use_energy_cutoff_lower;
-    //! Flag indicating whether to use the maximal energy cutoff, default value is false
-    bool use_energy_cutoff_upper;
-    
+  public:    
+    //! Typedef for the base class
+    typedef Details::Multicanonical::ParametersMulticanonical<EnergyType> Base;
+
     //! Flatness of the incidence counter histogram that should be reached
     double flatness;
     
@@ -168,12 +159,7 @@ namespace Mocasinns
     template<class Archive> void serialize(Archive & ar, const unsigned int)
     {
       // serialize base class information
-      ar & binning_reference;
-      ar & binning_width;
-      ar & energy_cutoff_lower;
-      ar & energy_cutoff_upper;
-      ar & use_energy_cutoff_lower;
-      ar & use_energy_cutoff_upper;
+      ar & boost::serialization::base_object<Base>(*this);
       ar & flatness;
       ar & sweep_steps;
       ar & prototype_histo;

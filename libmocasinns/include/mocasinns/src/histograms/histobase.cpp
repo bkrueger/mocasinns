@@ -143,7 +143,7 @@ bool HistoBase<x_value_type,y_value_type,Derived>::compatible(const HistoBase<x_
   // Check for value match
   for (const_iterator it_this = begin(), it_other = other.begin(); it_this != end(); ++it_this, ++it_other)
   {
-    if (it_this->second != it_other->second) return false;
+    if (it_this->first != it_other->first) return false;
   }
 
   // If sizes and values match, return true
@@ -361,32 +361,32 @@ void HistoBase<x_value_type,y_value_type,Derived>::save_csv(const char* filename
 }
 
 template<class x_value_type, class y_value_type, class Derived>
-const Derived operator+(const Derived& lhs, const y_value_type& scalar)
+const Derived operator+(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar)
 {
   return Derived(lhs) += scalar;
 }
 template<class x_value_type, class y_value_type, class Derived>
-const Derived operator+(const y_value_type& scalar, const Derived& rhs)
+const Derived operator+(const y_value_type& scalar, const HistoBase<x_value_type, y_value_type, Derived>& rhs)
 {
   return Derived(rhs) += scalar;
 }
 template<class x_value_type, class y_value_type, class Derived>
-const Derived operator-(const Derived& lhs, const y_value_type& scalar)
+const Derived operator-(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar)
 {
   return Derived(lhs) -= scalar;
 }
 template<class x_value_type, class y_value_type, class Derived>
-const Derived operator*(const Derived& lhs, const y_value_type& scalar)
+const Derived operator*(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar)
 {
   return Derived(lhs) *= scalar;
 }
 template<class x_value_type, class y_value_type, class Derived>
-const Derived operator*(const y_value_type& scalar, const Derived& rhs)
+const Derived operator*(const y_value_type& scalar, const HistoBase<x_value_type, y_value_type, Derived>& rhs)
 {
   return Derived(rhs) *= scalar;
 }
 template<class x_value_type, class y_value_type, class Derived>
-const Derived operator/(const Derived& lhs, const y_value_type& scalar)
+const Derived operator/(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar)
 {
   return Derived(lhs) /= scalar;
 }

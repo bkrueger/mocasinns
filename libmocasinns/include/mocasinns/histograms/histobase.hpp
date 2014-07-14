@@ -229,22 +229,22 @@ public:
 
   //! Adds a scalar and a HistoBase
   template<class x_value_type, class y_value_type, class Derived>
-  const Derived operator+(const Derived& lhs, const y_value_type& scalar);
+  const Derived operator+(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar);
   //! Adds a HistoBase and a scalar
   template<class x_value_type, class y_value_type, class Derived>
-  const Derived operator+(const y_value_type& scalar, const Derived& rhs);
+  const Derived operator+(const y_value_type& scalar, const HistoBase<x_value_type, y_value_type, Derived>& rhs);
   //! Substract a scalar from a HistoBase
   template<class x_value_type, class y_value_type, class Derived>
-  const Derived operator-(const Derived& lhs, const y_value_type& scalar);
+  const Derived operator-(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar);
   //! Multipliess a scalar and a HistoBase
   template<class x_value_type, class y_value_type, class Derived>
-  const Derived operator*(const Derived& lhs, const y_value_type& scalar);
+  const Derived operator*(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar);
   //! Multiplies a HistoBase and a scalar
   template<class x_value_type, class y_value_type, class Derived>
-  const Derived operator*(const y_value_type& scalar, const Derived& rhs);
+  const Derived operator*(const y_value_type& scalar, const HistoBase<x_value_type, y_value_type, Derived>& rhs);
   //! Divides a HistoBase through a scalar
   template<class x_value_type, class y_value_type, class Derived>
-  const Derived operator/(const Derived& lhs, const y_value_type& scalar);
+  const Derived operator/(const HistoBase<x_value_type, y_value_type, Derived>& lhs, const y_value_type& scalar);
 
   //! Adds two histograms (the type of the left hand side determines the type of the result)
   template<class x_value_type, class y_value_type, class DerivedLeft, class DerivedRight>

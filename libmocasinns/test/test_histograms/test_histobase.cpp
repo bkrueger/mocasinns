@@ -5,6 +5,9 @@ CppUnit::Test* TestHistoBase::suite()
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistoBase");
     
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_add", &TestHistoBase::test_operator_add ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_substract", &TestHistoBase::test_operator_substract ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_multiply", &TestHistoBase::test_operator_multiply ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_output", &TestHistoBase::test_operator_output ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_compatible", &TestHistoBase::test_compatible ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_derivative", &TestHistoBase::test_derivative ) );
@@ -72,7 +75,84 @@ void TestHistoBase::test_operator_equal()
   CPPUNIT_ASSERT(testhisto_int != testhisto_int_second);
   CPPUNIT_ASSERT(testhisto_double != testhisto_double_second);
 }
+
+void TestHistoBase::test_operator_add()
+{
+  // Setup a second histo
+  Histocrete<int,int> testhisto_int_second;
+  testhisto_int_second[1] = 3;
+  testhisto_int_second[2] = 6;
+  testhisto_int_second[3] = 1;
+  testhisto_int_second[4] = -1;
+  testhisto_int_second[5] = 4;
+  // Add the histos
+  Histocrete<int,int> testhisto_result = testhisto_int + testhisto_int_second;
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[1] + testhisto_int_second[1], testhisto_result[1]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[2] + testhisto_int_second[2], testhisto_result[2]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[3] + testhisto_int_second[3], testhisto_result[3]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[4] + testhisto_int_second[4], testhisto_result[4]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[5] + testhisto_int_second[5], testhisto_result[5]);
+  // Add with a scalar
+  Histocrete<int,int> testhisto_result_scalar = testhisto_result + 2;
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[1] + 2, testhisto_result_scalar[1]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[2] + 2, testhisto_result_scalar[2]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[3] + 2, testhisto_result_scalar[3]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[4] + 2, testhisto_result_scalar[4]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[5] + 2, testhisto_result_scalar[5]);
+}
+
+void TestHistoBase::test_operator_substract()
+{
+  // Setup a second histo
+  Histocrete<int,int> testhisto_int_second;
+  testhisto_int_second[1] = 3;
+  testhisto_int_second[2] = 6;
+  testhisto_int_second[3] = 1;
+  testhisto_int_second[4] = -1;
+  testhisto_int_second[5] = 4;
+  // Substract the histos
+  Histocrete<int,int> testhisto_result = testhisto_int - testhisto_int_second;
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[1] - testhisto_int_second[1], testhisto_result[1]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[2] - testhisto_int_second[2], testhisto_result[2]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[3] - testhisto_int_second[3], testhisto_result[3]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[4] - testhisto_int_second[4], testhisto_result[4]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[5] - testhisto_int_second[5], testhisto_result[5]);
+  // Substract with a scalar
+  Histocrete<int,int> testhisto_result_scalar = testhisto_result - 2;
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[1] - 2, testhisto_result_scalar[1]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[2] - 2, testhisto_result_scalar[2]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[3] - 2, testhisto_result_scalar[3]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[4] - 2, testhisto_result_scalar[4]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[5] - 2, testhisto_result_scalar[5]);
+}
+
+void TestHistoBase::test_operator_multiply()
+{
+  // Setup a second histo
+  Histocrete<int,int> testhisto_int_second;
+  testhisto_int_second[1] = 3;
+  testhisto_int_second[2] = 6;
+  testhisto_int_second[3] = 1;
+  testhisto_int_second[4] = -1;
+  testhisto_int_second[5] = 4;
+  // Multiply the histos
+  Histocrete<int,int> testhisto_result = testhisto_int * testhisto_int_second;
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[1] * testhisto_int_second[1], testhisto_result[1]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[2] * testhisto_int_second[2], testhisto_result[2]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[3] * testhisto_int_second[3], testhisto_result[3]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[4] * testhisto_int_second[4], testhisto_result[4]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_int[5] * testhisto_int_second[5], testhisto_result[5]);
+  // Multiply with a scalar
+  Histocrete<int,int> testhisto_result_scalar = testhisto_result * 2;
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[1] * 2, testhisto_result_scalar[1]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[2] * 2, testhisto_result_scalar[2]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[3] * 2, testhisto_result_scalar[3]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[4] * 2, testhisto_result_scalar[4]);
+  CPPUNIT_ASSERT_EQUAL(testhisto_result[5] * 2, testhisto_result_scalar[5]);
+}
+
 void TestHistoBase::test_operator_output()
+
 {
   // Export the operator to a stringstream
   std::stringstream ss;

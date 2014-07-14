@@ -60,6 +60,8 @@ namespace Mocasinns
     BOOST_CONCEPT_ASSERT((Concepts::RandomNumberGeneratorConcept<RandomNumberGenerator>));
 
   public:
+    // Typedef for the base class
+    typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     //! Typedef of this class
     typedef MetropolisHastings<ConfigurationType, StepType, RandomNumberGenerator> this_type;
     // Typedefs for integers

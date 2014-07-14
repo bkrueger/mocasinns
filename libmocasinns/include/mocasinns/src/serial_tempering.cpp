@@ -42,7 +42,7 @@ namespace Mocasinns
   */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
   template <class TemperatureTypeIterator>
-  void SerialTempering<ConfigurationType, StepType, RandomNumberGenerator>::do_serial_tempering_steps(const StepNumberType& number, 
+  void SerialTempering<ConfigurationType, StepType, RandomNumberGenerator>::do_serial_tempering_steps(const step_number_t& number, 
   												      TemperatureTypeIterator inverse_temperatures_begin, 
   												      TemperatureTypeIterator inverse_temperatures_end)
   {  
@@ -50,7 +50,7 @@ namespace Mocasinns
     check_temperature_range(inverse_temperatures_begin, inverse_temperatures_end);
     
     // Create a vector and call the generalized function
-    std::vector<StepNumberType> numbers(configuration_pointers.size(), number);
+    std::vector<step_number_t> numbers(configuration_pointers.size(), number);
     do_serial_tempering_steps(numbers.begin(), numbers.end(), inverse_temperatures_begin, inverse_temperatures_end);
   }
   /*!

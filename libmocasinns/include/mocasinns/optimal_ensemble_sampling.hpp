@@ -50,8 +50,8 @@ namespace Mocasinns
     // Typedef for the base class
     typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     // Typedefs for integers
-    typedef typename Base::StepNumberType StepNumberType;
-    typedef double IncidenceCounterYValueType;
+    typedef typename Base::step_number_t step_number_t;
+    typedef typename Base::incidence_counter_y_value_t incidence_counter_y_value_t;
     
     //! Struct storing the parameters of the optimal ensemble sampling simulation
     struct Parameters;
@@ -76,9 +76,9 @@ namespace Mocasinns
     //! Get-Accessor for the weights
     const HistoType<EnergyType, double>& get_weights() { return weights; }
     //! Get-Accessor for the incidence counter of positive labled walkers
-    const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter_positive() { return incidence_counter_positive; }
+    const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter_positive() { return incidence_counter_positive; }
     //! Get-Accessor for the incidence counter of negative labled walkers
-    const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter_negative() { return incidence_counter_negative; }
+    const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter_negative() { return incidence_counter_negative; }
 
     //! Find the minimal and the maximal energy of the system
     template<class TemperatureType>
@@ -118,9 +118,9 @@ namespace Mocasinns
     //! Histogram for the weights of the simulation
     HistoType<EnergyType, double> weights;
     //! Histogram for the incidence counter for positive labled walkers
-    HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter_positive;
+    HistoType<EnergyType, incidence_counter_y_value_t> incidence_counter_positive;
     //! Histogram for the incidence counter for negative labled walkers
-    HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter_negative;
+    HistoType<EnergyType, incidence_counter_y_value_t> incidence_counter_negative;
 
     //! Enum for the possible labels of the walker
     enum WalkerLabel { positive, negative};
@@ -171,7 +171,7 @@ namespace Mocasinns
     EnergyType maximal_energy;
 
     //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
-    HistoType<EnergyType, IncidenceCounterYValueType> prototype_histo;
+    HistoType<EnergyType, incidence_counter_y_value_t> prototype_histo;
 
     //! Constructor setting the default values
     Parameters() : initial_steps_per_iteration(1000),

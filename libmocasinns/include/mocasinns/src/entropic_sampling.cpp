@@ -88,7 +88,7 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 }
 
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_steps(const StepNumberType& number)
+void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_steps(const step_number_t& number)
 {
   // Variable to track the energy
   Details::Multicanonical::StepParameter<EnergyType> step_parameters;
@@ -112,7 +112,7 @@ void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
     do_entropic_sampling_steps(simulation_parameters.sweep_steps);
 
     // Update the density of states
-    for (typename HistoType<EnergyType,IncidenceCounterYValueType>::const_iterator it = incidence_counter.begin(); it != incidence_counter.end(); ++it)
+    for (typename HistoType<EnergyType,incidence_counter_y_value_t>::const_iterator it = incidence_counter.begin(); it != incidence_counter.end(); ++it)
     {
       if (it->second != 0) log_density_of_states[it->first] += log(it->second);
     }

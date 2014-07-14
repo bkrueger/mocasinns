@@ -72,8 +72,8 @@ namespace Mocasinns
     //! Typedef of this class
     typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator, rejection_free> this_type;
     // Typedefs for integers
-    typedef typename Base::StepNumberType StepNumberType;
-    typedef uint32_t MeasurementNumberType;
+    typedef typename Base::step_number_t step_number_t;
+    typedef uint32_t measurement_number_t;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
     
@@ -146,7 +146,7 @@ namespace Mocasinns
       \param beta Inverse temperature that will be used for calculation of the acceptance probability of the Metropolis steps.
     */
     template<class TemperaturType = double>
-    void do_metropolis_steps(const StepNumberType& number, const TemperaturType& beta = 0.0)
+    void do_metropolis_steps(const step_number_t& number, const TemperaturType& beta = 0.0)
     {
       this->template do_steps<this_type, StepType, rejection_free>(number, beta);
     }
@@ -199,11 +199,11 @@ namespace Mocasinns
   struct Metropolis<ConfigurationType, StepType, RandomNumberGenerator, rejection_free>::Parameters
   {
     //! Number of steps to perform before taking data
-    StepNumberType relaxation_steps;
+    step_number_t relaxation_steps;
     //! Number of data points per temperature
-    MeasurementNumberType measurement_number;
+    measurement_number_t measurement_number;
     //! Number of steps to perform between two data measurements
-    StepNumberType steps_between_measurement;
+    step_number_t steps_between_measurement;
     //! Number of measurements to perform before calling each signal
     unsigned int measurements_per_signal;
     

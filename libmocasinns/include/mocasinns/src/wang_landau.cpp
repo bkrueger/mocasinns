@@ -137,7 +137,7 @@ void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Rando
  * \param number Number of steps to perform.
  */
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_steps(const uint32_t& number)
+void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_steps(const step_number_t& number)
 {
   // Variable to track the energy
   Details::Multicanonical::StepParameter<EnergyType> step_parameters;
@@ -218,7 +218,7 @@ void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Rando
  * \param monte_carlo_time_unit Number that specifies how many single steps are one Monte-Carlo time unit
  */
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
-void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation_1_t(unsigned int monte_carlo_time_unit)
+void Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_wang_landau_simulation_1_t(step_number_t monte_carlo_time_unit)
 {
   // Log the start of the simulation
   this->simulation_start_log();

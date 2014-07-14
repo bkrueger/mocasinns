@@ -63,8 +63,8 @@ namespace Mocasinns
     //! Typedef of this class
     typedef MetropolisHastings<ConfigurationType, StepType, RandomNumberGenerator> this_type;
     // Typedefs for integers
-    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::StepNumberType StepNumberType;
-    typedef uint32_t MeasurementNumberType;
+    typedef typename Simulation<ConfigurationType, RandomNumberGenerator>::step_number_t step_number_t;
+    typedef uint32_t measurement_number_t;
 
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
@@ -137,7 +137,7 @@ namespace Mocasinns
       \param acceptance_probability_parameters Class object that defines a "double operator(EnergyType delta_E, EnergyType actual_energy)" returning the acceptance probability of the step.
     */
     template<class AcceptanceProbabilityParameters>
-    void do_metropolis_hastings_steps(const StepNumberType& number, AcceptanceProbabilityParameters& acceptance_probability_parameters)
+    void do_metropolis_hastings_steps(const step_number_t& number, AcceptanceProbabilityParameters& acceptance_probability_parameters)
     {
       this->template do_steps<this_type, StepType, false>(number, acceptance_probability_parameters);
     }

@@ -35,8 +35,8 @@ public:
   // Typedef for the base class
   typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
   // Typedefs for integers
-  typedef typename Base::StepNumberType StepNumberType;
-  typedef uint32_t RunNumberType;
+  typedef typename Base::step_number_t step_number_t;
+  typedef uint32_t run_number_t;
 
   // Forward declaration of the parameters used for a parallel Metropolis Simulation
   struct Parameters;
@@ -103,9 +103,9 @@ struct MetropolisParallel<ConfigurationType, StepType, RandomNumberGenerator>::P
   : Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters
 {
   //! Number of independent runs to perform
-  RunNumberType run_number;
+  run_number_t run_number;
   //! Number of processes to use
-  RunNumberType process_number;
+  run_number_t process_number;
   
   //! Standard constructor for setting default values
   Parameters() : MetropolisSerial::Parameters(),

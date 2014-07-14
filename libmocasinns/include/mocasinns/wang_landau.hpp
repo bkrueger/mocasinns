@@ -77,8 +77,8 @@ namespace Mocasinns
     // Typedef for the base class
     typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     // Typedefs for integers
-    typedef typename Base::StepNumberType StepNumberType;
-    typedef double IncidenceCounterYValueType;
+    typedef typename Base::step_number_t step_number_t;
+    typedef typename Base::incidence_counter_y_value_t incidence_counter_y_value_t;
 
     // Forward declaration of the parameters for the WangLandau-Simulation
     struct Parameters;
@@ -114,13 +114,13 @@ namespace Mocasinns
     //! Set-Accessor for the estimation of the density of states.
     void set_log_density_of_states(const HistoType<EnergyType, double>& value) { log_density_of_states = value; }
     //! Get-Accessor for the incidence counter
-    const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
+    const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter() const { return incidence_counter; }
     //! Set-Accessor for an empty incidence counter (initialises an empty incidence counter that looks like the density of states)
     void set_incidence_counter() { incidence_counter.initialise_empty(log_density_of_states); }
     //! Set-Accessor for the incidence counter
-    void set_incidence_counter(const HistoType<EnergyType, IncidenceCounterYValueType>& value) { incidence_counter = value; }
+    void set_incidence_counter(const HistoType<EnergyType, incidence_counter_y_value_t>& value) { incidence_counter = value; }
     //! Get-Accessor for the sweep counter
-    StepNumberType get_sweep_counter() const { return sweep_counter; }
+    step_number_t get_sweep_counter() const { return sweep_counter; }
     
     //! Calculate the acceptance probability of a step
     double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
@@ -130,13 +130,13 @@ namespace Mocasinns
     void handle_rejected_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
     //! Do a given number of wang-landau steps
-    void do_wang_landau_steps(const uint32_t& number);
+    void do_wang_landau_steps(const step_number_t& number);
     //! Do wang-landau steps until the incidence counter is flat
     void do_wang_landau_steps();
     //! Do a complete wang-landau simulation until the final modification factor is reached
     void do_wang_landau_simulation();
     //! Do a complete wang-landau simulation using a 1/t change in the modification factor until the final modifcation factor is reached
-    void do_wang_landau_simulation_1_t(unsigned int monte_carlo_time_unit);
+    void do_wang_landau_simulation_1_t(step_number_t monte_carlo_time_unit);
     
     //! Load the data of the Wang-Landau simulation from a serialization stream
     virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
@@ -151,7 +151,7 @@ namespace Mocasinns
     //! Histogram for the estimation of the density of states
     HistoType<EnergyType, double> log_density_of_states;
     //! Histogram for the incidence counter
-    HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
+    HistoType<EnergyType, incidence_counter_y_value_t> incidence_counter;
     
   private:
     //! Parameters of the simulation
@@ -161,7 +161,7 @@ namespace Mocasinns
     double modification_factor_current;
     
     //! Counter for the number of sweeps
-    StepNumberType sweep_counter;
+    step_number_t sweep_counter;
     
     //! Set the class properties that depend on the parameters, this function can be called each time the parameters will be updated
     void initialise_with_parameters();
@@ -205,10 +205,10 @@ namespace Mocasinns
     double modification_factor_multiplier;
     
     //! Number of steps to take before checking again the flatness
-    StepNumberType sweep_steps;
+    step_number_t sweep_steps;
     
     //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
-    HistoType<EnergyType, IncidenceCounterYValueType> prototype_histo;
+    HistoType<EnergyType, incidence_counter_y_value_t> prototype_histo;
     
     //! Number of sweeps that should be executed before a reset of the incidence counter and recalculation. Choose 0 (default) for no resets.
     unsigned int reset_sweep_number;

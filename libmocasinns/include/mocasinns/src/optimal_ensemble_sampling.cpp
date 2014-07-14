@@ -224,7 +224,7 @@ namespace Mocasinns
 	if (this->check_for_posix_signal()) return HistoType<EnergyType, double>();
 
 	// Fill the fraction histogram
-	for (typename HistoType<EnergyType, IncidenceCounterYValueType>::const_iterator it = incidence_counter_positive.begin();
+	for (typename HistoType<EnergyType, incidence_counter_y_value_t>::const_iterator it = incidence_counter_positive.begin();
 	     it != incidence_counter_positive.end(); ++it)
 	{	  
 	  fraction_histogram[it->first] = static_cast<double>(it->second) 
@@ -252,12 +252,12 @@ namespace Mocasinns
       // Create and fill the fraction histogram
       HistoType<EnergyType, double> fraction_histogram;
       fraction_histogram.initialise_empty(weights);
-      for (typename HistoType<EnergyType, IncidenceCounterYValueType>::const_iterator it = incidence_counter_positive.begin();
+      for (typename HistoType<EnergyType, incidence_counter_y_value_t>::const_iterator it = incidence_counter_positive.begin();
 	   it != incidence_counter_positive.end(); ++it)
       {
 	EnergyType energy = it->first;
-	IncidenceCounterYValueType positive_incidence = it->second;
-	IncidenceCounterYValueType negative_incidence = incidence_counter_negative[it->first];
+	incidence_counter_y_value_t positive_incidence = it->second;
+	incidence_counter_y_value_t negative_incidence = incidence_counter_negative[it->first];
 	fraction_histogram[energy] = static_cast<double>(positive_incidence) / static_cast<double>(positive_incidence + negative_incidence);
       }
       

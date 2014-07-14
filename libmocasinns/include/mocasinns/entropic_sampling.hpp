@@ -39,8 +39,8 @@ namespace Mocasinns
     // Typedef for the base class
     typedef Simulation<ConfigurationType, RandomNumberGenerator> Base;
     // Typedefs for integers
-    typedef typename Base::StepNumberType StepNumberType;
-    typedef double IncidenceCounterYValueType;
+    typedef typename Base::step_number_t step_number_t;
+    typedef typename Base::incidence_counter_y_value_t incidence_counter_y_value_t;
 
     // Forward declaration of the parameters for the entropic sampling simulation
     struct Parameters;
@@ -64,11 +64,11 @@ namespace Mocasinns
     //! Set-Accessor for the estimation of the density of states
     void set_log_density_of_states(const HistoType<EnergyType, double>& value) { log_density_of_states = value; }
     //! Get-Accessor for the incidence counter
-    const HistoType<EnergyType, IncidenceCounterYValueType>& get_incidence_counter() const { return incidence_counter; }
+    const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter() const { return incidence_counter; }
     //! Set-Accessor for an empty incidence counter (initialises an empty incidence counter that looks like the density of states)
     void set_incidence_counter() { incidence_counter.initialise_empty(log_density_of_states); }
     //! Set-Accessor for the incidence counter
-    void set_incidence_counter(const HistoType<EnergyType, IncidenceCounterYValueType>& value) { incidence_counter = value; }
+    void set_incidence_counter(const HistoType<EnergyType, incidence_counter_y_value_t>& value) { incidence_counter = value; }
     //! Get-Accessor for the current flatness
     const double& get_flatness_current() const { return flatness_current; }
 
@@ -80,7 +80,7 @@ namespace Mocasinns
     void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
     
     //! Do a certain number of entropic sampling steps updating the incidence_counter
-    void do_entropic_sampling_steps(const StepNumberType& number);
+    void do_entropic_sampling_steps(const step_number_t& number);
     //! Do a complete entropic sampling simulation until the desired flatness is reached
     void do_entropic_sampling_simulation();
     
@@ -100,7 +100,7 @@ namespace Mocasinns
     //! Histogram for the estimation of the density of states
     HistoType<EnergyType, double> log_density_of_states;
     //! Histogram for the incidence counter
-    HistoType<EnergyType, IncidenceCounterYValueType> incidence_counter;
+    HistoType<EnergyType, incidence_counter_y_value_t> incidence_counter;
 
     //! Current value of the flatness of the incidence counter
     double flatness_current;
@@ -137,10 +137,10 @@ namespace Mocasinns
     double flatness;
     
     //! Number of steps to do between updating the density of states
-    StepNumberType sweep_steps;
+    step_number_t sweep_steps;
     
     //! Prototype histogram for all settings that the histograms of the simulation can have (e.g. binning width ...)
-    HistoType<EnergyType, IncidenceCounterYValueType> prototype_histo;
+    HistoType<EnergyType, incidence_counter_y_value_t> prototype_histo;
     
     //! Constructor to set default values
     Parameters();

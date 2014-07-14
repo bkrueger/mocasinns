@@ -76,8 +76,8 @@ namespace Mocasinns
     //! Type of the inverse temperature histograms
     typedef std::vector<unsigned int> InverseTemperatureHistogram;
     // Typedefs for integers
-    typedef typename Base::StepNumberType StepNumberType;
-    typedef uint32_t MeasurementNumberType;
+    typedef typename Base::step_number_t step_number_t;
+    typedef uint32_t measurement_number_t;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
 
@@ -123,7 +123,7 @@ namespace Mocasinns
 
     //! Execute a given number of parallel tempering steps on the configuration at inverse temperatur beta
     template <class TemperatureTypeIterator>
-    void do_parallel_tempering_steps(const StepNumberType& number, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
+    void do_parallel_tempering_steps(const step_number_t& number, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
     //! Execute a given number of parallel tempering steps on the configuration at inverse temperatur beta
     template <class NumberIterator, class TemperatureTypeIterator>
     void do_parallel_tempering_steps(NumberIterator numbers_begin, NumberIterator numbers_end, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);

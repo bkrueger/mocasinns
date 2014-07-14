@@ -55,9 +55,9 @@ bool Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::check_for_
 template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
 typename boost::enable_if_c<!function_rejection_free, void>::type
-Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const step_number_t& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
-  for (StepNumberType i = 0; i < step_number; ++i)
+  for (step_number_t i = 0; i < step_number; ++i)
   {
     // Propose a new step
     StepType next_step = this->configuration_space->propose_step(this->rng);
@@ -87,9 +87,9 @@ Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const 
 template <class ConfigurationType, class RandomNumberGenerator>
 template <class Derived, class StepType, bool function_rejection_free, class AcceptanceProbabilityParameterType>
 typename boost::enable_if_c<function_rejection_free, void>::type
-Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
+Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const step_number_t& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
-  for (StepNumberType i = 0; i < step_number; ++i)
+  for (step_number_t i = 0; i < step_number; ++i)
   {
     // Propose all possible steps
     std::vector<StepType> all_steps = this->configuration_space->all_steps();

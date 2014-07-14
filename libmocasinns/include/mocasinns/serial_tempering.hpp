@@ -43,8 +43,8 @@ namespace Mocasinns
     //! Typedef for a metropolis simulation with the same template paramters
     typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> MetropolisType;
     // Typedefs for integers
-    typedef typename Base::StepNumberType StepNumberType;
-    typedef uint32_t MeasurementNumberType;
+    typedef typename Base::step_number_t step_number_t;
+    typedef uint32_t measurement_number_t;
     //! Type of the default observable
     typedef typename MetropolisType::DefaultObservator DefaultObservator;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
@@ -70,7 +70,7 @@ namespace Mocasinns
 
     //! Execute a given number of parallel tempering steps on the configuration at inverse temperatur beta
     template <class TemperatureTypeIterator>
-    void do_serial_tempering_steps(const StepNumberType& number, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
+    void do_serial_tempering_steps(const step_number_t& number, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
     //! Execute a given number of parallel tempering steps on the configuration at inverse temperatur beta
     template <class NumberIterator, class TemperatureTypeIterator>
     void do_serial_tempering_steps(NumberIterator numbers_begin, NumberIterator numbers_end, TemperatureTypeIterator inverse_temperatures_begin, TemperatureTypeIterator inverse_temperatures_end);
@@ -138,7 +138,7 @@ namespace Mocasinns
     : Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters
   {
     //! Number of steps between the exchange of a replice. This number should be divisor of the steps_between_measurements
-    StepNumberType steps_between_replica_exchange;
+    step_number_t steps_between_replica_exchange;
 
     Parameters() : Metropolis<ConfigurationType, StepType, RandomNumberGenerator>::Parameters(), steps_between_replica_exchange(10) { }
   };

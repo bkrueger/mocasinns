@@ -38,7 +38,9 @@ class Simulation
 {
 public:
   //! Typedef for the step number
-  typedef uint64_t StepNumberType;
+  typedef uint64_t step_number_t;
+  //! Typedef for incidence counter y values (for multicanonical algorithms)
+  typedef double incidence_counter_y_value_t;
 
   //! Boost signal handler invoked when SIGTERM is caught
   boost::signals2::signal<void (Simulation*)> signal_handler_sigterm;
@@ -106,11 +108,11 @@ protected:
   //! \cond
   template <class Derived, class StepType, bool rejection_free, class AcceptanceProbabilityParameterType>
   typename boost::enable_if_c<!rejection_free, void>::type // Standard version of the algorithm
-  do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
+  do_steps(const step_number_t& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 
   template <class Derived, class StepType, bool rejection_free, class AcceptanceProbabilityParameterType>
   typename boost::enable_if_c<rejection_free, void>::type // Rejection-free version of the algorithm
-  do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);  
+  do_steps(const step_number_t& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);  
   //! \endcond
 
   // Doxygen-Documentation for the do-steps routine
@@ -143,7 +145,7 @@ protected:
    */
 #ifdef MOCASINNS_DOXYGEN_DOCUMENTATION
   template <class Derived, class StepType, bool rejection_free, class AcceptanceProbabilityParameterType>
-  void do_steps(const StepNumberType& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
+  void do_steps(const step_number_t& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter);
 #endif
 
   //! Function to log the simulation start, stores the time of start of the simulation

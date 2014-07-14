@@ -2,7 +2,7 @@ CC = gcc
 CXX = g++
 OPT=-O2
 CFLAGS = -g -pg $(OPT) -Wall -Wextra -pedantic -std=c++0x -fopenmp
-INCLUDE = -I../include -I../../libgespinst/include -I../../librandom/include
+INCLUDE = -I../include -I../../gespinst/include -I../../librandom/include
 
 TEST_LIBS = -lboost_serialization -lboost_signals -lboost_program_options -lcppunit -ldl
 #TEST_OBJECTS_MAIN = test.o test_simulation.o test_configuration_test.o test_metropolis.o test_metropolis_parallel.o test_entropic_sampling.o test_wang_landau.o test_optimal_ensemble_sampling.o

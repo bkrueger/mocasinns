@@ -8,22 +8,23 @@
 #include <mocasinns/random/boost_random.hpp>
 #include <mocasinns/histograms/histocrete.hpp>
 #include <mocasinns/metropolis_hastings.hpp>
-#include <mocasinns/observables/array_observable.hpp>
+#include <mocasinns/observables/pair_observable.hpp>
+#include <mocasinns/analysis/multicanonical_average.hpp>
 
 typedef Mocasinns::WangLandau<IsingConfiguration, IsingStep, int, Mocasinns::Histograms::Histocrete, Mocasinns::Random::Boost_MT19937> WangLandauSimulation;
 typedef Mocasinns::MetropolisHastings<IsingConfiguration, IsingStep, Mocasinns::Random::Boost_MT19937> MetropolisHastingsSimulation;
 
 struct EnergySpecificMagnetizationObservator
 {
-  typedef Mocasinns::Observables::ArrayObservable<double, 2> observable_type;
+  typedef Mocasinns::Observables::PairObservable<int, double> observable_type;
   static observable_type observe(IsingConfiguration* system)
   {
     double magnetization = 0;
     for (unsigned int i = 0; i < system->spins.size(); ++i)
       magnetization += system->spins[i];
     observable_type result;
-    result[0] = system->energy();
-    result[1] = magnetization/system->spins.size();
+    result.first = system->energy();
+    result.second = magnetization/system->spins.size();
     return result;
   }
 };
@@ -48,24 +49,8 @@ int main()
  
   std::vector<EnergySpecificMagnetizationObservator::observable_type> energy_specific_magnetizations 
     = metropolis_hastings_simulation.do_metropolis_hastings_simulation<EnergySpecificMagnetizationObservator>(acceptance_probability_functor);
-  Mocasinns::Histograms::Histocrete<int, double> specific_magnetizations_histogram;
-  Mocasinns::Histograms::Histocrete<int, double> measurement_counter;
-  for (unsigned int m = 0; m < energy_specific_magnetizations.size(); ++m)
-  {
-    if (specific_magnetizations_histogram.find(energy_specific_magnetizations[m][0]) != specific_magnetizations_histogram.end())
-    {
-      specific_magnetizations_histogram[energy_specific_magnetizations[m][0]] += energy_specific_magnetizations[m][1];
-      measurement_counter[energy_specific_magnetizations[m][0]] += 1;
-    }
-    else
-    {
-      specific_magnetizations_histogram[energy_specific_magnetizations[m][0]] = energy_specific_magnetizations[m][1];
-      measurement_counter[energy_specific_magnetizations[m][0]] = 1;
-    }
-  }
-  std::cout << specific_magnetizations_histogram << std::endl;
-  std::cout << measurement_counter << std::endl;
-  specific_magnetizations_histogram /= measurement_counter;
+  Mocasinns::Histograms::Histocrete<int, double> specific_magnetizations_histogram
+    = Mocasinns::Analysis::MulticanonicalAverage::average(energy_specific_magnetizations.begin(), energy_specific_magnetizations.end());
 
   for (double beta = -1.0; beta < 1.05; beta += 0.1)
   {

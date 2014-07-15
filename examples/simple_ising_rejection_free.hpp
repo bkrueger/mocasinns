@@ -1,5 +1,5 @@
-#ifndef SIMPLE_ISING_HPP
-#define SIMPLE_ISING_HPP
+#ifndef SIMPLE_ISING_REJECTION_FREE_HPP
+#define SIMPLE_ISING_REJECTION_FREE_HPP
 
 #include <vector>
 
@@ -36,6 +36,15 @@ public:
   // Create an Ising configuration with a certain number of spins
   IsingConfiguration(unsigned int length) : spins(length, 1) { }
 
+  // Create all possible flips
+  std::vector<IsingStep> all_steps()
+  {
+    std::vector<IsingStep> result;
+    for (unsigned int i = 0; i < spins.size(); ++i)
+      result.push_back(IsingStep(this, i));
+    return result;
+  }
+  
   // Apply a given flip to the configuration
   void commit(const IsingStep& step) { spins[step.flip_index] *= -1; }
 
@@ -48,10 +57,6 @@ public:
     result += spins[0]*spins[spins.size() - 1];
     return -result;
   }
-
-  // Create a step (spin flip) using a given random number generator
-  template <class RandomNumberGenerator>
-  IsingStep propose_step(RandomNumberGenerator* rng) { return IsingStep(this, rng->random_int32(0, spins.size() - 1)); }
 };
   
 int IsingStep::delta_E()

@@ -28,7 +28,7 @@ namespace Mocasinns
       BOOST_CONCEPT_USAGE(ConfigurationConcept)
       {
 	// There must be a function for proposing a step and returning a StepType
-	same_type(proposed_step, configuration.propose_step(&rng));
+	// same_type(proposed_step, configuration.propose_step(&rng));
 	
 	// There must be a function energy
 	configuration.energy();

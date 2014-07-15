@@ -89,7 +89,9 @@ template <class Derived, class StepType, bool function_rejection_free, class Acc
 typename boost::enable_if_c<function_rejection_free, void>::type
 Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const step_number_t& step_number, AcceptanceProbabilityParameterType& acceptance_probability_parameter)
 {
-  for (step_number_t i = 0; i < step_number; ++i)
+  double remaining_simulation_time = step_number;
+
+  while (remaining_simulation_time > 0)
   {
     // Propose all possible steps
     std::vector<StepType> all_steps = this->configuration_space->all_steps();
@@ -142,13 +144,31 @@ Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const 
       static_cast<Derived*>(this)->handle_rejected_step(all_steps[step_index], 1.0, acceptance_probability_parameter);
     else
     {
-      all_steps[step_index].execute();
-      // Handle the executed step with 
-      static_cast<Derived*>(this)->handle_executed_step(all_steps[step_index], 1.0 / cumulative_acceptance_probabilities[all_steps.size()], acceptance_probability_parameter);
+      if (remaining_simulation_time - time > 0)
+      {
+	all_steps[step_index].execute();
+	// Handle the executed step with time
+	static_cast<Derived*>(this)->handle_executed_step(all_steps[step_index], time, acceptance_probability_parameter);
+	remaining_simulation_time -= time;
+      }
+      else
+      {
+	// Randomly choose whether the step should be executed or not
+	if (rng->random_double() < remaining_simulation_time / time)
+	{
+	  all_steps[step_index].execute();
+	  // Handle the executed step with the remaining time
+	  static_cast<Derived*>(this)->handle_executed_step(all_steps[step_index], remaining_simulation_time, acceptance_probability_parameter);
+	}
+	else
+	{
+	  // Handle the rejected step with the remaining time
+	  static_cast<Derived*>(this)->handle_rejected_step(all_steps[step_index], remaining_simulation_time, acceptance_probability_parameter);
+	}
+	remaining_simulation_time = -1.0;
+      }
     }
-
-    //    std::cout << static_cast<Derived*>(this)->get_log_density_of_states() << std::endl;
-  }
+  } // of while (remaining_simulation_time > 0.0)
 }
 
 /*! \fn AUTO_TEMPLATE_1

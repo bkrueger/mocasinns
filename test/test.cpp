@@ -29,14 +29,17 @@
 #include "test_observables/test_vector_observable.hpp"
 #include "test_energy_types/test_vector_energy.hpp"
 #include "test_energy_types/test_array_energy.hpp"
+#include "test_energy_types/test_pair_energy.hpp"
 #include "test_observables/test_array_observable.hpp"
 #include "test_observables/test_histogram_observable.hpp"
+#include "test_observables/test_pair_observable.hpp"
 #include "test_analysis/test_binning_analysis.hpp"
 #include "test_analysis/test_jackknife_analysis.hpp"
 #include "test_analysis/test_bootstrap_analysis.hpp"
 #include "test_analysis/test_autocorrelation.hpp"
 #include "test_details/test_stl_extensions/test_vector_addable.hpp"
 #include "test_details/test_stl_extensions/test_array_addable.hpp"
+#include "test_details/test_stl_extensions/test_pair_addable.hpp"
 #include "test_details/test_parallel_tempering/test_inverse_temperature_optimization.hpp"
 // #include "test_details/test_stl_extensions/test_tuple_addable.hpp"
 
@@ -89,6 +92,7 @@ int main(int argc, char *argv[])
     runner.addTest(TestVectorObservable::suite());
     runner.addTest(TestArrayObservable::suite());
     runner.addTest(TestHistogramObservable::suite());
+    runner.addTest(TestPairObservable::suite());
     runner.addTest(TestBinningAnalysis::suite());
     runner.addTest(TestJackknifeAnalysis::suite());
     runner.addTest(TestBootstrapAnalysis::suite());
@@ -98,11 +102,13 @@ int main(int argc, char *argv[])
   {
     runner.addTest(TestVectorEnergy::suite());
     runner.addTest(TestArrayEnergy::suite());
+    runner.addTest(TestPairEnergy::suite());
   }
   if (test_all || test_name == "Details")
   {
     runner.addTest(TestVectorAddable::suite());
     runner.addTest(TestArrayAddable::suite());
+    runner.addTest(TestPairAddable::suite());
     //    runner.addTest(TestTupleAddable::suite());
   }
 

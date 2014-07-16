@@ -202,6 +202,11 @@ ALIASES += signalhandlers="\htmlonly <dl class=\"params\"><dt>Signal handlers</d
 ALIASES += signalhandler{2}="\htmlonly <tr><td class=\"paramname\">\1</td><td>\2</td></tr>\endhtmlonly \latexonly {\em \1} & \-\2 \\ \hline \endlatexonly"
 ALIASES += endsignalhandlers="\htmlonly </table></dd></dl> \endhtmlonly \latexonly \end{DoxyParams}\endlatexonly"
 
+# Alias for generating a section of references
+ALIASES += references="\htmlonly <dl class=\"params\"><dt>References</dt><dd><table class=\"params\">\endhtmlonly \latexonly \begin{DoxyParams}{\-Parameters}\endlatexonly"
+ALIASES += reference{2}="\htmlonly <tr><td class=\"paramname\">[\1]</td><td>\2</td></tr>\endhtmlonly \latexonly {\em [\1]} & \-\2 \\ \hline \endlatexonly"
+ALIASES += endreferences="\htmlonly </table></dd></dl> \endhtmlonly \latexonly \end{DoxyParams}\endlatexonly"
+
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
 # "class=itcl::class" will allow you to use the command class in the

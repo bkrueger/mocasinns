@@ -1,5 +1,5 @@
-#ifndef HISTOGRAMNUMBERTEST_HPP
-#define HISTOGRAMNUMBERTEST_HPP
+#ifndef TEST_HISTOGRAM_CONSTANT_WIDTH_HPP
+#define TEST_HISTOGRAM_CONSTANT_WIDTH_HPP
 
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
@@ -11,11 +11,11 @@
 
 using namespace Mocasinns::Histograms;
 
-class TestHistogramNumber : public CppUnit::TestFixture
+class TestHistogramConstantWidth : public CppUnit::TestFixture
 {
 private:
-  HistogramNumber<int, int>* testhisto_int;
-  HistogramNumber<double, double>* testhisto_double;
+  HistogramConstantWidth<int, int>* testhisto_int;
+  HistogramConstantWidth<double, double>* testhisto_double;
 
 public:
   static CppUnit::Test* suite();

@@ -19,8 +19,8 @@ CppUnit::Test* TestHistogram::suite()
 
 void TestHistogram::setUp()
 {
-  testhisto_int = new Histogram<int, int, BinningNumber<int> >(BinningNumber<int>(3));
-  testhisto_double = new Histogram<double, double, BinningNumber<double> >(BinningNumber<double>(2.5));
+  testhisto_int = new Histogram<int, int, ConstantWidthBinning<int> >(ConstantWidthBinning<int>(3));
+  testhisto_double = new Histogram<double, double, ConstantWidthBinning<double> >(ConstantWidthBinning<double>(2.5));
 
   (*testhisto_int) << std::pair<int,int>(0,4);
   (*testhisto_int) << std::pair<int,int>(3,5);
@@ -116,7 +116,7 @@ void TestHistogram::test_operator_access()
 void TestHistogram::test_operator_increment()
 { 
   // Test the += with a histocrete
-  Histogram<int,int, BinningNumber<int> > histo2(BinningNumber<int>(3));
+  Histogram<int,int, ConstantWidthBinning<int> > histo2(ConstantWidthBinning<int>(3));
   histo2[0] = 2;
   histo2[3] = -4;
   histo2[6] = 1;
@@ -141,7 +141,7 @@ void TestHistogram::test_operator_divide()
 
 void TestHistogram::test_initialise_empty()
 {
-  Histogram<double, double, BinningNumber<double> > initialised_testhisto_double;
+  Histogram<double, double, ConstantWidthBinning<double> > initialised_testhisto_double;
   initialised_testhisto_double.initialise_empty(*testhisto_double);
   CPPUNIT_ASSERT_EQUAL(4, static_cast<int>(initialised_testhisto_double.size()));
   CPPUNIT_ASSERT(initialised_testhisto_double.find(0.0) != initialised_testhisto_double.end());
@@ -152,10 +152,10 @@ void TestHistogram::test_initialise_empty()
   CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(2.5)->second);
   CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(5.0)->second);
   CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.find(7.5)->second);
-  CPPUNIT_ASSERT_EQUAL(2.5, initialised_testhisto_double.get_binning_width());
-  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.get_binning_reference());
+  CPPUNIT_ASSERT_EQUAL(2.5, initialised_testhisto_double.get_binning().get_binning_width());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double.get_binning().get_binning_reference());
 
-  Histogram<double, int, BinningNumber<double> > initialised_testhisto_double_int;
+  Histogram<double, int, ConstantWidthBinning<double> > initialised_testhisto_double_int;
   initialised_testhisto_double_int.initialise_empty(*testhisto_double);
   CPPUNIT_ASSERT_EQUAL(4, static_cast<int>(initialised_testhisto_double_int.size()));
   CPPUNIT_ASSERT(initialised_testhisto_double_int.find(0.0) != initialised_testhisto_double_int.end());
@@ -166,8 +166,8 @@ void TestHistogram::test_initialise_empty()
   CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(2.5)->second);
   CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(5.0)->second);
   CPPUNIT_ASSERT_EQUAL(0, initialised_testhisto_double_int.find(7.5)->second);
-  CPPUNIT_ASSERT_EQUAL(2.5, initialised_testhisto_double_int.get_binning_width());
-  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double_int.get_binning_reference());
+  CPPUNIT_ASSERT_EQUAL(2.5, initialised_testhisto_double_int.get_binning().get_binning_width());
+  CPPUNIT_ASSERT_EQUAL(0.0, initialised_testhisto_double_int.get_binning().get_binning_reference());
 }
 void TestHistogram::test_insert()
 {
@@ -192,7 +192,7 @@ void TestHistogram::test_serialize()
 {
   (*testhisto_int).save_serialize("serialize_test.dat");
   
-  Histogram<int, int, BinningNumber<int> > testhisto_load;
+  Histogram<int, int, ConstantWidthBinning<int> > testhisto_load;
   testhisto_load.load_serialize("serialize_test.dat");
 
   CPPUNIT_ASSERT_EQUAL((*testhisto_int)[1], testhisto_load[1]);
@@ -205,7 +205,7 @@ void TestHistogram::test_serialize()
 
   (*testhisto_double).save_serialize("serialize_test.dat");
   
-  Histogram<double, double, BinningNumber<double> > testhisto_load_double;
+  Histogram<double, double, ConstantWidthBinning<double> > testhisto_load_double;
   testhisto_load_double.load_serialize("serialize_test.dat");
 
   CPPUNIT_ASSERT_EQUAL((*testhisto_double)[1.0], testhisto_load_double[1.0]);

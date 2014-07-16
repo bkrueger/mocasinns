@@ -8,15 +8,15 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <mocasinns/histograms/histogram.hpp>
-#include <mocasinns/histograms/binnings.hpp>
+#include <mocasinns/histograms/constant_width_binning.hpp>
 
 using namespace Mocasinns::Histograms;
 
 class TestHistogram : public CppUnit::TestFixture
 {
 private:
-  Histogram<int, int, BinningNumber<int> >* testhisto_int;
-  Histogram<double, double, BinningNumber<double> >* testhisto_double;
+  Histogram<int, int, ConstantWidthBinning<int> >* testhisto_int;
+  Histogram<double, double, ConstantWidthBinning<double> >* testhisto_double;
 
 public:
   static CppUnit::Test* suite();

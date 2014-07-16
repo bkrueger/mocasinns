@@ -27,8 +27,7 @@ void Histogram<x_value_type, y_value_type, BinningFunctor>::initialise_empty(con
   Base::initialise_empty(static_cast<HistoBase<x_value_type, other_y_value_type, Histogram<x_value_type, other_y_value_type, BinningFunctor> > >(other));
 
   // Copy the binning
-  set_binning_width(other.get_binning_width());
-  set_binning_reference(other.get_binning_reference());
+  binning = other.get_binning();
 }
 
 } // of namespace Histograms

@@ -21,15 +21,16 @@
 #include "test_optimal_ensemble_sampling.hpp"
 #include "test_accumulators/test_histogram_accumulator.hpp"
 #include "test_accumulators/test_file_accumulator.hpp"
-#include "test_histograms/test_binnings.hpp"
+#include "test_histograms/test_constant_width_binning.hpp"
+#include "test_histograms/test_fixed_boundary_binning.hpp"
 #include "test_histograms/test_histobase.hpp"
 #include "test_histograms/test_histocrete.hpp"
 #include "test_histograms/test_histogram.hpp"
-#include "test_histograms/test_histogram_number.hpp"
-#include "test_observables/test_vector_observable.hpp"
+#include "test_histograms/test_histogram_constant_width.hpp"
 #include "test_energy_types/test_vector_energy.hpp"
 #include "test_energy_types/test_array_energy.hpp"
 #include "test_energy_types/test_pair_energy.hpp"
+#include "test_observables/test_vector_observable.hpp"
 #include "test_observables/test_array_observable.hpp"
 #include "test_observables/test_histogram_observable.hpp"
 #include "test_observables/test_pair_observable.hpp"
@@ -80,12 +81,13 @@ int main(int argc, char *argv[])
   }
   if (test_all || test_name == "Histograms")
   {
-    runner.addTest(TestBinningNumber::suite());
-    runner.addTest(TestBinningNumberVector::suite());
+    runner.addTest(TestConstantWidthBinningNumber::suite());
+    runner.addTest(TestConstantWidthBinningVector::suite());
+    runner.addTest(TestFixedBoundaryBinning::suite());
     runner.addTest(TestHistoBase::suite());
     runner.addTest(TestHistocrete::suite());
     runner.addTest(TestHistogram::suite());
-    runner.addTest(TestHistogramNumber::suite());
+    runner.addTest(TestHistogramConstantWidth::suite());
   }
   if (test_all || test_name == "Observables")
   {

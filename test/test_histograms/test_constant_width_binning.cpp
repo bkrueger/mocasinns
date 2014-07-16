@@ -1,24 +1,24 @@
-#include "test_binnings.hpp"
+#include "test_constant_width_binning.hpp"
 #include <vector>
 #include <cstdint>
 
-CppUnit::Test* TestBinningNumber::suite()
+CppUnit::Test* TestConstantWidthBinningNumber::suite()
 {
-  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestHistograms/TestBinningNumber");
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestBinningNumber>("TestHistograms/TestBinningNumber: test_functor", &TestBinningNumber::test_functor) );
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestHistograms/TestConstantWidthBinningNumber");
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestConstantWidthBinningNumber>("TestHistograms/TestConstantWidthBinningNumber: test_functor", &TestConstantWidthBinningNumber::test_functor) );
   
   return suite_of_tests;
 }
 
-void TestBinningNumber::setUp()
+void TestConstantWidthBinningNumber::setUp()
 {
-  test_binning_int = new BinningNumber<int>(3);
-  test_binning_int_base = new BinningNumber<int>(3,1);
-  test_binning_double = new BinningNumber<double>(2.5);
-  test_binning_double_base = new BinningNumber<double>(2.5, 1.0);
+  test_binning_int = new binning_t_int(3);
+  test_binning_int_base = new binning_t_int(3,1);
+  test_binning_double = new binning_t_double(2.5);
+  test_binning_double_base = new binning_t_double(2.5, 1.0);
 }
 
-void TestBinningNumber::tearDown()
+void TestConstantWidthBinningNumber::tearDown()
 {
   delete test_binning_int;
   delete test_binning_int_base;
@@ -26,7 +26,7 @@ void TestBinningNumber::tearDown()
   delete test_binning_double_base;
 }
 
-void TestBinningNumber::test_functor()
+void TestConstantWidthBinningNumber::test_functor()
 {
   // Test with integer binning without base value
   CPPUNIT_ASSERT_EQUAL(-9, (*test_binning_int)(-9));
@@ -103,56 +103,55 @@ void TestBinningNumber::test_functor()
   CPPUNIT_ASSERT_EQUAL(6.0, (*test_binning_double_base)(6.1));
   CPPUNIT_ASSERT_EQUAL(6.0, (*test_binning_double_base)(7.1));
   CPPUNIT_ASSERT_EQUAL(6.0, (*test_binning_double_base)(8.1));
-
 }
 
 
 
-CppUnit::Test* TestBinningNumberVector::suite()
+CppUnit::Test* TestConstantWidthBinningVector::suite()
 {
-  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestHistograms/TestBinningNumberVector");
-  suite_of_tests->addTest( new CppUnit::TestCaller<TestBinningNumberVector>("TestHistograms/TestBinningNumberVector: test_functor", &TestBinningNumberVector::test_functor) );
+  CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestHistograms/TestConstantWidthBinningVector");
+  suite_of_tests->addTest( new CppUnit::TestCaller<TestConstantWidthBinningVector>("TestHistograms/TestConstantWidthBinningVector: test_functor", &TestConstantWidthBinningVector::test_functor) );
   
   return suite_of_tests;
 }
 
-void TestBinningNumberVector::setUp()
+void TestConstantWidthBinningVector::setUp()
 {
-  test_binning_double_same = new BinningNumberVector<double>(3, 2.5);
-  std::vector<double> diff_bin_widths;
+  test_binning_double_same = new binning_t(3, 2.5);
+  binning_value_t diff_bin_widths;
   diff_bin_widths.push_back(2.0);
   diff_bin_widths.push_back(2.5);
-  test_binning_double_diff = new BinningNumberVector<double>(diff_bin_widths);
+  test_binning_double_diff = new binning_t(diff_bin_widths);
 }
 
-void TestBinningNumberVector::tearDown()
+void TestConstantWidthBinningVector::tearDown()
 {
   delete test_binning_double_same;
   delete test_binning_double_diff;
 }
 
-void TestBinningNumberVector::test_functor()
+void TestConstantWidthBinningVector::test_functor()
 {
   // Test with double and same bin widths
-  std::vector<double> test_1;
+  binning_value_t test_1;
   test_1.push_back(0.5), test_1.push_back(5.3), test_1.push_back(-0.8);
   CPPUNIT_ASSERT_EQUAL(0.0, (*test_binning_double_same)(test_1)[0]);
   CPPUNIT_ASSERT_EQUAL(5.0, (*test_binning_double_same)(test_1)[1]);
   CPPUNIT_ASSERT_EQUAL(-2.5, (*test_binning_double_same)(test_1)[2]);
 
-  std::vector<double> test_2;
+  binning_value_t test_2;
   test_2.push_back(-0.1), test_2.push_back(5.0), test_2.push_back(-4.8);
   CPPUNIT_ASSERT_EQUAL(-2.5, (*test_binning_double_same)(test_2)[0]);
   CPPUNIT_ASSERT_EQUAL(5.0, (*test_binning_double_same)(test_2)[1]);
   CPPUNIT_ASSERT_EQUAL(-5.0, (*test_binning_double_same)(test_2)[2]);
 
   // Test with double and different bin widths
-  std::vector<double> test_3;
+  binning_value_t test_3;
   test_3.push_back(5.3), test_3.push_back(0.5);
   CPPUNIT_ASSERT_EQUAL(4.0, (*test_binning_double_diff)(test_3)[0]);
   CPPUNIT_ASSERT_EQUAL(0.0, (*test_binning_double_diff)(test_3)[1]);
 
-  std::vector<double> test_4;
+  binning_value_t test_4;
   test_4.push_back(-0.1), test_4.push_back(5.0);
   CPPUNIT_ASSERT_EQUAL(-2.0, (*test_binning_double_diff)(test_4)[0]);
   CPPUNIT_ASSERT_EQUAL(5.0, (*test_binning_double_diff)(test_4)[1]);

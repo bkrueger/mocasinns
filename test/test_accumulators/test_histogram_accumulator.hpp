@@ -16,7 +16,7 @@ using namespace Mocasinns::Histograms;
 class TestHistogramAccumulator : CppUnit::TestFixture
 {
 private:
-  HistogramAccumulator<HistogramNumber, double> histogram_accumulator;
+  HistogramAccumulator<HistogramConstantWidth, double> histogram_accumulator;
 
 public:
   static CppUnit::Test* suite();

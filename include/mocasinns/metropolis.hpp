@@ -190,9 +190,9 @@ namespace Mocasinns
 
   // Typedef for Metropolis rejection-free.
   // Checks for C++11 support for template typedef
-  #ifndef BOOST_NO_CXX11_TEMPLATE_ALIASES
+#ifndef BOOST_NO_CXX11_TEMPLATE_ALIASES
   template <class ConfigurationType, class StepType, class RandomNumberGenerator> using MetropolisRejectionFree = Metropolis<ConfigurationType, StepType, RandomNumberGenerator, true>;
-  #endif
+#endif
 
   //! Struct storing the definition of the Parameters of a Metropolis-Simulation
   template <class ConfigurationType, class StepType, class RandomNumberGenerator, bool rejection_free>

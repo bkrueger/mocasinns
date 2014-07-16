@@ -225,16 +225,6 @@ namespace Mocasinns
   };
 }
 
-/*!
- * \example simple_ising_metropolis.cpp
- * Example for the simplest possible usage of a Metropolis simulation. Since no observator is given, a default observator that measures the energy is used. The measurment results are given as a vector.
- */
-
-/*!
- * \example simple_ising_metropolis_observator.cpp
- * Example for using a Metropolis simulation with an user-provided observator that measures the energy and the magnetization of the system at once.
- */
-
 #include "src/metropolis.cpp"
 
 #endif

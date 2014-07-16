@@ -20,8 +20,23 @@
 
 namespace Mocasinns
 {
-  //! Class for Metropolis-Monte-Carlo simulations
+  //! Class for Entropic samplin Monte-Carlo simulations
   /*!
+   * \details The Entropic sampling simulation is an algorithm to estimate the density of states of a system in order to calculate observables directly (if the observables do only depend on the energy) or to use it in a multicanonical \ref MetropolisHastings "Metropolis Hastings simulation" (if the observables do depend on other system details).
+   * Other algorithms to calculate the density of states are the \ref WangLandau "Wang-Landau algorithm" and the \ref OptimalEnsembleSampling "Optimal Ensemble sampling".
+   *
+   * The acceptance probability of a single entropic sampling step from energy \f$ E \f$ to \f$ E + \Delta E \f$ is given by:
+   * \f[
+   *   A\left( E \rightarrow E + \Delta E \right) = \min \left[1, \frac{g(E)}{g(E + \Delta E)} \cdot \frac{S(E + \Delta E \rightarrow  E)}{S(E \rightarrow E + \Delta E)}\right]
+   * \f]
+   * where \f$ g(E) \f$ is the density of states (DOS) at energy \f$ E \f$ and \f$ S(E \rightarrow E + \Delta E) \f$ is the selection probability of the step (which can also depend on the microstructure of the step and not only on the energy difference).
+   *
+   * Since the DOS is not known a priori, the aim of the Entropic sampling simulation is to estimate it. Therefore one starts with an initial estimation of the DOS (if nothing is specified by the user. a constant DOS for all energies is used) and iterativly improves the estimation.
+   * If the actual estimation of the DOS is \f$ g_i(E) \f$, the next iteration is calculated by doing steps with this DOS and record the number \f$ H_i(E) \f$ of times the algorithm visited the energy \f$ E \f$.
+   * The next iteration of the DOS \f$ g_{i+1}(E) = H_i(E) \cdot g_i(E) \f$ is calculated by multiplying the incidence histogram and the previous DOS.
+   *
+   * The algorithm stops if the incidence histogram is flat enough (specified by a user-provided parameter \f$ 0 < f < 1 \f$), i.e. the ration of the minimal and the average bin of the incidence histogram is greater than \f$ f \f$ after an iteration.
+   *
    * \signalhandlers
    * \signalhandler{signal_handler_sweep, This handler is called after every sweep of <tt>Parameters::sweep_steps</tt> steps.}
    * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) is performed after every sweep of <tt>Parameters::sweep_steps</tt> steps.}

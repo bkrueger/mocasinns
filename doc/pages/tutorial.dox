@@ -205,11 +205,11 @@ std::vector<int> energies = simulation.do_metropolis_simulation(1.0);
 which results in a vector 1000 energies that were measured.
 
 The resulting code for a calculation of the mean energy is then, assuming that the code for <tt>IsingSystem</tt> and <tt>IsingStep</tt> is stored in the file <tt>simple_ising.hpp</tt>:
-\include simple_ising_metropolis.cpp
+\include metropolis.cpp
 
 This code can be compiled with
 \code
-g++ -c -std=c++11 -I../include -o simple_ising_metropolis.o simple_ising_metropolis.cpp -lboost_serialization -o simple_ising_metropolis
+g++-std=c++11 -I../include metropolis.cpp -lboost_serialization -o metropolis
 \endcode
 The flag <tt>-I../include</tt> must be replaced with the location of the include files of mocasinns, or the path must be listed in the environment variable <tt>CPLUS_INCLUDE_PATH</tt>
 
@@ -241,7 +241,7 @@ The observator has then to be given as a template parameter to the \c do_metropo
 \endcode
 
 Alltogether the program for measuring the mean specific magnetization and the mean energy is:
-\include simple_ising_metropolis_observator.cpp
+\include observables.cpp
 
 \section tutorial_additional_functions Additional functions for configurations and steps
 

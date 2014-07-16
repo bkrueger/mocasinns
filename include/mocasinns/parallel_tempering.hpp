@@ -44,7 +44,7 @@ namespace Mocasinns
    * - <tt>ParallelTempering</tt> for parallel tempering on multiple cores, where the single Metropolis simulations are executed in parallel using OpenMP.
    * 
    * An important problem for the parallel tempering algorithm is how to choose the inverse temperatures \f$\beta_i\f$.
-   * If the chosen temperature range is to wide, the acceptance probabilities \ref{eq:parallel_tempering_swap_acceptance} approach 0 and one gets basically independent Metropolis simulations which cannot escape local energy minima.
+   * If the chosen temperature range is to wide, the acceptance probabilities approach 0 and one gets basically independent Metropolis simulations which cannot escape local energy minima.
    * If the chosen temperature range is to small, computation time is wasted since simulations with neighbouring inverse temperatures produce basically the same information.
    * Especially if there are phase transitions present in the system at certain inverse temperatures, the range around these critical temperatures must be sampled mor accuratly as far away from the cricitcal regions.
    *

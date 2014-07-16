@@ -58,6 +58,11 @@ namespace Mocasinns
    * \tparam EnergyType \concept{EnergyType}
    * \tparam HistoType \concept{HistoType}
    * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   *
+   * \references
+   * \reference{1, Wang F. and Landau D.P.\, PRL 86 (2001) 2050-2053}
+   * \reference{2, Wang F. and Landau D.P.\, PRE 64 (2001) 056101}
+   * \endreferences
    */
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free = false>
   class WangLandau : public Simulation<ConfigurationType, RandomNumberGenerator>

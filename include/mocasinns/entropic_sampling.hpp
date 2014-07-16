@@ -21,6 +21,18 @@
 namespace Mocasinns
 {
   //! Class for Metropolis-Monte-Carlo simulations
+  /*!
+   *
+   * \tparam ConfigurationType \concept{ConfigurationType}
+   * \tparam StepType \concept{StepType}
+   * \tparam EnergyType \concept{EnergyType}
+   * \tparam HistoType \concept{HistoType}
+   * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   *
+   * \references
+   * \reference{1, Lee J.\, PRL 71 (1993) 211}
+   * \endreferences
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator, bool rejection_free = false>
   class EntropicSampling : public Simulation<ConfigurationType, RandomNumberGenerator>
   {

@@ -51,6 +51,11 @@ namespace Mocasinns
    * \tparam ConfigurationType \concept{ConfigurationType}
    * \tparam StepType \concept{StepType}
    * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   *
+   * \references
+   * \reference{1, Swendsen R.H. and Wang J.-S.\, PRL 57 (1986) 2607}
+   * \reference{2, Hukushima K. and Nemoto K.\, J. Phys. Soc. Japan 65 (1996) 1604}
+   * \endreferences
    */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator>
   class ParallelTempering : public Simulation<ConfigurationType, RandomNumberGenerator>

@@ -55,6 +55,11 @@ namespace Mocasinns
    * \tparam ConfigurationType \concept{ConfigurationType}
    * \tparam StepType \concept{StepType}
    * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   *
+   * \references
+   * \reference{1, Metropolis N. et al.\, J. Chem. Phys. 21 (1953) 1087}
+   * \reference{2, Metropolis N. and Ulam S.\, J. Amer. Statist. Assoc. 44 (1949) 335}
+   * \endreferences
    */
   template <class ConfigurationType, class StepType, class RandomNumberGenerator, bool rejection_free = false>
   class Metropolis : public Simulation<ConfigurationType, RandomNumberGenerator>

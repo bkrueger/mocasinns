@@ -102,9 +102,8 @@ void Mocasinns::Metropolis<ConfigurationType,Step,RandomNumberGenerator,rejectio
     // Do the steps
     do_metropolis_steps(simulation_parameters.steps_between_measurement, beta);
 
-    // If the right number of measurments was performed, call the signal handler
-    if (m / simulation_parameters.measurement_number == 0)
-      signal_handler_measurement(this);
+    // Call the measurement signal handler
+    signal_handler_measurement(this);
 
     // Observe and check for posix signals
     measurement_accumulator(Observator::observe(this->configuration_space));

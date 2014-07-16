@@ -48,6 +48,12 @@ namespace Mocasinns
    * If the chosen temperature range is to small, computation time is wasted since simulations with neighbouring inverse temperatures produce basically the same information.
    * Especially if there are phase transitions present in the system at certain inverse temperatures, the range around these critical temperatures must be sampled mor accuratly as far away from the cricitcal regions.
    *
+   * \signalhandlers
+   * \signalhandler{signal_handler_measurement,This handler is called after every measurement.}
+   * \signalhandler{signal_handler_replica_exchange,This handler is called after every replica exchange.}
+   * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) after every measurment.}
+   * \endsignalhandlers
+   *
    * \tparam ConfigurationType \concept{ConfigurationType}
    * \tparam StepType \concept{StepType}
    * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}

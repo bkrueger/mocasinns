@@ -52,6 +52,11 @@ namespace Mocasinns
    * - <tt>do_metropolis_simulation<Observator>(TemperatureType inverse_temperature, Accumulator& measurement_accumulator)</tt>: Do a Metropolis simulation for a single temperature and accumulate the measured observables in a given accumulator (that fulfills the \ref concept-Accumulator "Accumulator concept"). This can be used e.g. for calculating the mean and the variance of the observables without storing the single measurement results.
    * - <tt>do_metropolis_simulation<Observator>(TemperatureType inverse_temperature, Accumulator& measurement_accumulator)</tt>: Do a Metropolis simulation for a single temperature and accumulate the measured observables in a given accumulator (that fulfills the \ref concept-Accumulator "Accumulator concept"). This can be used e.g. for calculating the mean and the variance of the observables without storing the single measurement results.
    *
+   * \signalhandlers
+   * \signalhandler{signal_handler_measurement,This handler is called before every measurement.}
+   * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) after every measurment.}
+   * \endsignalhandlers
+   *
    * \tparam ConfigurationType \concept{ConfigurationType}
    * \tparam StepType \concept{StepType}
    * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}

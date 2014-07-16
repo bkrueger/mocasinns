@@ -22,6 +22,10 @@ namespace Mocasinns
 {
   //! Class for Metropolis-Monte-Carlo simulations
   /*!
+   * \signalhandlers
+   * \signalhandler{signal_handler_sweep, This handler is called after every sweep of <tt>Parameters::sweep_steps</tt> steps.}
+   * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) is performed after every sweep of <tt>Parameters::sweep_steps</tt> steps.}
+   * \endsignalhandlers
    *
    * \tparam ConfigurationType \concept{ConfigurationType}
    * \tparam StepType \concept{StepType}

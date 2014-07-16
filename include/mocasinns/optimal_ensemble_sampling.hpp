@@ -20,13 +20,18 @@ namespace Mocasinns
   /*!
    * \brief Class for Optimal Ensemble Sampling
    *
+   * \details Does a Optimal-Sampling simulation and determines the density of states with respect to the energy functional. Usage examples are found in the test cases. 
+   *
+   * \signalhandlers
+   * \signalhandler{signal_handler_iteration,This handler is called after every iteration of the algorithm.}
+   * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) is performed after every sweep steps.}
+   * \endsignalhandlers
+   *
    * \tparam ConfigurationType Type of the configuration space considered.
    * \tparam StepType Type of the step considered.
    * \tparam EnergyType Return type of the ConfigurationType::energy() and StepType::delta_E() functions
    * \tparam HistoType Template template parameter giving the type of the histograms to use. The first template parameters specifies the type of the x-values, the second template parameter specifies the type of the y-values. Use e.g. the classes in Mocasinns::Histograms
    * \tparam RandomNumberGenerator Type of the random number generator to use.
-   *
-   * \details Does a Optimal-Sampling simulation and determines the density of states with respect to the energy functional. Usage examples are found in the test cases. 
    *
    * \references
    * \reference{1, Trebst S.\, Huse D.A. and Troyer M.\, PRE 70 (2004) 046701}

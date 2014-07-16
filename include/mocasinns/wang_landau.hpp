@@ -49,8 +49,8 @@ namespace Mocasinns
    *
    * \signalhandlers
    * \signalhandler{signal_handler_modfac_change,This handler is called if the flatness criterion was reached and the current modification factor will be decreased.}
-   * \signalhandler{signal_handler_sweep, This handler is called after every sweep of \c Parameters::sweep_steps steps.}
-   * \signalhandler{signal_handler_sig...., The check for \c POSIX signals (SIGTERM\, SIGUSR1 and SIGUSR2) is performed after every sweep of \c Parameters::sweep_steps steps.}
+   * \signalhandler{signal_handler_sweep, This handler is called after every sweep of <tt>Parameters::sweep_steps</tt> steps.}
+   * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) is performed after every sweep of <tt>Parameters::sweep_steps</tt> steps.}
    * \endsignalhandlers
    *
    * \tparam ConfigurationType \concept{ConfigurationType}

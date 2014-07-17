@@ -64,7 +64,7 @@ int IsingStep::delta_E()
   if (flip_index == configuration->spins.size() - 1) flip_index_upper = 0;
   else flip_index_upper = flip_index + 1;
   
-    // Calculate the energy difference
+  // Calculate the energy difference
   return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
 }
 

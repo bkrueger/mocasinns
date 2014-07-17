@@ -29,7 +29,7 @@ int IsingConfiguration::energy()
   for (unsigned int i = 0; i < spins.size() - 1; ++i)
     result += spins[i] * spins[i + 1];
   result += spins[0]*spins[spins.size() - 1];
-  return result;
+  return -result;
 }
 \endcode
 
@@ -55,13 +55,13 @@ int IsingStep::delta_E()
 {
   // Calculate the indices of the neighbouring spins using the periodic boundary conditions
   unsigned int flip_index_lower;
-  if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
+  if (flip_index == 0) flip_index_lower = configuration->spins.size() - 1;
   else flip_index_lower = flip_index - 1;
   unsigned int flip_index_upper;
-  if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
+  if (flip_index == configuration->spins.size() - 1) flip_index_upper = 0;
   else flip_index_upper = flip_index + 1;
   
-    // Calculate the energy difference
+  // Calculate the energy difference
   return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
 }
 \endcode
@@ -109,7 +109,7 @@ public:
     for (unsigned int i = 0; i < spins.size() - 1; ++i)
       result += spins[i] * spins[i + 1];
     result += spins[0]*spins[spins.size() - 1];
-    return result;
+    return -result;
   }
 };
   
@@ -117,13 +117,13 @@ int IsingStep::delta_E()
 {
   // Calculate the indices of the neighbouring spins using the periodic boundary conditions
   unsigned int flip_index_lower;
-  if (flip_index == 0) flip_index_lower = configuration->spins[configuration->spins.size()];
+  if (flip_index == 0) flip_index_lower = configuration->spins.size() - 1;
   else flip_index_lower = flip_index - 1;
   unsigned int flip_index_upper;
-  if (flip_index == configuration->spins.size()) flip_index_lower = configuration->spins[0];
+  if (flip_index == configuration->spins.size() - 1) flip_index_upper = 0;
   else flip_index_upper = flip_index + 1;
   
-    // Calculate the energy difference
+  // Calculate the energy difference
   return 2*configuration->spins[flip_index]*(configuration->spins[flip_index_lower] + configuration->spins[flip_index_upper]);
 }
 
@@ -155,14 +155,6 @@ So you must define a \c execute function in the step.
 In most cases this function simply calls the commit function of the associated configuration"
 \code
   void IsingStep::execute() { configuration->commit(*this); }
-\endcode
-
-For reasons that will be explained later in the tutorial we include the following functions into the classes to compile:
-\code
-  std::vector<IsingStep> IsingConfiguration::all_steps() const { return std::vector<IsingStep>(); }
-  template <class Archiv> void IsingConfiguration::serialize(Archiv&, const unsigned int&) {}
-  bool IsingStep::is_executable() const { return true; }
-  double IsingStep::selection_probability_factor() const { return 1.0; }
 \endcode
 
 After writting this rather simple classes and functions we are allready able to use the \c mocasinns library.
@@ -246,7 +238,6 @@ Alltogether the program for measuring the mean specific magnetization and the me
 \section tutorial_additional_functions Additional functions for configurations and steps
 
 \subsection tutorial_additional_functions_selection_probability_factor Selection probability factor
-
 In the considered Ising spin system the probability for proposing a certain step is constant.
 There are systems for which this is not the case.
 For example one can consider a grand-canonical particle simulation with a step being an random insertion of a particle. 
@@ -266,9 +257,9 @@ If for your system this is not the case, you can define the member function
 double selection_probability_factor();
 \endcode
 of the Step class that calculates the ratio of the selection probability of the flip it represents and the selection probability of the inverse of the flips it represents.
+The mocasinns library will detect the presence of this function and use it for altering the acceptance probabilities of the steps.
 
 \subsection tutorial_additional_functions_is_executable Executability of steps
-
 There are situtations where one want to propose steps that are actual not executable, because the would transfer the system in an invalid state.
 If one considers again the example of a grand-canonical particle simulation this would be the case if a particle would be inserted in a region of space where there is allready a particle contained.
 
@@ -282,6 +273,19 @@ that specifies whether the step is executable or not.
 If any algorithm encounters a non-executable step, it treats the step as a valid step that will allways be declined.
 E.g. the Meropolis algorithm would count a non-executable step as a relexation step or as a step between measurements.
 
+\subsection tutorial_additional_functions_serialize Serialization of the configuration
+Especially for long running simulations so-called checkpointing is convenient. 
+This means that in regular intervals the status of the simulation is permanently stored to be able to continue the simulation if it stops expected or unexpected.
+The complete status of a simulation consists of both the current values of the simulation parameters and the current state of the simulated systems.
+
+To be able to store the current state of the simulation (in case of planned or system induced breaks of the algorithm) the library uses the concepts of the boost serialization library. 
+It is not possible for the \c mocasinns library to detect whether a given configuration is serializable, different from the member functions described in the sections before.
+So if the user wants to enable the serialization functionality he has to define a static member function \texttt{is\_serializable()}.
+Note that the return value of this function can determine whether to serialize the configuration space, but the existance of this function must imply the existance of the serialization functionality, otherwise a compilation error will occur.
+
 \section tutorial_multicanonical An example for another algorithm: Wang-Landau sampling
+The big advantage of the <tt>mocasinns</tt> library is that the same code for system and steps can be used with all available Markov chain Monte Carlo methods.
+The following code shows how to do a Wang-Landau simulation with the simple ising system we defined:
+\include wang_landau.cpp
 
 */

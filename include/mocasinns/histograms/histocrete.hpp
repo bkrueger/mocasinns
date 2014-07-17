@@ -20,6 +20,12 @@ namespace Mocasinns
 namespace Histograms
 {
 
+  //! Class for a Histo with discrete x-values.
+  /*!
+   * \details A Histocrete is basically a wrapper of the normal std::map behaviour, neither the <tt>insert</tt> function nor the <tt>operator[]</tt> functions modify the value inserted in the histogram, both just insert or select the according value.
+   * \tparam x_value_type Type of the x-values of the histogram
+   * \tparam y_value_type Type of the y-values of the histogram
+   */
 template <class x_value_type, class y_value_type> 
 class Histocrete : public HistoBase<x_value_type, y_value_type, Histocrete<x_value_type, y_value_type> >
 {

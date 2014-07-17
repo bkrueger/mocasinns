@@ -30,5 +30,5 @@ void TestFixedBoundaryBinning::test_functor()
   CPPUNIT_ASSERT_EQUAL(-1, (*test_binning_int)(-3));
   CPPUNIT_ASSERT_EQUAL(-3, (*test_binning_int)(-4));
   CPPUNIT_ASSERT_EQUAL(3, (*test_binning_int)(-1));
-  CPPUNIT_ASSERT_EQUAL(10, (*test_binning_int)(11));
+  CPPUNIT_ASSERT_EQUAL(std::numeric_limits<int>::max(), (*test_binning_int)(11));
 }

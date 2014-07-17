@@ -17,8 +17,8 @@ CppUnit::Test* TestHistogramConstantWidth::suite()
 
 void TestHistogramConstantWidth::setUp()
 {
-  testhisto_int = new HistogramConstantWidth<int, int>(3,0);
-  testhisto_double = new HistogramConstantWidth<double, double>(2.5,0.0);
+  testhisto_int = new HistogramConstantWidth<int, int>(typename HistogramConstantWidth<int, int>::BinningFunctorType(3,0));
+  testhisto_double = new HistogramConstantWidth<double, double>(typename HistogramConstantWidth<double, double>::BinningFunctorType(2.5,0.0));
 
   (*testhisto_int) << std::pair<int,int>(0,4);
   (*testhisto_int) << std::pair<int,int>(3,5);
@@ -114,7 +114,7 @@ void TestHistogramConstantWidth::test_operator_access()
 void TestHistogramConstantWidth::test_operator_increment()
 { 
   // Test the += with a histocrete
-  HistogramConstantWidth<int,int> histo2(3,0);
+  HistogramConstantWidth<int,int> histo2(typename HistogramConstantWidth<int, int>::BinningFunctorType(3,0));
   histo2[0] = 2;
   histo2[3] = -4;
   histo2[6] = 1;

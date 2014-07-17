@@ -23,6 +23,17 @@ namespace Histograms
 {
 
 //! Class for a binned histogram
+  /*!
+   * \details A Histogram bins the values given by the <tt>insert</tt> function or the <tt>operator[]</tt> functions using a functor that is given in the construction of the Histogram. 
+   * The functor must define the member <tt>x_value_type operator(x_value_type)</tt> that maps a given x-value to the according bin.
+   * 
+   * In the <tt>mocasinns</tt> library there are two predefined binning functor: ConstantWidthBinning and FixedBoundaryBinning.
+   * For these binning functors there are the templated typedefs HistogramConstantWidth and HistogramFixedBoundary that can be used with C++11 compliant compilers instead of giving the BinningFunctor template parameter directly.
+   *
+   * \tparam x_value_type Type of the x-values of the histogram
+   * \tparam y_value_type Type of the y-values of the histogram
+   * \tparam BinningFunctor Type of the binning functor, must define a member <tt>x_value_type operator(x_value_type)</tt> used for binning.
+   */
 template <class x_value_type, class y_value_type, class BinningFunctor> 
 class Histogram : public HistoBase<x_value_type, y_value_type, Histogram<x_value_type, y_value_type, BinningFunctor> >
 {
@@ -61,21 +72,15 @@ public:
   typedef typename Base::pointer pointer;
   typedef typename Base::const_pointer const_pointer;
   typedef typename Base::size_type size_type;
+  //! Typedef for the template parameter
+  typedef BinningFunctor BinningFunctorType;
 
   //! Standard constructor
-  Histogram() : binning(1.0, 0.0) {}
+  Histogram() : binning() {}
   //! Constructor taking a binning functor
-  /*!
-   * \param binning_functor Class that maps a arbitrary x-value to another x-value that corresponds to a specific binning encoded in this class using the binning_functor::operator()
-   */
   Histogram(BinningFunctor binning_functor) : binning(binning_functor) {}
-  //! Constructor taking the binning width and the binning reference
-  Histogram(x_value_type binning_width, x_value_type binning_reference) : binning(binning_width, binning_reference) {}
   //! Copy constructor
-  Histogram(const Base& other) : Base(other), binning(1.0, 0.0) {}
-  //! Copy constructor for different x-value types
-  template <class other_x_value_type>
-  explicit Histogram(const HistoBase<other_x_value_type, y_value_type, Histogram<other_x_value_type, y_value_type, BinningFunctor> >& other) : Base(other) {}
+  Histogram(const Base& other) : Base(other), binning() {}
 
   //! Get-accessor for the binning functor
   const BinningFunctor& get_binning() const { return binning; }

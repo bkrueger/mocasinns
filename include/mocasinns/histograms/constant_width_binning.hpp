@@ -12,6 +12,8 @@ namespace Mocasinns
 {
   namespace Histograms
   {
+    //! Common base class for all ConstantWidthBinning classes.
+    //! \details This class cannot be used as a binning functor, because it has no binning operator.
     template <class T> 
     class ConstantWidthBinningBase
     {
@@ -45,6 +47,15 @@ namespace Mocasinns
       ConstantWidthBinningBase();
     };
 
+    //! Class for binning with constant binwidth
+    /*!
+     * \details Binning with constant binwidth needs as arguments the width of the bin \f$ \Delta b \f$ and a reference point \f$ b_0 \f$. 
+     * A value \f$ x \f$ is binned into \f$ b_i := b_0 + i\cdot \Delta b \f$ if \f$ b_i \leq x < b_{i+1}\f$.
+     * 
+     * There are specializations of this binning for all energy types defined in the <tt>mocasinns</tt>-library, so that one can bin the values component-wise for VectorEnergy, ArrayEnergy or PairEnergy.
+     *
+     * \tparam T Type of the values to bin
+     */
     template <class T> 
     class ConstantWidthBinning : public ConstantWidthBinningBase<T>
     {
@@ -65,6 +76,7 @@ namespace Mocasinns
       }
     };
 
+    //! \cond
     template <class T>
     class ConstantWidthBinning<EnergyTypes::VectorEnergy<T> > : public ConstantWidthBinningBase<EnergyTypes::VectorEnergy<T> >
     {
@@ -159,6 +171,7 @@ namespace Mocasinns
 	return result;
       }
     };
+    //! \endcond
   }
 }
 

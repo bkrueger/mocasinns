@@ -10,6 +10,7 @@ namespace Mocasinns
     namespace ParallelTempering
     {
       //! Structure for use in inverse temperature optimization algorithms for parallel tempering. Weights only the last range of inverse temperatures obtained in the optimization.
+      //! \details This class should only be used as a template parameter in class InverseTemperatureOptimizationEqualAcceptanceProbabilities. See the documentation of this class for details.
       struct WeightOnlyLast
       {
 	//! Static function to calculate the weights.
@@ -22,6 +23,7 @@ namespace Mocasinns
       };
 
       //! Structure for use in inverse temperature optimization algorithms for parallel tempering. Weights the inverse temperatures ranges according to the worst acceptance probability obtained in the optimization.
+      //! \details This class should only be used as a template parameter in class InverseTemperatureOptimizationEqualAcceptanceProbabilities. See the documentation of this class for details.
       struct WeightWorstAcceptance
       {
 	//! Static function to calculate the weights.
@@ -47,6 +49,7 @@ namespace Mocasinns
       };
 
       //! Structure for use in inverse temperature optimization algorithms for parallel tempering. Weights the inverse temperatures ranges statistically correct with the assumption that the acceptance probabilities are independent.
+      //! \details This class should only be used as a template parameter in class InverseTemperatureOptimizationEqualAcceptanceProbabilities. See the documentation of this class for details.
       struct WeightIndependentAcceptance
       {	
 	//! Static function to calculate the weights.

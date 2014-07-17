@@ -2,6 +2,7 @@
 #define MOCASINNS_HISTOGRAMS_FIXED_BOUNDARY_BINNING_HPP
 
 #include <algorithm>
+#include <limits>
 
 #include <boost/serialization/serialization.hpp>
 
@@ -47,8 +48,8 @@ namespace Mocasinns
 	if (bin_iterator != boundaries.end())
 	  return *bin_iterator;
 	else
-	  if (numeric_limits<T>::has_infinity) return numeric_limits<T>::infinity();
-	  else return numeric_limits<T>::max();
+	  if (std::numeric_limits<T>::has_infinity) return std::numeric_limits<T>::infinity();
+	  else return std::numeric_limits<T>::max();
       }
     private:
       //! Vector with boundaries

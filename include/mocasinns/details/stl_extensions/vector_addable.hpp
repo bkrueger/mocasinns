@@ -2,10 +2,11 @@
 #define MOCASINNS_DETAILS_STL_EXTENSIONS_VECTOR_ADDABLE_HPP
 
 #include <vector>
-#include <stdexcept>
 
 // Header for the serialization of the class
 #include <boost/serialization/vector.hpp>
+
+#include "../../exceptions/unequal_sizes_exception.hpp"
 
 namespace Mocasinns
 {
@@ -22,13 +23,6 @@ namespace Mocasinns
 	std::vector<T> data;
 	
       public:
-	//! Exception class for non-fitting sizes
-	class SizesUnequalException : public std::range_error
-	{
-	public:
-	  SizesUnequalException() : std::range_error("The sizes of the VectorAddable-objects do not match.") {}
-	};
-
 	//! The type of the object stored in the VectorAddable (T)
 	typedef typename std::vector<T>::value_type value_type;
 	//! Pointer to T
@@ -120,7 +114,7 @@ namespace Mocasinns
 	  }
 
 	  // Test the sizes for other mismatch
-	  if (data.size() != rhs.size()) throw SizesUnequalException();
+	  if (data.size() != rhs.size()) throw Exceptions::UnequalSizesException("Adding two vectors works only for vectors of the same size.");
 	  
 	  // Add the vectors component-wise
 	  iterator it_this = data.begin();
@@ -145,7 +139,7 @@ namespace Mocasinns
 	  }
 	  
 	  // Test the sizes for other mismatch
-	  if (data.size() != rhs.size()) throw SizesUnequalException();
+	  if (data.size() != rhs.size()) throw Exceptions::UnequalSizesException("Substracting two vectors works only for vectors of the same size.");
 
 	  // Substract the vectors component-wise
 	  iterator it_this = data.begin();

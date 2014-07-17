@@ -13,8 +13,7 @@ CppUnit::Test* TestHistogramAccumulator::suite()
 void TestHistogramAccumulator::setUp()
 {
   // Set the binning
-  histogram_accumulator.set_binning_width(1.0);
-  histogram_accumulator.set_binning_reference(0.0);
+  histogram_accumulator.set_binning(ConstantWidthBinning<double>(1.0, 0.0));
 
   // Set some values
   histogram_accumulator[-0.5] = 2;
@@ -42,7 +41,7 @@ void TestHistogramAccumulator::test_operator_accumulate()
 }
 void TestHistogramAccumulator::test_normalized_histogram()
 {
-  HistogramNumber<double, double> normalized_histogram = histogram_accumulator.normalized_histogram();
+  HistogramConstantWidth<double, double> normalized_histogram = histogram_accumulator.normalized_histogram();
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.2, normalized_histogram[-0.1], 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, normalized_histogram[0.1], 1e-4);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.2, normalized_histogram[1.1], 1e-4);

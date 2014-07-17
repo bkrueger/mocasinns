@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <cmath>
 
+#include "../exceptions/unequal_sizes_exception.hpp"
 #include "../details/stl_extensions/vector_addable.hpp"
 
 namespace Mocasinns
@@ -62,7 +63,7 @@ namespace Mocasinns
     const T operator*(const VectorEnergy<T>& lhs, const VectorEnergy<T>& rhs)
     {
       // Test the sizes
-      if (lhs.size() != rhs.size()) throw typename VectorEnergy<T>::SizesUnequalException();
+      if (lhs.size() != rhs.size()) throw Exceptions::UnequalSizesException("Scalar multiplication of two VectorEnergy objects works only for vectors of the same size.");
 
       // Multiply the vectors as a scalar product
       T result(0);

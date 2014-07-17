@@ -62,7 +62,7 @@ namespace Mocasinns
       VectorObservable<T>& operator*=(const VectorObservable<T>& rhs)
       {
 	// Test the sizes
-	if (this->data.size() != rhs.size()) throw typename Base::SizesUnequalException();
+	if (this->data.size() != rhs.size()) throw Exceptions::UnequalSizesException("Scalar multiplication of two VectorEnergy objects works only for vectors of the same size.");
 
 	// Multiply the vectors component-wise
 	iterator it_this = this->data.begin();
@@ -76,7 +76,7 @@ namespace Mocasinns
       VectorObservable<T>& operator/=(const VectorObservable<T>& rhs)
       {
 	// Test the sizes
-	if (this->data.size() != rhs.size()) throw typename Base::SizesUnequalException();
+	if (this->data.size() != rhs.size()) throw Exceptions::UnequalSizesException("Scalar multiplication of two VectorEnergy objects works only for vectors of the same size.");
 
 	// Divide the vectors component-wise
 	iterator it_this = this->data.begin();

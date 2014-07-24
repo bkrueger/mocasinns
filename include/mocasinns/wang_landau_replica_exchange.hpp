@@ -24,7 +24,40 @@
 
 namespace Mocasinns
 {
-  //! Class for replica exchange Wang-Landau simulations
+  /*!
+   * \brief Class for a replica exchange version of the Wang-Landau algorithm
+   *
+   * \details For the basic notions of Wang-Landau simulation see the reference of the standard Wang-Landau simulation class WangLandau.
+   *
+   * For this replica exchange version of the Wang-Landau algorithm the studied energy range \f$ E_{\mathrm{min}} \leq E \leq E_{\mathrm{max}} \f$ is splitted into \f$ h \f$ smaller intervals \f$ E^{(i)}_{\mathrm{min}} \leq E \leq E^{(i)}_{\mathrm{max}} \f$ with \f$ E^{(0)}_{\mathrm{min}} = E_{\mathrm{min}} \f$ and \f$ E^{(h-1)}_{\mathrm{max}} = E_{\mathrm{max}} \f$.
+   * In each of the \f$ h \f$ smaller energy ranges there are \f$ m \f$ independent Wang-Landau simulations performed.
+   * 
+   * After a certain number of sweeps in all independent Wang-Landau simulations, a replica exchange between neighbouring simulations is proposed and accepted with the probability
+   * \f[
+   * P_{\mathrm{acc}} = \min \left[1, \frac{g^{(i,j)}(E^{(i,j)}) \cdot g^{(i+1,j^\prime)}(E^{(i+1,j^\prime)})}{g^{(i,j)}(E^{(i+1,j^\prime)}) \cdot g^{(i+1,j^\prime)}(E^{(i,j)})} \right]
+   * \f]
+   * where \f$ 0 \leq i \leq h - 2 \f$ is the index of the energy range and \f$ 0 \leq j,j^\prime \leq m - 1 \f$ are randomly chosen simulations in the energy ranges so that \f$ g^{(i,j)} \f$ is the density of states and \f$ E^{(i,j)} \f$ is the current energy of the simulation \f$ j \f$ in energy range \f$ i \f$.
+   *
+   * If each of the independent Wang-Landau simulations has reached the flatness criterion, the density of states in each energy range are averaged and replace the single density of states. Then the modification factor of all simulations is decreased simultaneously.
+   *
+   * \signalhandlers
+   * \signalhandler{signal_handler_modfac_change,This handler is called if the flatness criterion was reached in all incidence counters and the current modification factor will be decreased.}
+   * \signalhandler{signal_handler_replica_exchange, This handler is called every time a replica exchange is tried.}
+   * \signalhandler{signal_handler_sig...., The check for <tt>POSIX</tt> signals (<tt>SIGTERM</tt>\, <tt>SIGUSR1</tt> and <tt>SIGUSR2</tt>) is performed after every sweep of <tt>Parameters::sweep_steps</tt> steps.}
+   * \endsignalhandlers
+   *
+   * \tparam ConfigurationType \concept{ConfigurationType}
+   * \tparam StepType \concept{StepType}
+   * \tparam EnergyType \concept{EnergyType}
+   * \tparam HistoType \concept{HistoType}
+   * \tparam RandomNumberGenerator \concept{RandomNumberGenerator}
+   *
+   * \references
+   * \reference{1, Vogel T.\, Li Y.W.\, Wüst T. and Landau D.P.\, PRL 110 (2013) 210603}
+   * \reference{2, Wang F. and Landau D.P.\, PRL 86 (2001) 2050-2053}
+   * \reference{3, Wang F. and Landau D.P.\, PRE 64 (2001) 056101}
+   * \endreferences
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   class WangLandauReplicaExchange : public Simulation<ConfigurationType, RandomNumberGenerator>
   {

@@ -8,14 +8,24 @@
 
 #ifdef MOCASINNS_WANG_LANDAU_REPLICA_EXCHANGE_HPP
 
+#include <sstream>
 #include <iterator>
 #include <omp.h>
 
 #include "../exceptions/iterator_range_exception.hpp"
+#include "../exceptions/wrong_energy_exception.hpp"
 
 namespace Mocasinns
 {
   /*!
+    \details This constructor takes the parameters object and a range of pointers to configurations to work on.
+    The size of this range must equal the product of energy range number \f$ h \f$ and simulations per energy range \f$ m \f$ specified in the parameters region.
+    The configurations must be in energy-range-first order, so that the \f$ m \f$ first configurations correspond to the first energy range and so on.
+    If the current energy of the given configurations is not inside of the given energy range, an exception will be thrown
+
+    \exception IteratorRangeException The size of the given iterator range is not equal to \f$ h \cdot m \f$, the product of energy range numbers and simulations per energy range
+    \exception WrongEnergyException The energy of a given configuration is outside of the respective energy range
+    
     \tparam ConfigurationPointerIterator Iterator of a range of pointers to configurations to work on
     \param params Parameters of the simulation
     \param configuration_pointers_begin Begin of the range of pointers to configurations to work on
@@ -31,7 +41,14 @@ namespace Mocasinns
   {
     // Check that the number of simulations matches the parameters
     if (static_cast<unsigned int>(std::distance(configuration_pointers_begin, configuration_pointers_end)) != params.energy_ranges.size() * params.simulations_per_replica)
-      throw Exceptions::IteratorRangeException("The size of the given iterators must equal the product of energy ranges and the simulations per replica.");
+    {
+      std::stringstream error_string;
+      error_string << "The size of the given iterators (here: " << std::distance(configuration_pointers_begin, configuration_pointers_end);
+      error_string << ") must equal the product of energy range number (here: " << params.energy_ranges.size();
+      error_string << ") and the simulations per replica (here: " << params.simulations_per_replica;
+      error_string << ") specified in the parameters.";
+      throw Exceptions::IteratorRangeException(error_string.str());
+    }
 
     // Go through all configurations, store the pointers and set up a WangLandau simulation
     ConfigurationPointerIterator configuration_pointers_it = configuration_pointers_begin;
@@ -45,6 +62,18 @@ namespace Mocasinns
 
       for (unsigned int r = 0; r < params.simulations_per_replica; ++r)
       {
+	// Check that the energy of the configuration is in the correct range
+	if ((*configuration_pointers_it)->energy() < simulation_parameters.energy_ranges[e].first ||
+	    (*configuration_pointers_it)->energy() > simulation_parameters.energy_ranges[e].second)
+	{
+	  std::stringstream error_string;
+	  error_string << "The energy of configuration " << e*params.simulations_per_replica + r;
+	  error_string << ", E = " << (*configuration_pointers_it)->energy();
+	  error_string << " is outside of the given energy range " << e << ", ";
+	  error_string << simulation_parameters.energy_ranges[e].first << " <= E <= " << simulation_parameters.energy_ranges[e].second << ".";
+	  throw Exceptions::WrongEnergyException(error_string.str());
+	}
+
 	wang_landau_simulations.push_back(WangLandauType(base_parameters, *configuration_pointers_it));
 	configuration_pointers_it++;
       }

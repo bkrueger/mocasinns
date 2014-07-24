@@ -78,7 +78,7 @@ public:
   //! Value of the Histocrete at given bin
   y_value_type& operator[] (const x_value_type & bin) { return this->values[bin]; }
   //! Value of the Histocrete at given bin
-  const y_value_type& operator[] (const x_value_type & bin) const { return this->values[bin]; }
+  const y_value_type& operator[] (const x_value_type & bin) const { return this->values.find(bin)->second; }
 
   //! Adds a given value to all bins of this Histocrete
   Histocrete<x_value_type, y_value_type>& operator+= (const y_value_type& scalar) { return Base::operator+=(scalar); }

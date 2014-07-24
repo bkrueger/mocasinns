@@ -18,6 +18,7 @@
 #include "test_serial_tempering.hpp"
 #include "test_parallel_tempering.hpp"
 #include "test_wang_landau.hpp"
+#include "test_wang_landau_replica_exchange.hpp"
 #include "test_optimal_ensemble_sampling.hpp"
 #include "test_accumulators/test_histogram_accumulator.hpp"
 #include "test_accumulators/test_file_accumulator.hpp"
@@ -72,6 +73,8 @@ int main(int argc, char *argv[])
   }
   if (test_all || test_name == "WangLandau")
     runner.addTest(TestWangLandau::suite());
+  if (test_all || test_name == "WangLandauReplicaExchange")
+    runner.addTest(TestWangLandauReplicaExchange::suite());
   if (test_all || test_name == "OptimalEnsembleSampling")
     runner.addTest(TestOptimalEnsembleSampling::suite());
   if (test_all || test_name == "Accumulators")

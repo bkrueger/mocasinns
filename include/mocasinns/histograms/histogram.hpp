@@ -95,7 +95,7 @@ public:
   //! Value of the Histogram at given bin, takes binning into account
   y_value_type& operator[] (const x_value_type & bin) { return this->values[binning(bin)]; }
   //! Value of the Histogram at given bin, takes binning into account
-  const y_value_type& operator[] (const x_value_type & bin) const { return this->values[binning(bin)]; }
+  const y_value_type& operator[] (const x_value_type & bin) const { return this->values.find(binning(bin))->second; }
 
   //! Adds a given value to all bins of this Histogram
   Histogram<x_value_type, y_value_type, BinningFunctor>& operator+= (const y_value_type& scalar) { return Base::operator+=(scalar); }

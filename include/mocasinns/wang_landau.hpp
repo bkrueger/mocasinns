@@ -105,7 +105,7 @@ namespace Mocasinns
     WangLandau(const Parameters& params, ConfigurationType* initial_configuration);
     //! Copy from a Wang-Landau simulation with possible different rejection free parameter
     WangLandau(const WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>& other);
-    
+
     //! Get-Accessor for the parameters of the simulation
     const Parameters& get_simulation_parameters() const { return simulation_parameters; }
     //! Set-Accessor for the parameters of the simulation

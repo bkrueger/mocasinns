@@ -46,12 +46,11 @@ Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumb
 
 /*! \fn AUTO_TEMPLATE_2
  * \details Copies a Wang-Landau simulation from another given simulation.
- * \tparam rejection_free_other Automatically determined from parameter
- * \param other WangLandau or WangLandauRejectionFree simulation object that will be copied.
+ * \param other WangLandau simulation object that will be copied.
  */
 template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
 Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::WangLandau(const WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>& other)
-  : Simulation<ConfigurationType, RandomNumberGenerator>(this->configuration_space), sweep_counter(0)
+  : Simulation<ConfigurationType, RandomNumberGenerator>(other.configuration_space)
 {
   log_density_of_states = other.log_density_of_states;
   incidence_counter = other.incidence_counter;

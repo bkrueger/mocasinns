@@ -81,6 +81,8 @@ namespace Mocasinns
     // Typedefs for histograms
     typedef HistoType<EnergyType, incidence_counter_y_value_t> IncidenceCounterType;
     typedef HistoType<EnergyType, double> LogDensityOfStatesType;
+    //! Type of the replica exchange logs
+    typedef std::vector<step_number_t> ReplicaExchangeLog;
     //! Forward declaration of the struct storing the Parameters of a Metropolis Simulation
     struct Parameters;
 
@@ -117,15 +119,39 @@ namespace Mocasinns
     const std::vector<LogDensityOfStatesType>& get_log_density_of_states() { return log_density_of_states; }
     //! Set-accessor for the density of states of the energy ranges
     void set_log_density_of_states(const std::vector<LogDensityOfStatesType>& value) { log_density_of_states = value; }
+    //! Get-accessor for the sweep counter of the different simulations
+    step_number_t get_sweep_counter(unsigned int simulation_index) const { return wang_landau_simulations[simulation_index].get_sweep_counter(); }
+
+    //! Number of executed replica exchanges. 
+    //! At index i the number of executed exchanges between energy ranges with index i and (i+1) is recorded
+    const ReplicaExchangeLog& get_replica_exchanges_executed() const { return replica_exchange_log_executed; }
+    //! Number of rejected replica exchanges. 
+    //! At index i the number of rejected exchanges between energy ranges with index i and (i+1) is recorded
+    const ReplicaExchangeLog& get_replica_exchanges_rejected() const { return replica_exchange_log_rejected; }
+    //! Acceptance probability of replica exchanges
+    //! At index i the acceptance probability of replica exchanges between energy ranges with index i and (i+1) is recorded
+    std::vector<double> get_acceptance_probabilities() const
+    {
+      std::vector<double> result;
+      for (unsigned int e = 0; e < simulation_parameters.energy_ranges.size() - 1; ++e)
+	if (replica_exchange_log_executed[e] == 0)
+	  result.push_back(0.0);
+	else
+	  result.push_back(static_cast<double>(replica_exchange_log_executed[e]) / static_cast<double>(replica_exchange_log_rejected[e] + replica_exchange_log_executed[e]));
+      return result;
+    }
 
     //! Execute a given number of parallel tempering steps on the configuration at inverse temperatur beta
     void do_wang_landau_sweeps(const step_number_t& sweep_number);
 
     //! Execute an replica exchange step
-    unsigned int do_replica_exchange();
+    void do_replica_exchange();
     //! Average the density of states of the simulations in the same energy range
     void average_density_of_states();
 
+    //! Clear the replica exchange logs
+    void clear_logs();
+    
     //! Execute a replica exchange Wang-Landau simulation
     void do_wang_landau_replica_exchange_simulation();
 
@@ -141,14 +167,20 @@ namespace Mocasinns
   private:
     //! Member variable storing the parameters of the simulation
     Parameters simulation_parameters;
-    //! Member storing the overall current modification factor
-    double modification_factor_current;
 
     //! Member variable for storing the instances of the Metropolis simulations
     std::vector<WangLandauType> wang_landau_simulations;
 
     //! Member variable for storing the density of states for the energy ranges
     std::vector<LogDensityOfStatesType> log_density_of_states;
+
+    //! Member storing the overall current modification factor
+    double modification_factor_current;
+
+    //! Variable for logging the number of rejected replica exchanges (at index i (0 <= i < h - 1) the exchanges between energy ranges indices i and (i+1) are logged)
+    ReplicaExchangeLog replica_exchange_log_rejected;
+    //! Variable for logging the number of execyted replica exchanges (at index i (0 <= i < h - 1) the exchanges between energy ranges indices i and (i+1) are logged)
+    ReplicaExchangeLog replica_exchange_log_executed;
 
     //! Member variable for boost serialization
     friend class boost::serialization::access;

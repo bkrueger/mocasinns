@@ -181,9 +181,9 @@ namespace Mocasinns
 
     //! Vector that stores for each configuration pointer whether the minimal inverse temperature (false) or the maximal inverse temperature (true) was left
     std::map<ConfigurationType*, bool> replica_exchange_direction;
-    //! Variable for loggint the number of rejected replica exchanges (at index i the exchanges between indices i and (i+1) are logged)
+    //! Variable for logging the number of rejected replica exchanges (at index i the exchanges between indices i and (i+1) are logged)
     ReplicaExchangeLog replica_exchange_log_rejected;
-    //! Variable for loggint the number of execyted replica exchanges (at index i the exchanges between indices i and (i+1) are logged)
+    //! Variable for logging the number of execyted replica exchanges (at index i the exchanges between indices i and (i+1) are logged)
     ReplicaExchangeLog replica_exchange_log_executed;
     //! Variable for storing the temperature visits after leaving the minimal inverse temperature
     InverseTemperatureHistogram inverse_temperature_histogram_up;

@@ -37,7 +37,9 @@ namespace Mocasinns
 																  ConfigurationPointerIterator configuration_pointers_begin, 
 																  ConfigurationPointerIterator configuration_pointers_end) 
     : simulation_parameters(params),
-      modification_factor_current(params.modification_factor_initial)
+      modification_factor_current(params.modification_factor_initial),
+      replica_exchange_log_rejected(params.energy_ranges.size() - 1, 0),
+      replica_exchange_log_executed(params.energy_ranges.size() - 1, 0)
   {
     // Check that the number of simulations matches the parameters
     if (static_cast<unsigned int>(std::distance(configuration_pointers_begin, configuration_pointers_end)) != params.energy_ranges.size() * params.simulations_per_replica)
@@ -74,7 +76,10 @@ namespace Mocasinns
 	  throw Exceptions::WrongEnergyException(error_string.str());
 	}
 
+	// Create the Wang-Landau simulations
 	wang_landau_simulations.push_back(WangLandauType(base_parameters, *configuration_pointers_it));
+	// Add the replica index to the random seed to avoid sampling with the same sedd
+	wang_landau_simulations.back().set_random_seed(this->get_random_seed());
 	configuration_pointers_it++;
       }
     }
@@ -111,8 +116,14 @@ namespace Mocasinns
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  unsigned int WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::do_replica_exchange()
+  void WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::do_replica_exchange()
   {
+    if (simulation_parameters.energy_ranges.size() == 1)
+    {
+      replica_exchange_log_rejected[0]++;
+      return;
+    }
+
     // Select randomly the index of the energy ranges to exchange
     unsigned int exchange_index = this->rng->random_int32(0, simulation_parameters.energy_ranges.size() - 2);
     // Select randomly the index of the simulation to exchange
@@ -139,7 +150,10 @@ namespace Mocasinns
     // Check that the energies of the selected walkers are contained in the energy ranges
     if (energy_1 < simulation_parameters.energy_ranges[exchange_index + 1].first ||
 	energy_2 > simulation_parameters.energy_ranges[exchange_index].second)
-      return exchange_index;
+    {
+      replica_exchange_log_rejected[exchange_index]++;
+      return;
+    }
 
     // Calculate the acceptance probability
     double acceptance_probability = exp(log_dos_1[energy_1] - log_dos_1[energy_2] + 
@@ -153,17 +167,27 @@ namespace Mocasinns
       wang_landau_simulations[simulation_index_1].set_config_space(wang_landau_simulations[simulation_index_2].get_config_space());
       wang_landau_simulations[simulation_index_2].set_config_space(temp);
 
-      return exchange_index;
+      replica_exchange_log_executed[exchange_index]++;
     }
     else
-      return 0;
+      replica_exchange_log_rejected[exchange_index]++;
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   void WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::average_density_of_states()
   {
-    // If there is only one simulation per energy range, do nothing
-    if (simulation_parameters.simulations_per_replica == 1) return;
+    // If there is only one simulation per energy range, do only the dos shift
+    if (simulation_parameters.simulations_per_replica == 1) 
+    {
+      for (unsigned int e = 0; e < simulation_parameters.energy_ranges.size(); ++e)
+      {
+	LogDensityOfStatesType replica_dos = wang_landau_simulations[e].get_log_density_of_states();
+	replica_dos.shift_bin_zero(replica_dos.min_x_value());
+	wang_landau_simulations[e].set_log_density_of_states(replica_dos);
+	log_density_of_states[e] = replica_dos;
+      }
+      return;
+    }
 
     for (unsigned int e = 0; e < simulation_parameters.energy_ranges.size(); ++e)
     {
@@ -189,6 +213,18 @@ namespace Mocasinns
 	wang_landau_simulations[e*simulation_parameters.simulations_per_replica + r].set_log_density_of_states(averaged_dos);
       log_density_of_states[e] = averaged_dos;
     }
+  }
+
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+  void WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::clear_logs()
+  {
+    // Clear the replica exchange logs
+    for (typename ReplicaExchangeLog::iterator log_it = replica_exchange_log_executed.begin();
+	 log_it != replica_exchange_log_executed.end(); ++log_it)
+      *log_it = 0;
+    for (typename ReplicaExchangeLog::iterator log_it = replica_exchange_log_rejected.begin();
+	 log_it != replica_exchange_log_rejected.end(); ++log_it)
+      *log_it = 0;
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>

@@ -9,7 +9,6 @@
 #define MOCASINNS_OPTIMAL_ENSEMBLE_SAMPLING_HPP
 
 #include "simulation.hpp"
-#include "wang_landau.hpp"
 #include "concepts/concepts.hpp"
 
 // Boost serialization for derived classes
@@ -78,11 +77,6 @@ namespace Mocasinns
     //! Struct storing the parameters of the optimal ensemble sampling simulation
     struct Parameters;
 
-    //! Typedef for a Wang-Landau simulation (used to estimate the weights)
-    typedef WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator> WangLandauSimulation;
-    //! Typedef for the parameters of a Wang-Landau simulation (used to estimate the weights)
-    typedef typename WangLandauSimulation::Parameters WangLandauParameters;
-
     //! Boost signal handler invoked after every iteration
     boost::signals2::signal<void (Simulation<ConfigurationType,RandomNumberGenerator>*)> signal_handler_iteration;
 
@@ -105,15 +99,6 @@ namespace Mocasinns
     const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter_positive() { return incidence_counter_positive; }
     //! Get-Accessor for the incidence counter of negative labled walkers
     const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter_negative() { return incidence_counter_negative; }
-
-    //! Find the minimal and the maximal energy of the system
-    template<class TemperatureType>
-    void find_minimal_maximal_energy(const TemperatureType& inverse_temperature_minimal_energy, const TemperatureType& invserse_temperature_maximal_energy, unsigned int steps);
-
-    //! Estimate the weights from the density of states calculated in a Wang-Landau simulation with standard Wang-Landau parameters
-    void estimate_weights();
-    //! Estimate the weights from the density of states calculated in a Wang-Landau simulation with given Wang-Landau parameters
-    void estimate_weights(const WangLandauParameters& wang_landau_parameters);
 
     //! Calculate the acceptance probability of a step
     double acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);

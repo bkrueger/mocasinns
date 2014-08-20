@@ -85,6 +85,9 @@ public:
   template <class ArbitraryDerived>
   bool operator!=(const HistoBase<x_value_type,y_value_type,ArbitraryDerived>& rhs) const;
 
+  //! Operator for unary minus (negating the histogram)
+  Derived operator-() const;
+
   //! Operator for adding a scalar to every bin of this HistoBase
   Derived& operator+=(const y_value_type& scalar);
   //! Operator for substracting a scalar of every bin of this HistoBase

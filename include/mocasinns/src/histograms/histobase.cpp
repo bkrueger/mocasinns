@@ -54,6 +54,15 @@ bool HistoBase<x_value_type,y_value_type,Derived>::operator!=(const HistoBase<x_
 }
 
 template<class x_value_type, class y_value_type, class Derived>
+Derived HistoBase<x_value_type, y_value_type, Derived>::operator-() const
+{
+  Derived result;
+  for (const_iterator cit = this->values.begin(); cit != this->values.end(); ++cit)
+    result.insert(result.end(), value_type(cit->first, -cit->second));
+  return result;
+}
+
+template<class x_value_type, class y_value_type, class Derived>
 Derived& HistoBase<x_value_type, y_value_type, Derived>::operator+=(const y_value_type& scalar)
 {
   for (iterator it = this->values.begin(); it != this->values.end(); it++)

@@ -25,6 +25,7 @@ public:
   void tearDown();
 
   void test_operator_equal();
+  void test_operator_negative();
   void test_operator_add();
   void test_operator_substract();
   void test_operator_multiply();

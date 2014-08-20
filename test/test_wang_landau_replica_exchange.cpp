@@ -18,7 +18,7 @@ void TestWangLandauReplicaExchange::setUp()
   parameters_1d.modification_factor_multiplier = 0.9;
   parameters_1d.flatness = 0.8;
   parameters_1d.sweep_steps = 1000;
-  parameters_1d.simulations_per_replica = 2;
+  parameters_1d.simulations_per_energy_range = 2;
   parameters_1d.sweeps_per_replica_exchange = 10;
   std::vector<std::pair<int, int> > energy_ranges;
   energy_ranges.push_back(std::pair<int, int>(-16,8));

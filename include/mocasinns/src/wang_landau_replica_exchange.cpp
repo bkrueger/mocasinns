@@ -39,22 +39,25 @@ namespace Mocasinns
     : simulation_parameters(params),
       modification_factor_current(params.modification_factor_initial),
       replica_exchange_log_rejected(params.energy_ranges.size() - 1, 0),
-      replica_exchange_log_executed(params.energy_ranges.size() - 1, 0)
+      replica_exchange_log_executed(params.energy_ranges.size() - 1, 0),
+      sweeps_log(std::distance(configuration_pointers_begin, configuration_pointers_end), 0),
+      sweeps_modfac_log(std::distance(configuration_pointers_begin, configuration_pointers_end), 0)
   {
     // Check that the number of simulations matches the parameters
-    if (static_cast<unsigned int>(std::distance(configuration_pointers_begin, configuration_pointers_end)) != params.energy_ranges.size() * params.simulations_per_replica)
+    if (static_cast<unsigned int>(std::distance(configuration_pointers_begin, configuration_pointers_end)) 
+	!= simulation_parameters.energy_ranges.size() * simulation_parameters.simulations_per_energy_range)
     {
       std::stringstream error_string;
       error_string << "The size of the given iterators (here: " << std::distance(configuration_pointers_begin, configuration_pointers_end);
-      error_string << ") must equal the product of energy range number (here: " << params.energy_ranges.size();
-      error_string << ") and the simulations per replica (here: " << params.simulations_per_replica;
+      error_string << ") must equal the product of energy range number (here: " << simulation_parameters.energy_ranges.size();
+      error_string << ") and the simulations per replica (here: " << simulation_parameters.simulations_per_energy_range;
       error_string << ") specified in the parameters.";
       throw Exceptions::IteratorRangeException(error_string.str());
     }
 
     // Go through all configurations, store the pointers and set up a WangLandau simulation
     ConfigurationPointerIterator configuration_pointers_it = configuration_pointers_begin;
-    for (unsigned int e = 0; e < params.energy_ranges.size(); ++e)
+    for (unsigned int e = 0; e < simulation_parameters.energy_ranges.size(); ++e)
     {
       typename WangLandauType::Parameters base_parameters(params);
       base_parameters.use_energy_cutoff_lower = true;
@@ -62,14 +65,14 @@ namespace Mocasinns
       base_parameters.energy_cutoff_lower = simulation_parameters.energy_ranges[e].first;
       base_parameters.energy_cutoff_upper = simulation_parameters.energy_ranges[e].second;
 
-      for (unsigned int r = 0; r < params.simulations_per_replica; ++r)
+      for (unsigned int r = 0; r < simulation_parameters.simulations_per_energy_range; ++r)
       {
 	// Check that the energy of the configuration is in the correct range
 	if ((*configuration_pointers_it)->energy() < simulation_parameters.energy_ranges[e].first ||
 	    (*configuration_pointers_it)->energy() > simulation_parameters.energy_ranges[e].second)
 	{
 	  std::stringstream error_string;
-	  error_string << "The energy of configuration " << e*params.simulations_per_replica + r;
+	  error_string << "The energy of configuration " << e*simulation_parameters.simulations_per_energy_range + r;
 	  error_string << ", E = " << (*configuration_pointers_it)->energy();
 	  error_string << " is outside of the given energy range " << e << ", ";
 	  error_string << simulation_parameters.energy_ranges[e].first << " <= E <= " << simulation_parameters.energy_ranges[e].second << ".";
@@ -85,7 +88,7 @@ namespace Mocasinns
     }
 
     // Set up the density of states vector
-    log_density_of_states = std::vector<LogDensityOfStatesType>(params.energy_ranges.size());
+    log_density_of_states = std::vector<LogDensityOfStatesType>(simulation_parameters.energy_ranges.size());
   }
   
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -107,6 +110,18 @@ namespace Mocasinns
 	{
 	  wang_landau_simulations[i].do_wang_landau_steps(simulation_parameters.sweep_steps);
 	  sweep_counter++;
+
+	  // Log the sweeps
+	  sweeps_log[i]++;
+	  sweeps_modfac_log[i]++;
+
+	  // If the counter for the sweeps during this modification factor in this replica reaches the reset number
+	  // the incidence counter will be reset
+	  if (sweeps_modfac_log[i] == simulation_parameters.reset_sweep_number)
+	  {
+	    sweeps_modfac_log[i] = 0;
+	    wang_landau_simulations[i].set_incidence_counter();
+	  }
 	  
 	  // Check for signals and return if simulation should be terminated
 	  posix_signal_caught = this->check_for_posix_signal();
@@ -128,17 +143,17 @@ namespace Mocasinns
     unsigned int exchange_index = this->rng->random_int32(0, simulation_parameters.energy_ranges.size() - 2);
     // Select randomly the index of the simulation to exchange
     unsigned int simulation_index_1, simulation_index_2;
-    if (simulation_parameters.simulations_per_replica == 1)
+    if (simulation_parameters.simulations_per_energy_range == 1)
     {
       simulation_index_1 = exchange_index;
       simulation_index_2 = exchange_index + 1;
     }
     else
     {
-      simulation_index_1 = exchange_index*simulation_parameters.simulations_per_replica 
-	+ this->rng->random_int32(1, simulation_parameters.simulations_per_replica - 1);
-      simulation_index_2 = (exchange_index + 1)*simulation_parameters.simulations_per_replica 
-	+ this->rng->random_int32(1, simulation_parameters.simulations_per_replica - 1);
+      simulation_index_1 = exchange_index*simulation_parameters.simulations_per_energy_range 
+	+ this->rng->random_int32(1, simulation_parameters.simulations_per_energy_range - 1);
+      simulation_index_2 = (exchange_index + 1)*simulation_parameters.simulations_per_energy_range 
+	+ this->rng->random_int32(1, simulation_parameters.simulations_per_energy_range - 1);
     }
     
     // Get the density of states and the energies of the selected walkers
@@ -177,7 +192,7 @@ namespace Mocasinns
   void WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::average_density_of_states()
   {
     // If there is only one simulation per energy range, do only the dos shift
-    if (simulation_parameters.simulations_per_replica == 1) 
+    if (simulation_parameters.simulations_per_energy_range == 1) 
     {
       for (unsigned int e = 0; e < simulation_parameters.energy_ranges.size(); ++e)
       {
@@ -193,15 +208,15 @@ namespace Mocasinns
     {
       // Define the averaged_dos
       LogDensityOfStatesType averaged_dos;
-      averaged_dos.initialise_empty(wang_landau_simulations[e*simulation_parameters.simulations_per_replica].get_log_density_of_states());
+      averaged_dos.initialise_empty(wang_landau_simulations[e*simulation_parameters.simulations_per_energy_range].get_log_density_of_states());
       
       // Sum up
-      for (unsigned int r = 0; r < simulation_parameters.simulations_per_replica; ++r)
+      for (unsigned int r = 0; r < simulation_parameters.simulations_per_energy_range; ++r)
       {
-	LogDensityOfStatesType replica_dos = wang_landau_simulations[e*simulation_parameters.simulations_per_replica + r].get_log_density_of_states();
+	LogDensityOfStatesType replica_dos = wang_landau_simulations[e*simulation_parameters.simulations_per_energy_range + r].get_log_density_of_states();
 	replica_dos.shift_bin_zero(replica_dos.min_x_value());
 	for (typename LogDensityOfStatesType::iterator dos_it = replica_dos.begin(); dos_it != replica_dos.end(); ++dos_it)
-	  averaged_dos[dos_it->first] += exp(dos_it->second) / simulation_parameters.simulations_per_replica;
+	  averaged_dos[dos_it->first] += exp(dos_it->second) / simulation_parameters.simulations_per_energy_range;
       }
 
       // Calculate the logarithm
@@ -209,22 +224,10 @@ namespace Mocasinns
 	dos_it->second = log(dos_it->second);
 
       // Assign the averaged dos
-      for (unsigned int r = 0; r < simulation_parameters.simulations_per_replica; ++r)
-	wang_landau_simulations[e*simulation_parameters.simulations_per_replica + r].set_log_density_of_states(averaged_dos);
+      for (unsigned int r = 0; r < simulation_parameters.simulations_per_energy_range; ++r)
+	wang_landau_simulations[e*simulation_parameters.simulations_per_energy_range + r].set_log_density_of_states(averaged_dos);
       log_density_of_states[e] = averaged_dos;
     }
-  }
-
-  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  void WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::clear_logs()
-  {
-    // Clear the replica exchange logs
-    for (typename ReplicaExchangeLog::iterator log_it = replica_exchange_log_executed.begin();
-	 log_it != replica_exchange_log_executed.end(); ++log_it)
-      *log_it = 0;
-    for (typename ReplicaExchangeLog::iterator log_it = replica_exchange_log_rejected.begin();
-	 log_it != replica_exchange_log_rejected.end(); ++log_it)
-      *log_it = 0;
   }
 
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
@@ -236,8 +239,8 @@ namespace Mocasinns
     // Use the member density of states to initialise the density of states of the single simulations
     for (unsigned int e = 0; e < simulation_parameters.energy_ranges.size(); ++e)
     {
-      for (unsigned int r = 0; r < simulation_parameters.simulations_per_replica; ++r)
-	wang_landau_simulations[e*simulation_parameters.simulations_per_replica + r].set_log_density_of_states(log_density_of_states[e]);
+      for (unsigned int r = 0; r < simulation_parameters.simulations_per_energy_range; ++r)
+	wang_landau_simulations[e*simulation_parameters.simulations_per_energy_range + r].set_log_density_of_states(log_density_of_states[e]);
     }
 
     // Do the actual simulation
@@ -250,8 +253,10 @@ namespace Mocasinns
 	do_wang_landau_sweeps(simulation_parameters.sweeps_per_replica_exchange);
 	// Do a replica exchange
 	do_replica_exchange();
+
 	// Invoke the information signal handler
 	signal_handler_replica_exchange(this);
+
 	// Check flatness
 	all_incidence_counters_flat = true;
 	for (unsigned int i = 0; i < wang_landau_simulations.size(); ++i)
@@ -267,14 +272,23 @@ namespace Mocasinns
       // Invoke the information signal handler
       signal_handler_modfac_change(this);
 
-      // Reset the incidence counters, normalize and average the density of states
+      // Reset the incidence counters and the modfac sweep counter, normalize and average the density of states
       modification_factor_current *= simulation_parameters.modification_factor_multiplier;	
       for (unsigned int i = 0; i < wang_landau_simulations.size(); ++i)
       {
 	wang_landau_simulations[i].set_incidence_counter();
 	wang_landau_simulations[i].set_modification_factor_current(modification_factor_current);
+	sweeps_modfac_log[i] = 0;
       }
       average_density_of_states();
+
+      // Clear the replica exchange logs
+      for (typename ReplicaExchangeLog::iterator log_it = replica_exchange_log_executed.begin();
+	   log_it != replica_exchange_log_executed.end(); ++log_it)
+	*log_it = 0;
+      for (typename ReplicaExchangeLog::iterator log_it = replica_exchange_log_rejected.begin();
+	   log_it != replica_exchange_log_rejected.end(); ++log_it)
+	*log_it = 0;
     }
   }
 }

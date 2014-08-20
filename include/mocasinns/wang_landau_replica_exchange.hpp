@@ -16,6 +16,7 @@
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/vector.hpp>
 
 // Boost function types for the standard observable
 #include <boost/function_types/result_type.hpp>
@@ -120,7 +121,9 @@ namespace Mocasinns
     //! Set-accessor for the density of states of the energy ranges
     void set_log_density_of_states(const std::vector<LogDensityOfStatesType>& value) { log_density_of_states = value; }
     //! Get-accessor for the sweep counter of the different simulations
-    step_number_t get_sweep_counter(unsigned int simulation_index) const { return wang_landau_simulations[simulation_index].get_sweep_counter(); }
+    const std::vector<step_number_t>& get_sweeps() const { return sweeps_log; }
+    //! Get-accessor for the sweep counter for the current modification factor of the different simulations
+    const std::vector<step_number_t>& get_sweeps_modfac() const { return sweeps_modfac_log; }
 
     //! Number of executed replica exchanges. 
     //! At index i the number of executed exchanges between energy ranges with index i and (i+1) is recorded
@@ -149,9 +152,6 @@ namespace Mocasinns
     //! Average the density of states of the simulations in the same energy range
     void average_density_of_states();
 
-    //! Clear the replica exchange logs
-    void clear_logs();
-    
     //! Execute a replica exchange Wang-Landau simulation
     void do_wang_landau_replica_exchange_simulation();
 
@@ -177,18 +177,31 @@ namespace Mocasinns
     //! Member storing the overall current modification factor
     double modification_factor_current;
 
-    //! Variable for logging the number of rejected replica exchanges (at index i (0 <= i < h - 1) the exchanges between energy ranges indices i and (i+1) are logged)
+    //! Member variable for logging the number of rejected replica exchanges (at index i (0 <= i < h - 1) the exchanges between energy ranges indices i and (i+1) are logged)
     ReplicaExchangeLog replica_exchange_log_rejected;
-    //! Variable for logging the number of execyted replica exchanges (at index i (0 <= i < h - 1) the exchanges between energy ranges indices i and (i+1) are logged)
+    //! Member variable for logging the number of execyted replica exchanges (at index i (0 <= i < h - 1) the exchanges between energy ranges indices i and (i+1) are logged)
     ReplicaExchangeLog replica_exchange_log_executed;
+    //! Member variable for logging the sweeps executed for each replica
+    std::vector<step_number_t> sweeps_log;
+    //! Member variable for logging the sweeps executed for each replica for a single modfac
+    std::vector<step_number_t> sweeps_modfac_log;
 
-    //! Member variable for boost serialization
     friend class boost::serialization::access;
     //! Method to serialize this class (omitted version name to avoid unused parameter warnings)
     template<class Archive> void serialize(Archive & ar, const unsigned int)
     {
-      // serialize base class information
+      // Serialize base class information
       ar & boost::serialization::base_object<Simulation<ConfigurationType, RandomNumberGenerator> >(*this);
+
+      // Serialize the class members
+      ar & simulation_parameters;
+      ar & wang_landau_simulations;
+      ar & log_density_of_states;
+      ar & modification_factor_current;
+      ar & replica_exchange_log_rejected;
+      ar & replica_exchange_log_executed;
+      ar & sweeps_log;
+      ar & sweeps_modfac_log;
     }
   };
   
@@ -197,23 +210,38 @@ namespace Mocasinns
   struct WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters
     : WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters
   {    
-    //! Number of sweeps to execute before to try a replica exchange
+    //! Number of sweeps to execute before to try a replica exchange, the default value is 10
     typename WangLandauReplicaExchange<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::step_number_t sweeps_per_replica_exchange;
 
-    //! Number of independent simulations per energy range
-    unsigned int simulations_per_replica;
+    //! Number of independent simulations per energy range, the default value is 1
+    unsigned int simulations_per_energy_range;
 
-    //! Number of parallel processes to use.
+    //! Number of parallel processes to use, the default value is 2
     unsigned int process_number;
 
     //! Vector of energy ranges
     std::vector<std::pair<EnergyType, EnergyType> > energy_ranges;
     
+    //! Create a parameter object with default values.
     Parameters() 
       : WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters(), 
 	sweeps_per_replica_exchange(10),
-	simulations_per_replica(1),
+	simulations_per_energy_range(1),
 	process_number(2) {}
+
+  private:
+    friend class boost::serialization::access;
+    template<class Archive> void serialize(Archive & ar, const unsigned int)
+    {
+      // Serialize base class information
+      ar & boost::serialization::base_object<typename WangLandau<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::Parameters>(*this);    
+
+      // Serialize the class members
+      ar & sweeps_per_replica_exchange;
+      ar & simulations_per_energy_range;
+      ar & process_number;
+      ar & energy_ranges;
+    }
   };
 }
 #include "src/wang_landau_replica_exchange.cpp"

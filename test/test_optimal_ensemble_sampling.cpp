@@ -1,5 +1,7 @@
 #include "test_optimal_ensemble_sampling.hpp"
 
+#include <mocasinns/details/iteration_steps/power_law_steps.hpp>
+
 CppUnit::Test* TestOptimalEnsembleSampling::suite()
 {
   CppUnit::TestSuite *suite_of_tests = new CppUnit::TestSuite("TestOptimalEnsembleSampling");
@@ -48,25 +50,30 @@ void TestOptimalEnsembleSampling::test_do_optimal_ensemble_sampling_simulation()
 
   // Do a complete Wang-Landau simulation in the 1d case
   //  test_ising_simulation_1d->estimate_weights();
-  Histograms::Histocrete<int, double> entropy_estimation_1d = test_ising_simulation_1d->do_optimal_ensemble_sampling_simulation();
+  Histograms::Histocrete<int, double> entropy_estimation_1d = test_ising_simulation_1d->do_optimal_ensemble_sampling_simulation(Details::IterationSteps::PowerLawSteps<>());
 
   std::cout << "Resulting dos: " << std::endl;
   entropy_estimation_1d.print();
 
   // Test the density of states histocrete
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[-16], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[-12], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[-8], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[-4], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(9.4627, entropy_estimation_1d[0], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[4], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[8], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[12], 0.2);
-  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[16], 0.2);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[-16], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[-12], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[-8], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[-4], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(9.4627, entropy_estimation_1d[0], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(8.9882, entropy_estimation_1d[4], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(7.5066, entropy_estimation_1d[8], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(4.7875, entropy_estimation_1d[12], 0.25);
+  CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, entropy_estimation_1d[16], 0.25);
 
   // Do a complete Wang-Landau simulation in the 2d case
-  test_ising_simulation_2d->estimate_weights();
-  Histograms::Histocrete<int, double> entropy_estimation_2d = test_ising_simulation_2d->do_optimal_ensemble_sampling_simulation();
+  typename WangLandau_IsingSimulation2d::Parameters wl_parameters;
+  wl_parameters.modification_factor_final = 1e-4;
+  WangLandau_IsingSimulation2d wl_simulation(wl_parameters, test_ising_config_2d);
+  wl_simulation.do_wang_landau_simulation();
+
+  test_ising_simulation_2d->set_weights(-wl_simulation.get_log_density_of_states());
+  Histograms::Histocrete<int, double> entropy_estimation_2d = test_ising_simulation_2d->do_optimal_ensemble_sampling_simulation(Details::IterationSteps::PowerLawSteps<>());
 
   // Test the density of states histocrete
   Histograms::Histocrete<int, double>::const_iterator ground_state = entropy_estimation_2d.begin();

@@ -9,6 +9,8 @@
 #define MOCASINNS_OPTIMAL_ENSEMBLE_SAMPLING_HPP
 
 #include "simulation.hpp"
+#include "details/multicanonical/step_parameter.hpp"
+#include "details/iteration_steps/constant_steps.hpp"
 #include "concepts/concepts.hpp"
 
 // Boost serialization for derived classes
@@ -116,7 +118,8 @@ namespace Mocasinns
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);
 
     //! Do an optimal ensemble sampling simulation
-    HistoType<EnergyType, double> do_optimal_ensemble_sampling_simulation();
+    template <class IterationStepsFunctor = Details::IterationSteps::ConstantSteps<> >
+    HistoType<EnergyType, double> do_optimal_ensemble_sampling_simulation(IterationStepsFunctor iteration_steps_functor = IterationStepsFunctor());
 
     //! Load the data of the Optimal Ensemble Sampling simulation from a serialization stream
     virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }
@@ -191,7 +194,7 @@ namespace Mocasinns
 
     //! Constructor setting the default values
     Parameters() : initial_steps_per_iteration(1000),
-		   iterations(10),
+		   iterations(10000),
 		   energy_cutoff_lower(0),
 		   energy_cutoff_upper(0),
 		   use_energy_cutoff_lower(false),

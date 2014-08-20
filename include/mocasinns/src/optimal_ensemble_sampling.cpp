@@ -128,6 +128,9 @@ namespace Mocasinns
       incidence_counter_negative[step_parameters.total_energy]++;
   }
 
+  /*! \fn AUTO_TEMPLATE_1
+   * \details Checks whether the next iteration of the weights can be calculated iterativly. Three conditions must be fulfilled for the function to return true: (1) The positive and the negative incidence counter must have at least one entry, (2) the positive and the negative incidence counter must not have more than one zero entry (for the maximal or the minimal energy) and (3) the derivative of the fraction histogram must be positive everywhere.
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   bool OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::weights_recalculable()
   {
@@ -160,6 +163,13 @@ namespace Mocasinns
     return !(incidence_counters_vanish || incidence_counters_zero_y_values || fraction_derivative_negative);
   }
 
+  /*! \fn AUTO_TEMPLATE_1
+   * \details Calculates the next iteration of the weights using the formula
+   * \f[
+   *   \Rightarrow P_{i+1}(E) = P_i(E) \cdot \sqrt{\frac{1}{H_i(E)} \cdot \frac{\mathrm df_i}{\mathrm dE}}
+   * \f]
+   * Afterwards the weights are rescaled (which does not alter the acceptance probabilities, since only the weight ratios matter).
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::recalculate_weights()
   {
@@ -187,7 +197,7 @@ namespace Mocasinns
     weights.shift_bin_zero(weights.min_y_value());
   }
 
-  /*!
+  /*! \fn AUTO_TEMPLATE_1
     \details Performs a number of steps with the acceptance probability given by the weights. Records the step in the positive and negative incidence counter histograms and resets the walker label if necessary.
     \param number Number of steps to perform.
    */
@@ -202,11 +212,17 @@ namespace Mocasinns
     this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType, false>(number, step_parameters);
   }
 
-  /*!
-    \returns Histogram with the logarithmic density of states associated to each energy.
+  /*! \fn AUTO_TEMPLATE_2
+   * \details Does a complete Optimal Ensemble sampling simulation with the parameters specified in the constructor of the class.
+   * 
+   * \tparam IterationStepsFunctor Function or object that takes two integer arguments (the steps of the first iteration and the iteration index) and calculates the steps for the given iteration index.
+   * \param iteration_steps_functor  Function or object that takes two integer arguments (the steps of the first iteration and the iteration index) and calculates the steps for the given iteration index. The default is to use allways the same number of steps. The functors Details::IterationSteps::ConstantSteps, Details::IterationSteps::LinearSteps and Details::IterationsSteps::PowerLawSteps can be used here.
+   *
+   * \returns Histogram with the logarithmic density of states associated to each energy.
    */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_optimal_ensemble_sampling_simulation()
+  template <class IterationStepsFunctor>
+  HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_optimal_ensemble_sampling_simulation(IterationStepsFunctor iteration_steps_functor)
   {
     // Log the start of the simulation
     this->simulation_start_log();
@@ -226,7 +242,7 @@ namespace Mocasinns
       while(!weights_recalculable())
       {
 	// Do the sampling steps
-	do_optimal_ensemble_sampling_steps(pow(2,iteration) * simulation_parameters.initial_steps_per_iteration);
+	do_optimal_ensemble_sampling_steps(iteration_steps_functor(simulation_parameters.initial_steps_per_iteration, iteration));
 
 	// Check for signals and return if simulation should be terminated
 	if (this->check_for_posix_signal()) return HistoType<EnergyType, double>();

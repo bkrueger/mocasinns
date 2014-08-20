@@ -34,82 +34,18 @@ namespace Mocasinns
     initialize_with_parameters();
   }
 
-  /*!
-    \details Constructs a metropolis simulation and does a lot of steps to find the maximal and the minimal energy of the system. Sets this minimal and maximal energy in the parameters of the Simulation.
-
-    \tparam Type of the temperature to use. There must be an operator* defined for multiplying the inverse temperature with the energy of the system.
-    \param inverse_temperature_minimal_energy Inverse temperature to be used for searching the minimal energy of the system
-    \param inverse_temperature_maximal_energy Inverse temperature to be used for seraching the maximal energy of the system
-    \param steps Number of steps to perform for searching each extremum of the energies of the system
-
-    \todo After the SimulatedAnnealing simulation was implemented, use this instead of the Metropolis simulation
+  /*! \fn AUTO_TEMPLATE_1
+   * \details The acceptance probability of the Optimal Ensemble simulation is calculated using the following formula:
+   * \f[
+   *   A(E_1 \rightarrow E_2) = \mathrm{min}\left(1, \frac{P(E_2)}{P(E_1)}\right)
+   * \f]
+   * where \f$ P(E) \f$ are the current weights at energy level \f$E\f$.
+   *
+   * If the step leads to an energy wich is lower than the current minimal energy or higher than the current maximal energy of the simulation, the parameter is updated and the weight of the new state is set to the weight of the old extremal state.
+   *
+   * \param step_to_execute Step of which the acceptance probability will be calculated
+   * \param step_parameters Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
    */
-  template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
-  template <class TemperatureType>
-  void OptimalEnsembleSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::find_minimal_maximal_energy(const TemperatureType& inverse_temperature_minimal_energy, const TemperatureType& inverse_temperature_maximal_energy, unsigned int steps)
-  {
-    typedef Metropolis<ConfigurationType, StepType, RandomNumberGenerator> MetropolisSimulation;
-    
-    // Define a metropolis simulation that executes the steps
-    MetropolisSimulation metropolis_simulation(typename MetropolisSimulation::Parameters(), this->get_config_space());
-
-    // Do the steps searching the minimal energy
-    EnergyType minimal_energy = this->get_config_space()->energy();
-    for (unsigned int i = 0; i < steps; ++i)
-    {
-      metropolis_simulation->do_metropolis_steps(1, inverse_temperature_minimal_energy);
-      if (this->get_config_space()->energy() < minimal_energy)
-	minimal_energy = this->get_config_space()->energy();
-    }
-
-    // Do the steps searching the minimal energy
-    EnergyType maximal_energy = this->get_config_space()->energy();
-    for (unsigned int i = 0; i < steps; ++i)
-    {
-      metropolis_simulation->do_metropolis_steps(1, inverse_temperature_maximal_energy);
-      if (this->get_config_space()->energy() > maximal_energy)
-	maximal_energy = this->get_config_space()->energy();
-    }
-
-    // Set the maximal and the minimal energy
-    simulation_parameters.maximal_energy = maximal_energy;
-    simulation_parameters.minimal_energy = minimal_energy;
-  }
-
-  template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
-  void OptimalEnsembleSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::estimate_weights()
-  {
-    // Set parameters for a fast relaxation
-    WangLandauParameters wl_parameters;
-    wl_parameters.prototype_histo = simulation_parameters.prototype_histo;
-    wl_parameters.sweep_steps = simulation_parameters.initial_steps_per_iteration;
-    wl_parameters.modification_factor_initial = 1;
-    wl_parameters.modification_factor_final = 1e-6;
-    wl_parameters.modification_factor_multiplier = 0.5;
-    wl_parameters.flatness = 0.8;
-
-    // Call the general function
-    estimate_weights(wl_parameters);
-  }
-  template <class ConfigurationType, class StepType, class EnergyType, template<class,class> class HistoType, class RandomNumberGenerator>
-  void OptimalEnsembleSampling<ConfigurationType, StepType, EnergyType, HistoType, RandomNumberGenerator>::estimate_weights(const WangLandauParameters& wang_landau_parameters)
-  {
-    // Create a WangLandau simulation
-    WangLandauSimulation wl_simulation(wang_landau_parameters, this->get_config_space());
-
-    // Perform the WangLandau simulation
-    wl_simulation.do_wang_landau_simulation();
-    // Extract the density of states
-    HistoType<EnergyType, double> log_density_of_states = wl_simulation.get_log_density_of_states();
-
-    // Set the weights to the logarithm of the inverse density of states
-    for (typename HistoType<EnergyType, double>::const_iterator dos = log_density_of_states.begin();
-	 dos != log_density_of_states.end(); ++dos)
-    {
-      weights[dos->first] = - dos->second;
-    }
-  }
-
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   double OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::acceptance_probability(StepType& step_to_execute, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
@@ -146,6 +82,15 @@ namespace Mocasinns
     return exp(weights[total_energy_after_step] - weights[step_parameters.total_energy]);
   }
   
+/*! \fn AUTO_TEMPLATE_1
+ * \details the following updates are performed:
+ * - The total energy stored in the \c step_parameter is increased by the energy difference of the step
+ * - If the total energy equals the minimal or the maximal energy of the system, the label of the walker, which determines which incidence counter to fill, is adjusted
+ * - The positive or the negative incidence counter (which one depends on the actual label of the walker) at the new total energy is increase by one
+ *
+ * \param time Specifies the time the algorithm has been in the previous state if doing a rejection free algorithm
+ * \param step_parameters Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
+ */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_executed_step(StepType&, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
@@ -166,6 +111,13 @@ namespace Mocasinns
       incidence_counter_negative[step_parameters.total_energy] += time;
   }
   
+  /*! \fn AUTO_TEMPLATE_1
+   * \details the following updates are performed:
+   * - The positive or the negative incidence counter (which one depends on the actual label of the walker) at the current total energy is increase by one
+   *
+   * \param time Specifies the time the algorithm has been in the previous state if doing a rejection free algorithm
+   * \param step_parameters Structure for storing the actual energy of the system and the energy difference of the simulation. (Used for performance reasons)
+   */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
   void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::handle_rejected_step(StepType&, double, Details::Multicanonical::StepParameter<EnergyType>& step_parameters)
   {
@@ -176,7 +128,76 @@ namespace Mocasinns
       incidence_counter_negative[step_parameters.total_energy]++;
   }
 
-  /*!
+  /*! \fn AUTO_TEMPLATE_1
+   * \details Checks whether the next iteration of the weights can be calculated iterativly. Three conditions must be fulfilled for the function to return true: (1) The positive and the negative incidence counter must have at least one entry, (2) the positive and the negative incidence counter must not have more than one zero entry (for the maximal or the minimal energy) and (3) the derivative of the fraction histogram must be positive everywhere.
+   */
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+  bool OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::weights_recalculable()
+  {
+    // Fill the fraction histogram
+    HistoType<EnergyType, double> fraction_histogram;
+    for (typename HistoType<EnergyType, incidence_counter_y_value_t>::const_iterator it = incidence_counter_positive.begin();
+	 it != incidence_counter_positive.end(); ++it)
+    {	  
+      fraction_histogram[it->first] = static_cast<double>(it->second) 
+	/ static_cast<double>(it->second + incidence_counter_negative[it->first]);
+    }
+	
+    // Set the flags to false
+    bool incidence_counters_vanish = false;
+    bool incidence_counters_zero_y_values = false;
+    bool fraction_derivative_negative = false;
+
+    // Test whether new sampling steps have to be done
+    if (incidence_counter_positive.size() == 0 || incidence_counter_negative.size() == 0)
+      incidence_counters_vanish = true;
+    if (incidence_counter_positive.count_y(0) > 1 || incidence_counter_negative.count_y(0) > 1)
+      incidence_counters_zero_y_values = true;
+    for (typename HistoType<EnergyType, double>::const_iterator it = fraction_histogram.begin();
+	 it != fraction_histogram.end(); ++it)
+    {
+      if (fraction_histogram.derivative(it) < 0)
+	fraction_derivative_negative = true;
+    }
+    
+    return !(incidence_counters_vanish || incidence_counters_zero_y_values || fraction_derivative_negative);
+  }
+
+  /*! \fn AUTO_TEMPLATE_1
+   * \details Calculates the next iteration of the weights using the formula
+   * \f[
+   *   \Rightarrow P_{i+1}(E) = P_i(E) \cdot \sqrt{\frac{1}{H_i(E)} \cdot \frac{\mathrm df_i}{\mathrm dE}}
+   * \f]
+   * Afterwards the weights are rescaled (which does not alter the acceptance probabilities, since only the weight ratios matter).
+   */
+  template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
+  void OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::recalculate_weights()
+  {
+    // Create and fill the fraction histogram
+    HistoType<EnergyType, double> fraction_histogram;
+    fraction_histogram.initialise_empty(weights);
+    for (typename HistoType<EnergyType, incidence_counter_y_value_t>::const_iterator it = incidence_counter_positive.begin();
+	 it != incidence_counter_positive.end(); ++it)
+    {
+      EnergyType energy = it->first;
+      incidence_counter_y_value_t positive_incidence = it->second;
+      incidence_counter_y_value_t negative_incidence = incidence_counter_negative[it->first];
+      fraction_histogram[energy] = static_cast<double>(positive_incidence) / static_cast<double>(positive_incidence + negative_incidence);
+    }
+      
+    // Calculate the new weights out of the old ones
+    for (typename HistoType<EnergyType, double>::iterator energy_weight = weights.begin();
+	 energy_weight != weights.end(); ++energy_weight)
+    {
+      EnergyType energy = energy_weight->first;
+      energy_weight->second += 0.5 * (log(fraction_histogram.derivative(fraction_histogram.find(energy))) - log(incidence_counter_positive[energy] + incidence_counter_negative[energy]));
+    }
+
+    // Rescale the weights
+    weights.shift_bin_zero(weights.min_y_value());
+  }
+
+  /*! \fn AUTO_TEMPLATE_1
     \details Performs a number of steps with the acceptance probability given by the weights. Records the step in the positive and negative incidence counter histograms and resets the walker label if necessary.
     \param number Number of steps to perform.
    */
@@ -191,11 +212,17 @@ namespace Mocasinns
     this->template do_steps<OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>,StepType, false>(number, step_parameters);
   }
 
-  /*!
-    \returns Histogram with the logarithmic density of states associated to each energy.
+  /*! \fn AUTO_TEMPLATE_2
+   * \details Does a complete Optimal Ensemble sampling simulation with the parameters specified in the constructor of the class.
+   * 
+   * \tparam IterationStepsFunctor Function or object that takes two integer arguments (the steps of the first iteration and the iteration index) and calculates the steps for the given iteration index.
+   * \param iteration_steps_functor  Function or object that takes two integer arguments (the steps of the first iteration and the iteration index) and calculates the steps for the given iteration index. The default is to use allways the same number of steps. The functors Details::IterationSteps::ConstantSteps, Details::IterationSteps::LinearSteps and Details::IterationsSteps::PowerLawSteps can be used here.
+   *
+   * \returns Histogram with the logarithmic density of states associated to each energy.
    */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator>
-  HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_optimal_ensemble_sampling_simulation()
+  template <class IterationStepsFunctor>
+  HistoType<EnergyType, double> OptimalEnsembleSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator>::do_optimal_ensemble_sampling_simulation(IterationStepsFunctor iteration_steps_functor)
   {
     // Log the start of the simulation
     this->simulation_start_log();
@@ -211,66 +238,17 @@ namespace Mocasinns
       incidence_counter_negative.initialise_empty(weights);
       fraction_histogram.initialise_empty(weights);
 
-      // Do the steps until all values in the incidence counter have been reached
-      bool incidence_counters_vanish = false;
-      bool incidence_counters_zero_y_values = false;
-      bool fraction_derivative_negative = false;
-      do
+      // Test whether the weights can be recalculated
+      while(!weights_recalculable())
       {
 	// Do the sampling steps
-	do_optimal_ensemble_sampling_steps(pow(2,iteration) * simulation_parameters.initial_steps_per_iteration);
+	do_optimal_ensemble_sampling_steps(iteration_steps_functor(simulation_parameters.initial_steps_per_iteration, iteration));
 
 	// Check for signals and return if simulation should be terminated
 	if (this->check_for_posix_signal()) return HistoType<EnergyType, double>();
-
-	// Fill the fraction histogram
-	for (typename HistoType<EnergyType, incidence_counter_y_value_t>::const_iterator it = incidence_counter_positive.begin();
-	     it != incidence_counter_positive.end(); ++it)
-	{	  
-	  fraction_histogram[it->first] = static_cast<double>(it->second) 
-	    / static_cast<double>(it->second + incidence_counter_negative[it->first]);
-	}
-	
-	// Set the flags to false
-	incidence_counters_vanish = false;
-	incidence_counters_zero_y_values = false;
-	fraction_derivative_negative = false;
-
-	// Test whether new sampling steps have to be done
-	if (incidence_counter_positive.size() == 0 || incidence_counter_negative.size() == 0)
-	  incidence_counters_vanish = true;
-	if (incidence_counter_positive.count_y(0) > 1 || incidence_counter_negative.count_y(0) > 1)
-	  incidence_counters_zero_y_values = true;
-	for (typename HistoType<EnergyType, double>::const_iterator it = fraction_histogram.begin();
-	     it != fraction_histogram.end(); ++it)
-	{
-	  if (fraction_histogram.derivative(it) < 0)
-	    fraction_derivative_negative = true;
-	}
-      } while (incidence_counters_vanish || incidence_counters_zero_y_values || fraction_derivative_negative);
-
-      // Create and fill the fraction histogram
-      HistoType<EnergyType, double> fraction_histogram;
-      fraction_histogram.initialise_empty(weights);
-      for (typename HistoType<EnergyType, incidence_counter_y_value_t>::const_iterator it = incidence_counter_positive.begin();
-	   it != incidence_counter_positive.end(); ++it)
-      {
-	EnergyType energy = it->first;
-	incidence_counter_y_value_t positive_incidence = it->second;
-	incidence_counter_y_value_t negative_incidence = incidence_counter_negative[it->first];
-	fraction_histogram[energy] = static_cast<double>(positive_incidence) / static_cast<double>(positive_incidence + negative_incidence);
       }
-      
-      // Calculate the new weights out of the old ones
-      for (typename HistoType<EnergyType, double>::iterator energy_weight = weights.begin();
-	   energy_weight != weights.end(); ++energy_weight)
-      {
-	EnergyType energy = energy_weight->first;
-	energy_weight->second += 0.5 * (log(fraction_histogram.derivative(fraction_histogram.find(energy))) - log(incidence_counter_positive[energy] + incidence_counter_negative[energy]));
-      }
-
-      // Rescale the weights
-      weights.shift_bin_zero(weights.min_y_value());
+      // Recalculate the weights based on the data accumulated in the incidence counters
+      recalculate_weights();
 
       // Invoke the signal handler after iteration
       signal_handler_iteration(this);

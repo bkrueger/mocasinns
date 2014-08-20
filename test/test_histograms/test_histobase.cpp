@@ -5,6 +5,7 @@ CppUnit::Test* TestHistoBase::suite()
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestHistograms/TestHistoBase");
     
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_equal", &TestHistoBase::test_operator_equal ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_negative", &TestHistoBase::test_operator_negative ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_add", &TestHistoBase::test_operator_add ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_substract", &TestHistoBase::test_operator_substract ) );
     suiteOfTests->addTest( new CppUnit::TestCaller<TestHistoBase>("TestHistograms/TestHistoBase: test_operator_multiply", &TestHistoBase::test_operator_multiply ) );
@@ -74,6 +75,17 @@ void TestHistoBase::test_operator_equal()
   // Test for inequality
   CPPUNIT_ASSERT(testhisto_int != testhisto_int_second);
   CPPUNIT_ASSERT(testhisto_double != testhisto_double_second);
+}
+
+void TestHistoBase::test_operator_negative()
+{
+  Histocrete<int, int> negative_testhisto_int = -testhisto_int;
+  CPPUNIT_ASSERT_EQUAL(5lu, negative_testhisto_int.size());
+  CPPUNIT_ASSERT_EQUAL(0, negative_testhisto_int[1]);
+  CPPUNIT_ASSERT_EQUAL(0, negative_testhisto_int[2]);
+  CPPUNIT_ASSERT_EQUAL(0, negative_testhisto_int[3]);
+  CPPUNIT_ASSERT_EQUAL(0, negative_testhisto_int[4]);
+  CPPUNIT_ASSERT_EQUAL(-1, negative_testhisto_int[5]);
 }
 
 void TestHistoBase::test_operator_add()

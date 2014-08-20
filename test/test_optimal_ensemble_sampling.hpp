@@ -10,6 +10,7 @@
 #include <gespinst/spin_lattice.hpp>
 #include <gespinst/spins/ising_spin.hpp>
 
+#include <mocasinns/wang_landau.hpp>
 #include <mocasinns/optimal_ensemble_sampling.hpp>
 #include <mocasinns/histograms/histocrete.hpp>
 #include <mocasinns/random/boost_random.hpp>
@@ -25,6 +26,7 @@ public:
   
   typedef Gespinst::SpinLattice<2, Gespinst::IsingSpin> IsingConfiguration2d;
   typedef Gespinst::SpinLatticeStep<2, Gespinst::IsingSpin> IsingStep2d;
+  typedef WangLandau<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> WangLandau_IsingSimulation2d;
   typedef OptimalEnsembleSampling<IsingConfiguration2d, IsingStep2d, int, Histograms::Histocrete, Random::Boost_MT19937> IsingSimulation2d;
 
 private:

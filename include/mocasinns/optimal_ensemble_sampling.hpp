@@ -21,6 +21,22 @@ namespace Mocasinns
    * \brief Class for Optimal Ensemble Sampling
    *
    * \details Does a Optimal-Sampling simulation and determines the density of states with respect to the energy functional. Usage examples are found in the test cases. 
+   * 
+   * The basic idea of the optimal ensemble sampling is to modify the flat-histogram algorithms in order to maximize the number of sweeps from the highest to the lowest energy of the system and vice versa.
+   * This is done by optimizing the weights \f$P(E)\f$ of energy levels in the Markov chain.
+   *
+   * The incidence counter, which counts the number of times a certain energy was visited in the algorithm, is splitted into a positive and a negative counter  \f$H_+(E)\f$ and \f$H_-(E)\f$. 
+   * The positive (negative) counter measures how often a certain energy was visited after the maximal (minimal) energy of the system was visited last.
+   * The fraction histogram \f$f(E) := H_+(E) / \left( H_+(E) + H_-(E) \right)\f$ is the ratio of the positive incidence counter and the total incidence counter \f$H(E) := H_+(E) + H_-(E)\f$.
+   *
+   * After doing a certain number of steps, the weights \f$ P_{i+1}(E) \f$ can then be calculated iterativly from the old weights and the fraction histogram:
+   * \f[
+   *   \Rightarrow P_{i+1}(E) = P_i(E) \cdot \sqrt{\frac{1}{H_i(E)} \cdot \frac{\mathrm df_i}{\mathrm dE}}
+   * \f]
+   * This iterative calculation of the new weights relates on the two incidence counters having non-zero entries for all non-maximal and non-minimal energies, and on the fraction histogram \f$ f(E) \f$ increasing monotonically.
+   * If one of these two conditions is not fulfilled, the same number of steps is executed over and over again until the conditions are met.
+   * It is recomended to start with a good initial estimation of the weights for the first iteration.
+   * Otherwise it is almost impossible to fulfill both conditions in the first estimation.
    *
    * \signalhandlers
    * \signalhandler{signal_handler_iteration,This handler is called after every iteration of the algorithm.}
@@ -78,9 +94,13 @@ namespace Mocasinns
     OptimalEnsembleSampling(const Parameters& parameters, ConfigurationType* initial_configuration);
 
     //! Get-Accessor for the parameters of the simulation
-    const Parameters& get_parameters() { return simulation_parameters; }
+    const Parameters& get_simulation_parameters() { return simulation_parameters; }
+    //! Set-Accessor for the paramters of the simulation
+    void set_simulation_parameters(const Parameters& value) { simulation_parameters = value; }
     //! Get-Accessor for the weights
     const HistoType<EnergyType, double>& get_weights() { return weights; }
+    //! Set-Accessor for the weights
+    void set_weights(const HistoType<EnergyType, double>& value) {weights = value; }
     //! Get-Accessor for the incidence counter of positive labled walkers
     const HistoType<EnergyType, incidence_counter_y_value_t>& get_incidence_counter_positive() { return incidence_counter_positive; }
     //! Get-Accessor for the incidence counter of negative labled walkers
@@ -102,7 +122,12 @@ namespace Mocasinns
     //! Handle a rejected step
     void handle_rejected_step(StepType& rejected_step, double time, Details::Multicanonical::StepParameter<EnergyType>& step_parameters);
 
-    //! Do a certain number of steps updating the log_density_of_states and the incidence_counter
+    //! Recalculate the weights based on the data accumulated in the histograms
+    void recalculate_weights();
+    //! Test whether the incidence counters are non-empty and the derivative of the fraction is positive. If false, the weights can be recalculated
+    bool weights_recalculable();
+
+    //! Do a certain number of steps updating the incidence counters
     void do_optimal_ensemble_sampling_steps(const uint32_t& number);
 
     //! Do an optimal ensemble sampling simulation

@@ -109,7 +109,7 @@ namespace Mocasinns
     //! Get-Accessor for the parameters of the simulation
     const Parameters& get_simulation_parameters() const { return simulation_parameters; }
     //! Set-Accessor for the parameters of the simulation
-    void set_simulation_parameters(const Parameters& value) { simulation_parameters = value; initialise_with_parameters(); }
+    void set_simulation_parameters(const Parameters& value) { simulation_parameters = value; } //initialise_with_parameters(); }
     //! Get-Accessor for the current modification factor
     double get_modification_factor_current() const { return modification_factor_current; }
     //! Set-Accessor for the current modification factor

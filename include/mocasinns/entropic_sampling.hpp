@@ -14,6 +14,7 @@
 #include "concepts/concepts.hpp"
 #include "details/multicanonical/step_parameter.hpp"
 #include "details/multicanonical/parameters_multicanonical.hpp"
+#include "details/iteration_steps/constant_steps.hpp"
 
 // Boost serialization for derived classes
 #include <boost/serialization/base_object.hpp>
@@ -114,6 +115,9 @@ namespace Mocasinns
     void do_entropic_sampling_steps(const step_number_t& number);
     //! Do a complete entropic sampling simulation until the desired flatness is reached
     void do_entropic_sampling_simulation();
+    //! Do a complete entropic sampling simulation for a given number of iterations with a given number of steps per iteration
+    template <class IterationStepsFunctor = Details::IterationSteps::ConstantSteps<> >
+    void do_entropic_sampling_simulation(unsigned int iterations, IterationsStepsFunctor iteration_steps_functor = IterationStepsFunctor());
     
     //! Load the data of the Entropic Sampling simulation from a serialization stream
     virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }

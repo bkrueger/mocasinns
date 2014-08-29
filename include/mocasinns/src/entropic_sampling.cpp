@@ -168,7 +168,7 @@ namespace Mocasinns
    */
   template <class ConfigurationType, class StepType, class EnergyType, template <class,class> class HistoType, class RandomNumberGenerator, bool rejection_free>
   template <class IterationStepsFunctor>
-  void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_simulation(unsigned int iterations, IterationsStepsFunctor iteration_steps_functor)
+  void EntropicSampling<ConfigurationType,StepType,EnergyType,HistoType,RandomNumberGenerator,rejection_free>::do_entropic_sampling_simulation(unsigned int iterations, IterationStepsFunctor iteration_steps_functor)
   {
     // Log the start of the simulation
     this->simulation_start_log();

@@ -22,7 +22,7 @@ namespace Mocasinns
        }
      };
 
-     template <class EnergyType>
+     template <class EnergyType, class LowerComparator = std::greater_equal<EnergyType>, class UpperComparator = std::less_equal<EnergyType> >
      class ParametersMulticanonical
      {
      public:
@@ -40,6 +40,11 @@ namespace Mocasinns
        //! Flag indicating whether to use the maximal energy cutoff, default value is false
        bool use_energy_cutoff_upper;
 
+       //! Comparator object for comparing with the lower energy cutoff
+       LowerComparator lower_comparator;
+       //! Comparator object for comparing with the upper energy_cutoff
+       UpperComparator upper_comparator;
+
        //! Comparator object
        //       EnergyTypeComparator energy_type_comparator;
 
@@ -50,7 +55,9 @@ namespace Mocasinns
 	 energy_cutoff_lower(0),
 	 energy_cutoff_upper(0),
 	 use_energy_cutoff_lower(false),
-	 use_energy_cutoff_upper(false) {}
+	 use_energy_cutoff_upper(false),
+	 lower_comparator(LowerComparator()),
+	 upper_comparator(UpperComparator()) {}
 
        //! Constructor to copy parameters from other parameters with convertible energy type
        template <class EnergyTypeOther>
@@ -60,7 +67,9 @@ namespace Mocasinns
 	 energy_cutoff_lower(other.energy_cutoff_lower),
 	 energy_cutoff_upper(other.energy_cutoff_upper),
 	 use_energy_cutoff_lower(other.use_energy_cutoff_lower),
-	 use_energy_cutoff_upper(other.use_energy_cutoff_upper) { }
+	 use_energy_cutoff_upper(other.use_energy_cutoff_upper),
+	 lower_comparator(other.lower_comparator),
+	 upper_comparator(other.upper_comparator) { }
 
        //! Test for equality
        bool operator==(const ParametersMulticanonical<EnergyType>& rhs) const
@@ -75,15 +84,19 @@ namespace Mocasinns
        //! Test for inequality
        bool operator!=(const ParametersMulticanonical<EnergyType>& rhs) const { return !operator==(rhs); }
        
-       //! Function to compare two energies
-       // bool energy_compare_equal(const EnergyType& energy_1, const EnergyType& energy_2) { return (energy_type_comparator(energy_1, energy_2) == 0); }
-       // bool energy_compare_unequal(const EnergyType& energy_1, const EnergyType& energy_2) { return (energy_type_comparator(energy_1, energy_2) != 0); }
-       // bool energy_compare_less(const EnergyType& energy_1, const EnergyType& energy_2) { return (energy_type_comparator(energy_1, energy_2) < 0); }
-       // bool energy_compare_less_equal(const EnergyType& energy_1, const EnergyType& energy_2) { return (energy_type_comparator(energy_1, energy_2) <= 0); }
-       // bool energy_compare_greater(const EnergyType& energy_1, const EnergyType& energy_2) { return (energy_type_comparator(energy_1, energy_2) > 0); }
-       // bool energy_compare_greater_equal(const EnergyType& energy_1, const EnergyType& energy_2) { return (energy_type_comparator(energy_1, energy_2) >= 0); }
-
-
+       //! Test whether a given energy is in the range given by this parameter
+       bool energy_in_range(const EnergyType& energy) const
+       {
+	 // Check the upper cutoff
+	 if (use_energy_cutoff_upper && !upper_comparator(energy, energy_cutoff_upper))
+	   return false;
+	 // Check the lower cutoff
+	 if (use_energy_cutoff_lower && !lower_comparator(energy, energy_cutoff_lower))
+	   return false;
+	 // No cutoff violated
+	 return true;
+       }
+       
      private:
        //! Member variable for boost serialization
        friend class boost::serialization::access;

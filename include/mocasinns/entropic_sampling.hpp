@@ -117,7 +117,7 @@ namespace Mocasinns
     void do_entropic_sampling_simulation();
     //! Do a complete entropic sampling simulation for a given number of iterations with a given number of steps per iteration
     template <class IterationStepsFunctor = Details::IterationSteps::ConstantSteps<> >
-    void do_entropic_sampling_simulation(unsigned int iterations, IterationsStepsFunctor iteration_steps_functor = IterationStepsFunctor());
+    void do_entropic_sampling_simulation(unsigned int iterations, IterationStepsFunctor iteration_steps_functor = IterationStepsFunctor());
     
     //! Load the data of the Entropic Sampling simulation from a serialization stream
     virtual void load_serialize(std::istream& input_stream) { Base::load_serialize(*this, input_stream); }

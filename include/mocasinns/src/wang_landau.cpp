@@ -76,8 +76,7 @@ double Mocasinns::WangLandau<ConfigurationType,StepType,EnergyType,HistoType,Ran
   step_parameters.delta_E = step_to_execute.delta_E();
   
   // If an energy cutoff is used and the step would violate the energy cutoff, return 0.0
-  if ((simulation_parameters.use_energy_cutoff_lower && step_parameters.total_energy + step_parameters.delta_E < simulation_parameters.energy_cutoff_lower) ||
-      (simulation_parameters.use_energy_cutoff_upper && step_parameters.total_energy + step_parameters.delta_E > simulation_parameters.energy_cutoff_upper))
+  if (!simulation_parameters.energy_in_range(step_parameters.total_energy + step_parameters.delta_E))
     return 0.0;
   
   // Calculate and return the acceptance probability

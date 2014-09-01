@@ -22,7 +22,7 @@ namespace Mocasinns
        }
      };
 
-     template <class EnergyType, class LowerComparator = std::greater_equal<EnergyType>, class UpperComparator = std::less_equal<EnergyType> >
+     template <class EnergyType>
      class ParametersMulticanonical
      {
      public:
@@ -40,10 +40,10 @@ namespace Mocasinns
        //! Flag indicating whether to use the maximal energy cutoff, default value is false
        bool use_energy_cutoff_upper;
 
-       //! Comparator object for comparing with the lower energy cutoff
-       LowerComparator lower_comparator;
-       //! Comparator object for comparing with the upper energy_cutoff
-       UpperComparator upper_comparator;
+       //! Comparator object for comparing with the lower energy cutoff. Pointer to a function taking two const references to the energy type
+       bool (*lower_comparison_function)(const EnergyType&, const EnergyType&);
+       //! Comparator object for comparing with the upper energy_cutoff. Pointer to a function taking two const references to the energy type
+       bool (*upper_comparison_function)(const EnergyType&, const EnergyType&);
 
        //! Comparator object
        //       EnergyTypeComparator energy_type_comparator;
@@ -56,8 +56,8 @@ namespace Mocasinns
 	 energy_cutoff_upper(0),
 	 use_energy_cutoff_lower(false),
 	 use_energy_cutoff_upper(false),
-	 lower_comparator(LowerComparator()),
-	 upper_comparator(UpperComparator()) {}
+	 lower_comparison_function(&lower_comparison_function_default),
+	 upper_comparison_function(&upper_comparison_function_default) {}
 
        //! Constructor to copy parameters from other parameters with convertible energy type
        template <class EnergyTypeOther>
@@ -68,8 +68,8 @@ namespace Mocasinns
 	 energy_cutoff_upper(other.energy_cutoff_upper),
 	 use_energy_cutoff_lower(other.use_energy_cutoff_lower),
 	 use_energy_cutoff_upper(other.use_energy_cutoff_upper),
-	 lower_comparator(other.lower_comparator),
-	 upper_comparator(other.upper_comparator) { }
+	 lower_comparison_function(other.lower_comparison_function),
+	 upper_comparison_function(other.upper_comparison_function) { }
 
        //! Test for equality
        bool operator==(const ParametersMulticanonical<EnergyType>& rhs) const
@@ -88,16 +88,21 @@ namespace Mocasinns
        bool energy_in_range(const EnergyType& energy) const
        {
 	 // Check the upper cutoff
-	 if (use_energy_cutoff_upper && !upper_comparator(energy, energy_cutoff_upper))
+	 if (use_energy_cutoff_upper && !upper_comparison_function(energy, energy_cutoff_upper))
 	   return false;
 	 // Check the lower cutoff
-	 if (use_energy_cutoff_lower && !lower_comparator(energy, energy_cutoff_lower))
+	 if (use_energy_cutoff_lower && !lower_comparison_function(energy, energy_cutoff_lower))
 	   return false;
 	 // No cutoff violated
 	 return true;
        }
        
      private:
+       //! Default function for lower comparison
+       static bool lower_comparison_function_default(const EnergyType& first, const EnergyType& second) { std::greater_equal<EnergyType> comparator; return comparator(first, second); }
+       //! Default function for upper comparison
+       static bool upper_comparison_function_default(const EnergyType& first, const EnergyType& second) { std::less_equal<EnergyType> comparator; return comparator(first, second); }
+
        //! Member variable for boost serialization
        friend class boost::serialization::access;
        //! Method to serialize this class (omitted version name to avoid unused parameter warnings)

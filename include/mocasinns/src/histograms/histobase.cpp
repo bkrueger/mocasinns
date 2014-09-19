@@ -337,8 +337,10 @@ void HistoBase<x_value_type,y_value_type,Derived>::load_csv(std::istream& input_
     if (line[0] == '#') continue; // ignore comments
     if (line.length() == 0) continue; // ignore empty lines
     line.replace(line.find("\t"), 1, " ");
-    x_value_type x = atof(line.substr(0, line.find(" ")).c_str());
-    y_value_type y = atof(line.substr(line.find(" ") + 1).c_str());
+    std::stringstream x_ss; x_ss << line.substr(0, line.rfind(" "));
+    std::stringstream y_ss; y_ss << line.substr(line.rfind(" ") + 1);
+    x_value_type x; x_ss >> x;
+    y_value_type y; y = atof(y_ss.str().c_str());
     static_cast<Derived*>(this)->insert(std::pair<x_value_type, y_value_type>(x,y));
   }
 }

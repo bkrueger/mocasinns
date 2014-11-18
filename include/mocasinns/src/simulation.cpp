@@ -74,13 +74,26 @@ Mocasinns::Simulation<ConfigurationType, RandomNumberGenerator>::do_steps(const 
       if (step_probability > 0.0 && (step_probability >= 1.0 || this->rng->random_double() < step_probability))
       {
 	next_step.execute();
+#ifdef MOCASINNS_ACCEPTANCE_RATIO
+	accepted_steps++;
+#endif
 	static_cast<Derived*>(this)->handle_executed_step(next_step, 1.0, acceptance_probability_parameter);
       }
       else
+      {
+#ifdef MOCASINNS_ACCEPTANCE_RATIO
+	rejected_steps++;
+#endif
 	static_cast<Derived*>(this)->handle_rejected_step(next_step, 1.0, acceptance_probability_parameter);
+      }
     } // of if (next_step.is_executable())
     else
+    {
+#ifdef MOCASINNS_ACCEPTANCE_RATIO
+      rejected_steps++;
+#endif
       static_cast<Derived*>(this)->handle_rejected_step(next_step, 1.0, acceptance_probability_parameter);
+    }
   }
 }
  

@@ -69,6 +69,11 @@ public:
   //! Set-Accesspr for the path and name of the dumped file
   void set_dump_filename(const std::string& value) { dump_filename = value; }
 
+#ifdef MOCASINNS_ACCEPTANCE_RATIO
+  double acceptance_ratio() const { return static_cast<double>(accepted_steps) / static_cast<double>(accepted_steps + rejected_steps); }
+  void reset_acceptance_ratio() { accepted_steps = 0; rejected_steps = 0; }
+#endif
+
   //! Calculate the real time (in seconds) that passed since the start of the simulation
   int simulation_time_real() const { return time(NULL) - simulation_start; }
 
@@ -161,6 +166,13 @@ protected:
   template <class Algorithm> static void save_serialize(const Algorithm& simulation, const char* filename);
 
 private:
+#ifdef MOCASINNS_ACCEPTANCE_RATIO
+  // Variable storing the accepted steps
+  step_number_t accepted_steps;
+  // Variable storing the rejected steps
+  step_number_t rejected_steps;
+#endif
+
   //! Member variable for boost serialization
   friend class boost::serialization::access;
   //! Method for serializing the class

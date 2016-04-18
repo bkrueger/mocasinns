@@ -70,7 +70,7 @@ namespace Mocasinns
       ConstantWidthBinning(T new_binning_width, T new_binning_reference) : Base(new_binning_width, new_binning_reference) {}
 
       //! Functor for binning
-      T operator()(const T& value)
+      T operator()(const T& value) const
       {
 	return this->binning_reference + this->binning_width*(T)(floor((value - this->binning_reference) / static_cast<double>(this->binning_width)));
       }

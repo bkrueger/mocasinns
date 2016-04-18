@@ -122,6 +122,11 @@ public:
   //! Bin a calue
   virtual x_value_type bin_value(x_value_type value) { return binning(value); }
 
+  //! Get iterator to element
+  iterator find(const x_value_type& bin) { return this->values.find(binning(bin)); }
+  //! Get iterator to element
+  const_iterator find(const x_value_type& bin) const { return this->values.find(binning(bin)); }
+
   //! Initialise the Histogram with all necessary data of another Histogram, but sets all y-values to 0
   template <class other_y_value_type>
   void initialise_empty(const Histogram<x_value_type, other_y_value_type, BinningFunctor>& other);
